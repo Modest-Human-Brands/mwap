@@ -1,0 +1,19 @@
+$kind: http-example
+name: '200 Success'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/site/template/preview'
+  method: POST
+response:
+  statusCode: 200
+  statusText: 'OK'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "html": "<!DOCTYPE html><html  lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Harbor Films</title><link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?fa…",
+        "page": "home"
+      }

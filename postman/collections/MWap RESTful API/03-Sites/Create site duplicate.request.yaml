@@ -1,0 +1,75 @@
+$kind: http-request
+name: 'Create site duplicate'
+description: |-
+  Same slug as the previous request: the slug is taken.
+order: 5000
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{newSiteSlug}}",
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "Harbor Films",
+        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "#0EA5E9",
+          "secondary": "#0F172A",
+          "accent": "#38BDF8",
+          "background": "#020617",
+          "text": "#F8FAFC"
+        }
+      },
+      "domains": [
+        "{{customDomain}}"
+      ],
+      "data": {
+        "seo": {
+          "ogImage": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&h=630&fit=crop&q=80",
+          "canonicalUrl": "https://harbor.example.com"
+        },
+        "navigation": [
+          {
+            "label": "Home",
+            "href": "/"
+          }
+        ],
+        "pages": {
+          "home": {
+            "title": "Harbor Films",
+            "description": "A coastal production studio.",
+            "sections": [
+              {
+                "type": "hero",
+                "id": "hero",
+                "title": "Stories From The Waterfront.",
+                "subtitle": "A coastal production studio for films, series and campaigns.",
+                "cta": {
+                  "label": "Get in touch",
+                  "href": "#contact"
+                },
+                "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
+              }
+            ]
+          }
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 409', () => pm.response.to.have.status(409))
+      pm.test('matches Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'statusMessage'], properties: { statusCode: { type: 'number' }, statusMessage: { type: 'string' } } }))
+examples: './.resources/Create site duplicate.resources/examples/'

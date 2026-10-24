@@ -1,8 +1,0 @@
-$kind: collection
-name: MWap API
-description: |-
-  Contract for the MWap site-builder microservice (Nuxt/Nitro). The zod schema in shared/utils/site.ts is the runtime source of truth for the site payload; this collection documents and tests it.
-variables:
-  - key: baseUrl
-    value: 'http://localhost:3000'
-    description: Base URL of the MWap service

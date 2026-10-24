@@ -5,3 +5,8 @@ values:
     enabled: true
     type: default
     description: Base URL of the MWap service
+  - key: apiKey
+    value: ''
+    enabled: true
+    type: secret
+    description: Value of NUXT_PRIVATE_API_KEY; sent as x-api-key on write requests

@@ -1,0 +1,26 @@
+$kind: http-request
+name: 'Get all templates'
+description: |-
+  Template catalog for the picker. `category` groups templates; ids are what `templateId` accepts when previewing or creating a site.
+order: 1000
+method: GET
+url: '{{baseUrl}}/api/site/template'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Template List schema', () => pm.response.to.have.jsonSchema({
+        type: 'array',
+        minItems: 1,
+        items: {
+          type: 'object',
+          required: ['id', 'label', 'shortLabel', 'category', 'description'],
+          properties: { id: { type: 'string' }, label: { type: 'string' }, shortLabel: { type: 'string' }, category: { type: ['string', 'null'] }, description: { type: 'string' } }
+        }
+      }))
+      pm.test('lists the studio-v1 template', () => pm.expect(pm.response.json().map((t) => t.id)).to.include('studio-v1'))
+examples: './.resources/Get all templates.resources/examples/'

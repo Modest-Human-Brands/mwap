@@ -24,3 +24,6 @@ logs
 !.env.example
 !.env.native
 
+
+# Stored sites
+/data

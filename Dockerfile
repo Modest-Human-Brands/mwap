@@ -29,6 +29,9 @@ ENV NODE_ENV=production
 ENV NUXT_META_VERSION=$VERSION
 ENV NUXT_META_BUILD_TIME=$BUILD_TIME
 
+RUN mkdir -p /app/data/sites && chown -R bun:bun /app/data
+VOLUME /app/data
+
 USER bun
 
 EXPOSE 3000

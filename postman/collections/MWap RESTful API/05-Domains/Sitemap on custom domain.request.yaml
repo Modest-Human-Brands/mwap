@@ -1,0 +1,30 @@
+$kind: http-request
+name: 'Sitemap on custom domain'
+description: |-
+  The sitemap of a custom domain lists only that site, with clean URLs (no slug).
+order: 5000
+method: GET
+url: '{{baseUrl}}/sitemap.xml'
+headers:
+  - key: Accept
+    value: 'application/xml'
+  - key: Host
+    value: '{{customDomain}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('lists the clean urls of the site', () => {
+        const xml = pm.response.text()
+        pm.expect(xml).to.include('/projects</loc>')
+        pm.expect(xml).to.include('/about</loc>')
+      })
+      pm.test('lists no other site and no slug', () => {
+        const xml = pm.response.text()
+        for (const slug of [pm.collectionVariables.get('siteSlug'), pm.collectionVariables.get('newSiteSlug')]) {
+          pm.expect(xml).to.not.include('/' + slug + '/')
+          pm.expect(xml).to.not.include('/' + slug + '</loc>')
+        }
+      })
+examples: './.resources/Sitemap on custom domain.resources/examples/'

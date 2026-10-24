@@ -100,6 +100,8 @@ export default defineNuxtConfig({
     },
     private: {
       notionDbId: '',
+      apiKey: '',
+      sitesDir: './data/sites',
       vapidKey: '',
       vapidSubject: '',
     },
@@ -149,7 +151,7 @@ export default defineNuxtConfig({
   },
   sitemap: {
     autoLastmod: true,
-    exclude: ['/'],
+    exclude: ['/', '/_preview'],
     sources: ['/api/__sitemap__/urls'],
   },
   robots: {

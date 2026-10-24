@@ -71,21 +71,32 @@ export const pageSchema = z.object({
   sections: z.array(sectionSchema),
 })
 
-export const siteSchema = z.object({
-  slug: z.string().regex(/^[a-z0-9-]+$/),
-  brand: z.object({
-    name: z.string(),
-    logoUrl: z.url(),
-    faviconUrl: z.url(),
-    fontFamily,
-    colors: z.object({
-      primary: hexColor,
-      secondary: hexColor,
-      accent: hexColor,
-      background: hexColor,
-      text: hexColor,
-    }),
+// "template" and "preview" are fixed routes under /api/site
+const RESERVED_SLUGS = new Set(['template', 'preview'])
+
+export const slugSchema = z
+  .string()
+  .regex(/^[a-z0-9-]+$/, 'Invalid string: must match pattern /^[a-z0-9-]+$/')
+  .max(60)
+  .refine((slug) => !RESERVED_SLUGS.has(slug), 'Reserved slug')
+
+/** Shared by every template */
+export const brandSchema = z.object({
+  name: z.string().min(1),
+  logoUrl: z.url(),
+  faviconUrl: z.url(),
+  fontFamily,
+  colors: z.object({
+    primary: hexColor,
+    secondary: hexColor,
+    accent: hexColor,
+    background: hexColor,
+    text: hexColor,
   }),
+})
+
+/** Payload of the `studio-v1` template */
+export const studioDataSchema = z.object({
   seo: z.object({
     ogImage: z.url(),
     canonicalUrl: z.url(),
@@ -97,4 +108,21 @@ export const siteSchema = z.object({
     projects: pageSchema,
     about: pageSchema,
   }),
+})
+
+/** Lowercase apex hostname; `www.` is not accepted because it always redirects to the apex */
+export const domainSchema = z
+  .string()
+  .regex(/^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/, 'Invalid hostname: use a lowercase domain such as "example.com"')
+  .refine((domain) => !domain.startsWith('www.'), 'Use the apex domain: www redirects to it')
+
+export const domainsSchema = z.array(domainSchema).max(10).default([])
+
+export const siteSchema = z.object({
+  slug: slugSchema,
+  templateId: z.string(),
+  brand: brandSchema,
+  data: studioDataSchema,
+  domains: domainsSchema,
+  updatedAt: z.string(),
 })

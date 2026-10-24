@@ -1,0 +1,30 @@
+$kind: http-example
+name: '200 Success'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/site?limit=50&offset=0'
+  method: GET
+response:
+  statusCode: 200
+  statusText: 'OK'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "results": [
+          {
+            "slug": "northlight-studio",
+            "templateId": "studio-v1",
+            "name": "Northlight Studio",
+            "updatedAt": "2026-01-01T00:00:00.000Z"
+          }
+        ],
+        "pagination": {
+          "total": 1,
+          "limit": 50,
+          "offset": 0
+        }
+      }

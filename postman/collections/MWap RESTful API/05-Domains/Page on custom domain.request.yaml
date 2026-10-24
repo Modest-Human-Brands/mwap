@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Page on custom domain'
+description: |-
+  Pages sit directly under the domain root: /projects and /about.
+order: 2000
+method: GET
+url: '{{baseUrl}}/projects'
+headers:
+  - key: Accept
+    value: 'text/html'
+  - key: Host
+    value: '{{customDomain}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('shows the site of the domain', () => pm.expect(pm.response.text()).to.include('Harbor Films Studio'))
+      pm.test('links carry no slug', () => pm.expect(pm.response.text()).to.not.include('/' + pm.collectionVariables.get('newSiteSlug') + '/'))
+examples: './.resources/Page on custom domain.resources/examples/'

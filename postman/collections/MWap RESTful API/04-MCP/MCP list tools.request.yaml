@@ -1,0 +1,31 @@
+$kind: http-request
+name: 'MCP list tools'
+description: |-
+  Lists the tools the MCP server exposes.
+order: 2000
+method: POST
+url: '{{baseUrl}}/mcp'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json, text/event-stream'
+body:
+  type: json
+  content: |-
+    {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "tools/list"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('lists at least one tool with an input schema', () => {
+        const { tools } = pm.response.json().result
+        pm.expect(tools).to.be.an('array').that.is.not.empty
+        tools.forEach((t) => pm.expect(t).to.include.all.keys('name', 'description', 'inputSchema'))
+      })
+examples: './.resources/MCP list tools.resources/examples/'

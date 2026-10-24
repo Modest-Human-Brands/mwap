@@ -1,0 +1,79 @@
+$kind: http-example
+name: '201 Created'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/site'
+  method: POST
+response:
+  statusCode: 201
+  statusText: 'Created'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+    - key: Location
+      value: '/api/site/harbor-films'
+  body:
+    type: json
+    content: |-
+      {
+        "slug": "harbor-films",
+        "templateId": "studio-v1",
+        "brand": {
+          "name": "Harbor Films",
+          "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
+          "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
+          "fontFamily": "Oxanium",
+          "colors": {
+            "primary": "#0EA5E9",
+            "secondary": "#0F172A",
+            "accent": "#38BDF8",
+            "background": "#020617",
+            "text": "#F8FAFC"
+          }
+        },
+        "data": {
+          "seo": {
+            "ogImage": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&h=630&fit=crop&q=80",
+            "canonicalUrl": "https://harbor.example.com"
+          },
+          "navigation": [
+            {
+              "label": "Home",
+              "href": "/"
+            }
+          ],
+          "pages": {
+            "home": {
+              "title": "Harbor Films",
+              "description": "A coastal production studio.",
+              "sections": [
+                {
+                  "type": "hero",
+                  "id": "hero",
+                  "title": "Stories From The Waterfront.",
+                  "subtitle": "A coastal production studio for films, series and campaigns.",
+                  "cta": {
+                    "label": "Get in touch",
+                    "href": "#contact"
+                  },
+                  "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
+                }
+              ]
+            },
+            "projects": {
+              "title": "{{ projects title }}",
+              "description": "{{ projects description }}",
+              "sections": []
+            },
+            "about": {
+              "title": "{{ about title }}",
+              "description": "{{ about description }}",
+              "sections": []
+            }
+          }
+        },
+        "domains": [
+          "harbor-films.example.test"
+        ],
+        "updatedAt": "2026-10-24T17:26:39.924Z"
+      }

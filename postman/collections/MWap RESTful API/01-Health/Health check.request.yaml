@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Health check'
+description: |-
+  Readiness ping. Returns the build version and time (empty outside of a container build) and the node that answered.
+order: 1000
+method: GET
+url: '{{baseUrl}}/api/health'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Health schema', () => pm.response.to.have.jsonSchema({
+        type: 'object',
+        required: ['status', 'node'],
+        properties: { status: { const: 'OK' }, version: { type: ['string', 'null'] }, buildTime: { type: ['string', 'null'] }, node: { type: 'string' } }
+      }))
+examples: './.resources/Health check.resources/examples/'

@@ -1,0 +1,24 @@
+$kind: collection
+name: MWap RESTful API
+description: |-
+  Contract for the MWap site-builder microservice (Nuxt/Nitro): pick a template, send a brand and a payload, get a website.
+  The zod schemas in the service are the runtime source of truth; this collection documents and tests the contract.
+  Write endpoints (create/replace site) need the x-api-key header: set the secret environment variable apiKey.
+  A site can own custom domains: a request whose Host matches one is served at the domain root (/projects instead of /<slug>/projects); www redirects to the apex, slug paths redirect to the clean URL, any other host keeps the /<slug> routes.
+  Errors use the Nitro shape { statusCode, statusMessage, message, data? }; validation failures return 400 with data.errors[{ field, message, code }].
+variables:
+  - key: baseUrl
+    value: 'http://localhost:3000'
+    description: Base URL of the MWap service
+  - key: templateId
+    value: studio-v1
+    description: Template used by the requests
+  - key: siteSlug
+    value: northlight-studio
+    description: Seeded read-only example site
+  - key: newSiteSlug
+    value: pm-example-site
+    description: Slug created by the Create site request (regenerated on every run)
+  - key: customDomain
+    value: pm-example-site.example.test
+    description: Domain given to the created site (regenerated on every run); the Domains requests send it as Host header

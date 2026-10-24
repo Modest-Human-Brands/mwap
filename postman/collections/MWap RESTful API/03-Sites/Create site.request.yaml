@@ -1,0 +1,113 @@
+$kind: http-request
+name: 'Create site'
+description: |-
+  Validates brand and payload against the template schema (missing fields are filled from the template placeholders) and stores the site. Needs the x-api-key header. 409 when the slug exists, 404 when the template does not, 400 with data.errors when a field is invalid. `domains` (optional, lowercase apex hostnames) makes the site answer on its own domain; a domain can belong to one site only (409 otherwise) and www hosts are rejected because www redirects to the apex. A new slug and domain are generated for every run; the collection variables newSiteSlug and customDomain carry them to the following requests.
+order: 4000
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{newSiteSlug}}",
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "Harbor Films",
+        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "#0EA5E9",
+          "secondary": "#0F172A",
+          "accent": "#38BDF8",
+          "background": "#020617",
+          "text": "#F8FAFC"
+        }
+      },
+      "domains": [
+        "{{customDomain}}"
+      ],
+      "data": {
+        "seo": {
+          "ogImage": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&h=630&fit=crop&q=80",
+          "canonicalUrl": "https://harbor.example.com"
+        },
+        "navigation": [
+          {
+            "label": "Home",
+            "href": "/"
+          }
+        ],
+        "pages": {
+          "home": {
+            "title": "Harbor Films",
+            "description": "A coastal production studio.",
+            "sections": [
+              {
+                "type": "hero",
+                "id": "hero",
+                "title": "Stories From The Waterfront.",
+                "subtitle": "A coastal production studio for films, series and campaigns.",
+                "cta": {
+                  "label": "Get in touch",
+                  "href": "#contact"
+                },
+                "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
+              }
+            ]
+          }
+        }
+      }
+    }
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      const slug = 'pm-' + Date.now()
+      pm.collectionVariables.set('newSiteSlug', slug)
+      pm.collectionVariables.set('customDomain', slug + '.example.test')
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 201', () => pm.response.to.have.status(201))
+      pm.test('points to the new resource', () => pm.expect(pm.response.headers.get('Location')).to.eql('/api/site/' + pm.collectionVariables.get('newSiteSlug')))
+      pm.test('matches Site schema', () => pm.response.to.have.jsonSchema({
+        type: 'object',
+        required: ['slug', 'templateId', 'brand', 'domains', 'data', 'updatedAt'],
+        properties: {
+          slug: { type: 'string', pattern: '^[a-z0-9-]+$' },
+          templateId: { type: 'string' },
+          domains: { type: 'array', items: { type: 'string', pattern: '^[a-z0-9.-]+$' } },
+          brand: {
+            type: 'object',
+            required: ['name', 'logoUrl', 'faviconUrl', 'fontFamily', 'colors'],
+            properties: {
+              fontFamily: { type: 'string', pattern: '^[A-Za-z0-9 ]{1,60}$' },
+              colors: { type: 'object', required: ['primary', 'secondary', 'accent', 'background', 'text'], additionalProperties: { type: 'string', pattern: '^#[0-9a-fA-F]{3,8}$' } }
+            }
+          },
+          data: {
+            type: 'object',
+            required: ['seo', 'navigation', 'pages'],
+            properties: {
+              seo: { type: 'object', required: ['ogImage', 'canonicalUrl'] },
+              navigation: { type: 'array', items: { type: 'object', required: ['label', 'href'] } },
+              pages: {
+                type: 'object',
+                required: ['home', 'projects', 'about'],
+                additionalProperties: { type: 'object', required: ['title', 'description', 'sections'], properties: { sections: { type: 'array' } } }
+              }
+            }
+          },
+          updatedAt: { type: 'string' }
+        }
+      }))
+      pm.test('missing pages are filled from placeholders', () => pm.expect(Object.keys(pm.response.json().data.pages)).to.have.members(['home', 'projects', 'about']))
+examples: './.resources/Create site.resources/examples/'

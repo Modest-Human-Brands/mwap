@@ -1,0 +1,108 @@
+$kind: http-request
+name: 'Replace site'
+description: |-
+  Replaces brand, domains and payload of the site created by "Create site" (the whole record, not a merge: omitted domains are removed). Same validation as create. Needs the x-api-key header.
+order: 8000
+method: PUT
+url: '{{baseUrl}}/api/site/:slug'
+pathVariables:
+  - key: slug
+    value: '{{newSiteSlug}}'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+body:
+  type: json
+  content: |-
+    {
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "Harbor Films Studio",
+        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "#0EA5E9",
+          "secondary": "#0F172A",
+          "accent": "#38BDF8",
+          "background": "#020617",
+          "text": "#F8FAFC"
+        }
+      },
+      "domains": [
+        "{{customDomain}}"
+      ],
+      "data": {
+        "seo": {
+          "ogImage": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&h=630&fit=crop&q=80",
+          "canonicalUrl": "https://harbor.example.com"
+        },
+        "navigation": [
+          {
+            "label": "Home",
+            "href": "/"
+          }
+        ],
+        "pages": {
+          "home": {
+            "title": "Harbor Films",
+            "description": "A coastal production studio.",
+            "sections": [
+              {
+                "type": "hero",
+                "id": "hero",
+                "title": "Stories From The Waterfront.",
+                "subtitle": "A coastal production studio for films, series and campaigns.",
+                "cta": {
+                  "label": "Get in touch",
+                  "href": "#contact"
+                },
+                "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
+              }
+            ]
+          }
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Site schema', () => pm.response.to.have.jsonSchema({
+        type: 'object',
+        required: ['slug', 'templateId', 'brand', 'domains', 'data', 'updatedAt'],
+        properties: {
+          slug: { type: 'string', pattern: '^[a-z0-9-]+$' },
+          templateId: { type: 'string' },
+          domains: { type: 'array', items: { type: 'string', pattern: '^[a-z0-9.-]+$' } },
+          brand: {
+            type: 'object',
+            required: ['name', 'logoUrl', 'faviconUrl', 'fontFamily', 'colors'],
+            properties: {
+              fontFamily: { type: 'string', pattern: '^[A-Za-z0-9 ]{1,60}$' },
+              colors: { type: 'object', required: ['primary', 'secondary', 'accent', 'background', 'text'], additionalProperties: { type: 'string', pattern: '^#[0-9a-fA-F]{3,8}$' } }
+            }
+          },
+          data: {
+            type: 'object',
+            required: ['seo', 'navigation', 'pages'],
+            properties: {
+              seo: { type: 'object', required: ['ogImage', 'canonicalUrl'] },
+              navigation: { type: 'array', items: { type: 'object', required: ['label', 'href'] } },
+              pages: {
+                type: 'object',
+                required: ['home', 'projects', 'about'],
+                additionalProperties: { type: 'object', required: ['title', 'description', 'sections'], properties: { sections: { type: 'array' } } }
+              }
+            }
+          },
+          updatedAt: { type: 'string' }
+        }
+      }))
+      pm.test('brand was replaced', () => pm.expect(pm.response.json().brand.name).to.eql('Harbor Films Studio'))
+examples: './.resources/Replace site.resources/examples/'

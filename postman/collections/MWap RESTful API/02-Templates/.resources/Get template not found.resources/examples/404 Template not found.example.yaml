@@ -1,0 +1,22 @@
+$kind: http-example
+name: '404 Template not found'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/site/template/does-not-exist'
+  method: GET
+response:
+  statusCode: 404
+  statusText: 'Not Found'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "error": true,
+        "url": "http://localhost:3000/api/site/template/does-not-exist",
+        "statusCode": 404,
+        "statusMessage": "Template not found",
+        "message": "Template not found"
+      }

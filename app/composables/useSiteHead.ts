@@ -25,14 +25,14 @@ export function useSiteHead(site: MaybeRefOrGetter<SitePayload>, page: PagePaylo
     description: page.description,
     ogTitle: page.title,
     ogDescription: page.description,
-    ogImage: () => toValue(site).seo.ogImage,
+    ogImage: () => toValue(site).data.seo.ogImage,
     ogSiteName: () => toValue(site).brand.name,
   })
 
   useSchemaOrg([
     defineWebSite({
       name: () => toValue(site).brand.name,
-      url: () => toValue(site).seo.canonicalUrl,
+      url: () => toValue(site).data.seo.canonicalUrl,
     }),
     defineWebPage({
       name: page.title,

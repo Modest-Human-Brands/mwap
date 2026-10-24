@@ -1,0 +1,24 @@
+$kind: http-example
+name: '200 Success'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/site/template'
+  method: GET
+response:
+  statusCode: 200
+  statusText: 'OK'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      [
+        {
+          "id": "studio-v1",
+          "label": "Studio",
+          "shortLabel": "Studio",
+          "category": "Studios",
+          "description": "Brand site for film and photo studios with Home, Projects and About pages built from hero, projects, pricing and contact sections."
+        }
+      ]

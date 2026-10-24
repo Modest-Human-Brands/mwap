@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Unknown host keeps slug routes'
+description: |-
+  A host without a mapping (localhost, the platform URL, a health check) behaves as before: sites live under /<slug>.
+order: 6000
+method: GET
+url: '{{baseUrl}}/:slug'
+pathVariables:
+  - key: slug
+    value: '{{siteSlug}}'
+headers:
+  - key: Accept
+    value: 'text/html'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('shows the requested site', () => pm.expect(pm.response.text()).to.include('Northlight Studio'))
+examples: './.resources/Unknown host keeps slug routes.resources/examples/'

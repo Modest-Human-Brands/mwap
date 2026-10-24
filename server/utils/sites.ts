@@ -81,7 +81,8 @@ const contactSection = {
   },
 }
 
-const mockSites: Record<string, unknown> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockSites: Record<string, any> = {
   'northlight-studio': {
     slug: 'northlight-studio',
     brand: {
@@ -174,13 +175,40 @@ const mockSites: Record<string, unknown> = {
   },
 }
 
-const sites: Record<string, SitePayload> = Object.fromEntries(Object.entries(mockSites).map(([slug, site]) => [slug, siteSchema.parse(site)]))
+const SEED_UPDATED_AT = '2026-01-01T00:00:00.000Z'
 
-export function getSite(slug: string): SitePayload | undefined {
-  return sites[slug]
+// Built-in example sites; a stored site with the same slug takes precedence
+const seeds: Record<string, SitePayload> = Object.fromEntries(
+  Object.entries(mockSites).map(([slug, { brand, ...data }]) => [slug, siteSchema.parse({ slug, templateId: 'studio-v1', brand, data, updatedAt: SEED_UPDATED_AT })])
+)
+
+const storage = () => useStorage('sites')
+const key = (slug: string) => `${slug}.json`
+
+// Sites stored before custom domains existed have no `domains`
+const withDomains = (site: SitePayload): SitePayload => ({ ...site, domains: site.domains ?? [] })
+
+export async function getSite(slug: string): Promise<SitePayload | undefined> {
+  const stored = await storage().getItem<SitePayload>(key(slug))
+  const site = stored ?? seeds[slug]
+  return site && withDomains(site)
+}
+
+export async function saveSite(site: SitePayload): Promise<void> {
+  await storage().setItem(key(site.slug), site)
+  invalidateDomains()
+}
+
+export async function listSites(): Promise<SitePayload[]> {
+  const storedKeys = await storage().getKeys()
+  const stored = await Promise.all(storedKeys.map((k) => storage().getItem<SitePayload>(k)))
+  const bySlug = new Map<string, SitePayload>(Object.entries(seeds))
+  for (const site of stored) if (site) bySlug.set(site.slug, withDomains(site))
+
+  return [...bySlug.values()].sort((a, b) => a.slug.localeCompare(b.slug))
 }
 
 /** Public paths of every page of every site, e.g. `/slug`, `/slug/projects` */
-export function listSitePaths(): string[] {
-  return Object.entries(sites).flatMap(([slug, site]) => Object.keys(site.pages).map((page) => (page === 'home' ? `/${slug}` : `/${slug}/${page}`)))
+export async function listSitePaths(): Promise<string[]> {
+  return (await listSites()).flatMap((site) => Object.keys(site.data.pages).map((page) => (page === 'home' ? `/${site.slug}` : `/${site.slug}/${page}`)))
 }

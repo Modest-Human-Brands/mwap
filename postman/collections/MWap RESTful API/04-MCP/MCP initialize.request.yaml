@@ -1,0 +1,39 @@
+$kind: http-request
+name: 'MCP initialize'
+description: |-
+  JSON-RPC handshake with the MCP server (streamable HTTP).
+order: 1000
+method: POST
+url: '{{baseUrl}}/mcp'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json, text/event-stream'
+body:
+  type: json
+  content: |-
+    {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "initialize",
+      "params": {
+        "protocolVersion": "2025-03-26",
+        "capabilities": {},
+        "clientInfo": {
+          "name": "postman",
+          "version": "1.0.0"
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('returns server info and tool capability', () => {
+        const { result } = pm.response.json()
+        pm.expect(result.serverInfo.name).to.eql('MWap MCP Server')
+        pm.expect(result.capabilities).to.have.property('tools')
+      })
+examples: './.resources/MCP initialize.resources/examples/'

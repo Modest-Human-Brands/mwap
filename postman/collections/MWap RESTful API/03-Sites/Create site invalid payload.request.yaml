@@ -1,0 +1,81 @@
+$kind: http-request
+name: 'Create site invalid payload'
+description: |-
+  Invalid slug, colour and a www domain: 400 with one data.errors entry per field. Nothing is stored.
+order: 7000
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "Not A Slug",
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "Harbor Films",
+        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "red",
+          "secondary": "#0F172A",
+          "accent": "#38BDF8",
+          "background": "#020617",
+          "text": "#F8FAFC"
+        }
+      },
+      "domains": [
+        "www.example.com"
+      ],
+      "data": {
+        "seo": {
+          "ogImage": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&h=630&fit=crop&q=80",
+          "canonicalUrl": "https://harbor.example.com"
+        },
+        "navigation": [
+          {
+            "label": "Home",
+            "href": "/"
+          }
+        ],
+        "pages": {
+          "home": {
+            "title": "Harbor Films",
+            "description": "A coastal production studio.",
+            "sections": [
+              {
+                "type": "hero",
+                "id": "hero",
+                "title": "Stories From The Waterfront.",
+                "subtitle": "A coastal production studio for films, series and campaigns.",
+                "cta": {
+                  "label": "Get in touch",
+                  "href": "#contact"
+                },
+                "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
+              }
+            ]
+          }
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('matches Validation Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'data'], properties: { statusCode: { const: 400 }, data: { type: 'object', required: ['errors'], properties: { errors: { type: 'array', minItems: 1, items: { type: 'object', required: ['field', 'message', 'code'], properties: { field: { type: 'string' }, message: { type: 'string' }, code: { type: 'string' } } } } } } } }))
+      pm.test('reports the invalid fields', () => {
+        const fields = pm.response.json().data.errors.map((e) => e.field)
+        pm.expect(fields).to.include('slug')
+        pm.expect(fields).to.include('brand.colors.primary')
+        pm.expect(fields).to.include('domains.0')
+      })
+examples: './.resources/Create site invalid payload.resources/examples/'

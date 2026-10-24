@@ -1,0 +1,22 @@
+$kind: http-example
+name: '409 Slug taken'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/site'
+  method: POST
+response:
+  statusCode: 409
+  statusText: 'Conflict'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "error": true,
+        "url": "http://localhost:3000/api/site",
+        "statusCode": 409,
+        "statusMessage": "Site \"harbor-films\" already exists",
+        "message": "Site \"harbor-films\" already exists"
+      }

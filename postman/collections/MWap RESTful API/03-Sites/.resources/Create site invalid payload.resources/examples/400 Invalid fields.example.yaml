@@ -1,0 +1,41 @@
+$kind: http-example
+name: '400 Invalid fields'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/site'
+  method: POST
+response:
+  statusCode: 400
+  statusText: 'Bad Request'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "error": true,
+        "url": "http://localhost:3000/api/site",
+        "statusCode": 400,
+        "statusMessage": "Bad Request",
+        "message": "Bad Request",
+        "data": {
+          "errors": [
+            {
+              "field": "brand.colors.primary",
+              "message": "Expected a hex color",
+              "code": "invalid_format"
+            },
+            {
+              "field": "domains.0",
+              "message": "Use the apex domain: www redirects to it",
+              "code": "custom"
+            },
+            {
+              "field": "slug",
+              "message": "Invalid string: must match pattern /^[a-z0-9-]+$/",
+              "code": "invalid_format"
+            }
+          ]
+        }
+      }

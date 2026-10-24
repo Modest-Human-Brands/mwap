@@ -1,0 +1,52 @@
+$kind: http-request
+name: 'Get site'
+description: |-
+  The stored site: template id, brand and template payload. This is what the website renders from. Cached at the edge for 60 seconds.
+order: 2000
+method: GET
+url: '{{baseUrl}}/api/site/:slug'
+pathVariables:
+  - key: slug
+    value: '{{siteSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is cacheable at the edge', () => pm.expect(pm.response.headers.get('Cache-Control')).to.eql('s-maxage=60, stale-while-revalidate=300'))
+      pm.test('matches Site schema', () => pm.response.to.have.jsonSchema({
+        type: 'object',
+        required: ['slug', 'templateId', 'brand', 'domains', 'data', 'updatedAt'],
+        properties: {
+          slug: { type: 'string', pattern: '^[a-z0-9-]+$' },
+          templateId: { type: 'string' },
+          domains: { type: 'array', items: { type: 'string', pattern: '^[a-z0-9.-]+$' } },
+          brand: {
+            type: 'object',
+            required: ['name', 'logoUrl', 'faviconUrl', 'fontFamily', 'colors'],
+            properties: {
+              fontFamily: { type: 'string', pattern: '^[A-Za-z0-9 ]{1,60}$' },
+              colors: { type: 'object', required: ['primary', 'secondary', 'accent', 'background', 'text'], additionalProperties: { type: 'string', pattern: '^#[0-9a-fA-F]{3,8}$' } }
+            }
+          },
+          data: {
+            type: 'object',
+            required: ['seo', 'navigation', 'pages'],
+            properties: {
+              seo: { type: 'object', required: ['ogImage', 'canonicalUrl'] },
+              navigation: { type: 'array', items: { type: 'object', required: ['label', 'href'] } },
+              pages: {
+                type: 'object',
+                required: ['home', 'projects', 'about'],
+                additionalProperties: { type: 'object', required: ['title', 'description', 'sections'], properties: { sections: { type: 'array' } } }
+              }
+            }
+          },
+          updatedAt: { type: 'string' }
+        }
+      }))
+      pm.test('slug matches the request', () => pm.expect(pm.response.json().slug).to.eql(pm.collectionVariables.get('siteSlug')))
+examples: './.resources/Get site.resources/examples/'

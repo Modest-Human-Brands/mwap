@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Get template not found'
+description: |-
+  Unknown template id.
+order: 3000
+method: GET
+url: '{{baseUrl}}/api/site/template/:id'
+pathVariables:
+  - key: id
+    value: 'does-not-exist'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('matches Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'statusMessage'], properties: { statusCode: { type: 'number' }, statusMessage: { type: 'string' } } }))
+examples: './.resources/Get template not found.resources/examples/'

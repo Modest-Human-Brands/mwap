@@ -1,0 +1,22 @@
+$kind: http-example
+name: '409 Domain taken'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/site'
+  method: POST
+response:
+  statusCode: 409
+  statusText: 'Conflict'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "error": true,
+        "url": "http://localhost:3000/api/site",
+        "statusCode": 409,
+        "statusMessage": "Domain \"harbor-films.example.test\" is already used by site \"harbor-films\"",
+        "message": "Domain \"harbor-films.example.test\" is already used by site \"harbor-films\""
+      }

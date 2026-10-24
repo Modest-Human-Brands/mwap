@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Home on custom domain'
+description: |-
+  The Host header of the site created in 03-Sites (its customDomain) serves that site at the root: no slug in the URL. The request goes to baseUrl; only the Host header differs, like behind a reverse proxy.
+order: 1000
+method: GET
+url: '{{baseUrl}}/'
+headers:
+  - key: Accept
+    value: 'text/html'
+  - key: Host
+    value: '{{customDomain}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is an html page', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('text/html'))
+      pm.test('shows the site of the domain', () => pm.expect(pm.response.text()).to.include('Harbor Films Studio'))
+examples: './.resources/Home on custom domain.resources/examples/'

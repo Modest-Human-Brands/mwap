@@ -1,0 +1,24 @@
+$kind: http-request
+name: 'Slug path redirects'
+description: |-
+  On a custom domain the /<slug> routes redirect (301) to the clean URL, so every page has one address. Redirects are not followed so the response can be checked.
+order: 3000
+method: GET
+url: '{{baseUrl}}/:slug/projects'
+pathVariables:
+  - key: slug
+    value: '{{newSiteSlug}}'
+headers:
+  - key: Accept
+    value: 'text/html'
+  - key: Host
+    value: '{{customDomain}}'
+settings:
+  followRedirects: false
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 301', () => pm.response.to.have.status(301))
+      pm.test('points to the clean URL', () => pm.expect(pm.response.headers.get('Location')).to.eql('/projects'))
+examples: './.resources/Slug path redirects.resources/examples/'
