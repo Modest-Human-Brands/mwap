@@ -17,8 +17,9 @@ export default <Partial<Config>>{
       '5xl': ['3.5rem', '4.1875rem'],
     },
     fontFamily: {
-      main: ['', 'sans-serif'],
-      sub: ['', 'sans-serif'],
+      main: ['var(--brand-font)', 'sans-serif'],
+      sub: ['var(--brand-font)', 'sans-serif'],
+      brand: ['var(--brand-font)', 'sans-serif'],
     },
     fontWeight: {
       light: '300',
@@ -42,7 +43,7 @@ export default <Partial<Config>>{
       },
       primary: {
         400: '',
-        500: '',
+        500: 'var(--brand-primary)',
         600: '',
       },
       success: {
@@ -59,6 +60,13 @@ export default <Partial<Config>>{
         400: '',
         500: '',
         600: '',
+      },
+      brand: {
+        primary: 'var(--brand-primary)',
+        secondary: 'var(--brand-secondary)',
+        accent: 'var(--brand-accent)',
+        bg: 'var(--brand-bg)',
+        text: 'var(--brand-text)',
       },
     },
   },

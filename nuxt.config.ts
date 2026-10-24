@@ -102,7 +102,6 @@ export default defineNuxtConfig({
       notionDbId: '',
       vapidKey: '',
       vapidSubject: '',
-      emailMetaData: '',
     },
   },
   app: {
@@ -132,6 +131,9 @@ export default defineNuxtConfig({
       googleAnalytics: true,
     },
   },
+  aiReady: {
+    database: false,
+  },
   colorMode: {
     preference: 'system',
     fallback: 'light',
@@ -147,6 +149,7 @@ export default defineNuxtConfig({
   },
   sitemap: {
     autoLastmod: true,
+    exclude: ['/'],
     sources: ['/api/__sitemap__/urls'],
   },
   robots: {
@@ -306,19 +309,6 @@ export default defineNuxtConfig({
       type: 'module',
       enabled: false,
       suppressWarnings: false,
-    },
-  },
-  nodemailer: {
-    from: '',
-    host: '',
-    port: '',
-    secure: true,
-    auth: {
-      user: '',
-      pass: '',
-    },
-    tls: {
-      rejectUnauthorized: false,
     },
   },
   ...nativeConfig,
