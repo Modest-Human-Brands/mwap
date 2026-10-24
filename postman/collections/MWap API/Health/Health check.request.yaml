@@ -6,7 +6,7 @@ url: '{{baseUrl}}/api/health'
 headers:
   - key: Accept
     value: application/json
-examples: './.resources/health.resources/examples/'
+examples: './.resources/Health check.resources/examples/'
 scripts:
   - type: afterResponse
     language: text/javascript

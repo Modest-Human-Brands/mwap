@@ -22,7 +22,7 @@ body:
         }
       }
     }
-examples: './.resources/call-test-tool.resources/examples/'
+examples: './.resources/MCP call test tool.resources/examples/'
 scripts:
   - type: afterResponse
     language: text/javascript

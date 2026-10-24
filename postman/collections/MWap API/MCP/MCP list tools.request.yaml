@@ -16,7 +16,7 @@ body:
       "id": 2,
       "method": "tools/list"
     }
-examples: './.resources/list-tools.resources/examples/'
+examples: './.resources/MCP list tools.resources/examples/'
 scripts:
   - type: afterResponse
     language: text/javascript

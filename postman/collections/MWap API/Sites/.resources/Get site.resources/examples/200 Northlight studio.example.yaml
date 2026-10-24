@@ -1,5 +1,5 @@
 $kind: http-example
-name: '200 northlight-studio'
+name: '200 Northlight studio'
 order: 1000
 request:
   url: '{{baseUrl}}/api/sites/northlight-studio'

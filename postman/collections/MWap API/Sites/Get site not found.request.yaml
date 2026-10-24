@@ -1,5 +1,5 @@
 $kind: http-request
-name: 'Get site (unknown slug)'
+name: 'Get site not found'
 order: 2000
 method: GET
 url: '{{baseUrl}}/api/sites/:siteSlug'
@@ -9,7 +9,7 @@ pathVariables:
 headers:
   - key: Accept
     value: application/json
-examples: './.resources/get-site-not-found.resources/examples/'
+examples: './.resources/Get site not found.resources/examples/'
 scripts:
   - type: afterResponse
     language: text/javascript

@@ -1,5 +1,5 @@
 $kind: http-example
-name: '404 unknown slug'
+name: '404 Unknown slug'
 order: 1000
 request:
   url: '{{baseUrl}}/api/sites/does-not-exist'
