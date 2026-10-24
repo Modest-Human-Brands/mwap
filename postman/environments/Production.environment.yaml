@@ -1,0 +1,7 @@
+name: Production
+values:
+  - key: baseUrl
+    value: 'https://example.com'
+    enabled: true
+    type: default
+    description: Base URL of the MWap service

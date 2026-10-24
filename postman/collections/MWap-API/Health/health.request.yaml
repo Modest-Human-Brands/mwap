@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Health check'
+order: 1000
+method: GET
+url: '{{baseUrl}}/api/health'
+headers:
+  - key: Accept
+    value: application/json
+examples: './.resources/health.resources/examples/'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+
+      pm.test('reports OK with build metadata', () => {
+        const body = pm.response.json()
+        pm.expect(body.status).to.eql('OK')
+        pm.expect(body).to.include.all.keys('version', 'buildTime', 'node')
+      })

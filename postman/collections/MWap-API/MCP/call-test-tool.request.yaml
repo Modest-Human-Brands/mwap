@@ -1,0 +1,35 @@
+$kind: http-request
+name: 'MCP call test tool'
+order: 3000
+method: POST
+url: '{{baseUrl}}/mcp'
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: 'application/json, text/event-stream'
+body:
+  type: json
+  content: |-
+    {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "tools/call",
+      "params": {
+        "name": "test",
+        "arguments": {
+          "message": "hello"
+        }
+      }
+    }
+examples: './.resources/call-test-tool.resources/examples/'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+
+      pm.test('tool echoes the message', () => {
+        const { content } = pm.response.json().result
+        pm.expect(content[0].text).to.eql('Test successful: hello')
+      })

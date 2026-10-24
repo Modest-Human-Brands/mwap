@@ -1,0 +1,38 @@
+$kind: http-example
+name: '200 OK'
+order: 1000
+request:
+  url: '{{baseUrl}}/mcp'
+  method: POST
+response:
+  statusCode: 200
+  statusText: 'OK'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "result": {
+          "protocolVersion": "2025-03-26",
+          "capabilities": {
+            "logging": {},
+            "tools": {
+              "listChanged": true
+            },
+            "resources": {
+              "listChanged": true
+            },
+            "prompts": {
+              "listChanged": true
+            }
+          },
+          "serverInfo": {
+            "name": "MWap MCP Server",
+            "version": "1.0.0"
+          }
+        },
+        "jsonrpc": "2.0",
+        "id": 1
+      }

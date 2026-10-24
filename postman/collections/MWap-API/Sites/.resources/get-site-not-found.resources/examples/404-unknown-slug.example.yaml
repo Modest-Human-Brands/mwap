@@ -1,0 +1,22 @@
+$kind: http-example
+name: '404 unknown slug'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/sites/does-not-exist'
+  method: GET
+response:
+  statusCode: 404
+  statusText: 'Not Found'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "error": true,
+        "url": "{{baseUrl}}/api/sites/does-not-exist",
+        "statusCode": 404,
+        "statusMessage": "No site found for slug: \"does-not-exist\"",
+        "message": "No site found for slug: \"does-not-exist\""
+      }
