@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.0.3
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.2...v0.0.3)
+
+### 🚀 Enhancements
+
+- Add CORS support for fonts and Nuxt assets in configuration ([4a4ce09](https://github.com/Modest-Human-Brands/mwap/commit/4a4ce09))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.2
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.1...v0.0.2)
