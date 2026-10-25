@@ -78,7 +78,9 @@ export default defineNuxtConfig({
     '/': { ssr: true },
     '/_ipx/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
     '/images/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
-    '/fonts/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+    '/fonts/**': { cors: true, headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+    // Previews are embedded in srcdoc iframes (opaque origin), which fetch crossorigin assets in CORS mode
+    '/_nuxt/**': { cors: true, headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
     '/api/**': { cors: true },
   },
   runtimeConfig: {
