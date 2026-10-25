@@ -1,0 +1,90 @@
+$kind: http-request
+name: 'Create site with fewer cards'
+description: |-
+  Cards are content: a payload may carry fewer projects and pricing tiers than the sample (arrays replace the sample's as a whole, within the limits of "Get template by ID"). Everything it leaves out is filled from the sample.
+order: 4600
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{newSiteSlug}}-cards",
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "Harbor Films",
+        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "#0EA5E9",
+          "secondary": "#0F172A",
+          "accent": "#38BDF8",
+          "background": "#020617",
+          "text": "#F8FAFC"
+        }
+      },
+      "data": {
+        "pages": {
+          "home": {
+            "projects": {
+              "items": [
+                {
+                  "title": "Project 1",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 2",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                }
+              ]
+            },
+            "pricing": {
+              "tiers": [
+                {
+                  "name": "Starter",
+                  "price": "from $1,500",
+                  "description": "A single short film or photo set.",
+                  "features": [
+                    "1 day shoot"
+                  ],
+                  "cta": {
+                    "label": "Get started",
+                    "href": "#contact"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 201', () => pm.response.to.have.status(201))
+      pm.test('keeps only the cards that were sent', () => {
+        const home = pm.response.json().data.pages.home
+        pm.expect(home.projects.items.length).to.eql(2)
+        pm.expect(home.pricing.tiers.length).to.eql(1)
+      })
+      pm.test('the rest is filled from the sample', () => {
+        const { pages } = pm.response.json().data
+        pm.expect(pages.home.hero.title).to.be.a('string').and.not.empty
+        pm.expect(pages.projects.projects.items.length).to.be.above(2)
+      })
+examples: './.resources/Create site with fewer cards.resources/examples/'

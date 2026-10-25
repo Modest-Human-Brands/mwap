@@ -96,7 +96,7 @@ export default defineNuxtConfig({
       vapidKey: '',
     },
     private: {
-      notionDbId: '',
+      siteNotionDbId: '',
       apiKey: '',
       sitesDir: './data/sites',
       vapidKey: '',

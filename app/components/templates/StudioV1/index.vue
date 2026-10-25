@@ -10,19 +10,30 @@ provide('siteBase', customDomain.value ? '' : `/${props.site.slug}`)
 
 const page = computed(() => props.site.data.pages[props.pageKey])
 
-const sectionComponents = {
-  hero: resolveComponent('TemplatesStudioV1Hero'),
-  projects: resolveComponent('TemplatesStudioV1Projects'),
-  pricing: resolveComponent('TemplatesStudioV1Pricing'),
-  'about-contact': resolveComponent('TemplatesStudioV1AboutContact'),
+// The layout is fixed: each page renders these slots in this order; the payload only edits their content
+const layout: Record<PageKey, string[]> = {
+  home: ['hero', 'projects', 'pricing', 'contact'],
+  projects: ['projects', 'contact'],
+  about: ['hero', 'story', 'contact'],
 }
+
+const slotComponents: Record<string, Component> = {
+  hero: resolveComponent('TemplatesStudioV1Hero') as Component,
+  projects: resolveComponent('TemplatesStudioV1Projects') as Component,
+  pricing: resolveComponent('TemplatesStudioV1Pricing') as Component,
+  story: resolveComponent('TemplatesStudioV1AboutContact') as Component,
+  contact: resolveComponent('TemplatesStudioV1AboutContact') as Component,
+}
+
+// A hidden slot (`enabled: false`) is skipped, its content is kept in the payload
+const slots = computed(() => layout[props.pageKey].map((name) => ({ name, content: (page.value as Record<string, { enabled: boolean }>)[name] })).filter(({ content }) => content?.enabled))
 </script>
 
 <template>
   <div class="min-h-screen bg-brand-bg font-brand text-brand-text">
     <TemplatesStudioV1Header :site="site" />
     <main>
-      <component :is="sectionComponents[section.type]" v-for="section in page.sections" :key="section.id" :section="section" />
+      <component :is="slotComponents[slot.name]" v-for="slot in slots" :id="slot.name" :key="slot.name" :section="slot.content" />
     </main>
     <TemplatesStudioV1Footer :site="site" />
   </div>

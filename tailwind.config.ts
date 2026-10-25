@@ -62,11 +62,13 @@ export default <Partial<Config>>{
         600: '',
       },
       brand: {
-        primary: 'var(--brand-primary)',
-        secondary: 'var(--brand-secondary)',
-        accent: 'var(--brand-accent)',
-        bg: 'var(--brand-bg)',
-        text: 'var(--brand-text)',
+        // RGB channels (see useSiteHead) so opacity modifiers like `bg-brand-bg/90` work; the fallbacks only apply before a site sets its brand
+        primary: 'rgb(var(--brand-primary-rgb, 5 147 250) / <alpha-value>)',
+        secondary: 'rgb(var(--brand-secondary-rgb, 38 38 38) / <alpha-value>)',
+        accent: 'rgb(var(--brand-accent-rgb, 242 64 103) / <alpha-value>)',
+        bg: 'rgb(var(--brand-bg-rgb, 255 255 255) / <alpha-value>)',
+        text: 'rgb(var(--brand-text-rgb, 0 0 0) / <alpha-value>)',
+        'on-primary': 'rgb(var(--brand-on-primary-rgb, 255 255 255) / <alpha-value>)',
       },
     },
   },

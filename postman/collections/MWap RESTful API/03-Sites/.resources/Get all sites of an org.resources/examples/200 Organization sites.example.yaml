@@ -20,11 +20,18 @@ response:
             "orgId": "pm-org",
             "templateId": "studio-v1",
             "name": "Harbor Films Studio",
-            "updatedAt": "2026-10-25T13:08:26.208Z"
+            "updatedAt": "2026-10-25T20:35:03.521Z"
+          },
+          {
+            "slug": "harbor-films-sample",
+            "orgId": "pm-org",
+            "templateId": "studio-v1",
+            "name": "Harbor Films",
+            "updatedAt": "2026-10-25T20:35:03.486Z"
           }
         ],
         "pagination": {
-          "total": 1,
+          "total": 2,
           "limit": 50,
           "offset": 0
         }

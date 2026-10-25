@@ -179,14 +179,21 @@ const SEED_UPDATED_AT = '2026-01-01T00:00:00.000Z'
 
 // Built-in example sites; a stored site with the same slug takes precedence
 const seeds: Record<string, SitePayload> = Object.fromEntries(
-  Object.entries(mockSites).map(([slug, { brand, ...data }]) => [slug, siteSchema.parse({ slug, templateId: 'studio-v1', brand, data, updatedAt: SEED_UPDATED_AT })])
+  Object.entries(mockSites).map(([slug, { slug: _slug, brand, ...data }]) => [
+    slug,
+    siteSchema.parse({ slug, templateId: 'studio-v1', brand, data: migrateLegacyData(templates['studio-v1']!.sample, data), updatedAt: SEED_UPDATED_AT }),
+  ])
 )
 
 const storage = () => useStorage('sites')
 const key = (slug: string) => `${slug}.json`
 
-// Sites stored before custom domains and organizations existed have neither `domains` nor `orgId`
-const withDomains = (site: SitePayload): SitePayload => ({ ...site, domains: site.domains ?? [], orgId: site.orgId ?? DEFAULT_ORG_ID })
+// Sites stored before custom domains, organizations and fixed layouts existed have no `domains` or `orgId`, and pages with a `sections` list
+function withDomains(site: SitePayload): SitePayload {
+  const template = templates[site.templateId]
+  const data = template && isLegacyData(site.data) ? (migrateLegacyData(template.sample, site.data as unknown as Record<string, unknown>) as unknown as StudioData) : site.data
+  return { ...site, data, domains: site.domains ?? [], orgId: site.orgId ?? DEFAULT_ORG_ID }
+}
 
 // Precedence: saved through the API, then a published Notion row, then the built-in example
 export async function getSite(slug: string): Promise<SitePayload | undefined> {

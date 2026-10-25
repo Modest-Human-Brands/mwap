@@ -1,0 +1,66 @@
+$kind: http-request
+name: 'Create site with sections list'
+description: |-
+  The layout is fixed: sections cannot be added, removed, reordered or repeated, so a free `sections` list (the old payload shape) is rejected with 400, as is any other unknown key on a page or slot.
+order: 5600
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{newSiteSlug}}-list",
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "Harbor Films",
+        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "#0EA5E9",
+          "secondary": "#0F172A",
+          "accent": "#38BDF8",
+          "background": "#020617",
+          "text": "#F8FAFC"
+        }
+      },
+      "data": {
+        "pages": {
+          "home": {
+            "sections": [
+              {
+                "type": "hero",
+                "id": "hero",
+                "title": "Hello",
+                "subtitle": "World",
+                "cta": {
+                  "label": "Go",
+                  "href": "#contact"
+                },
+                "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
+              }
+            ]
+          }
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('rejects the unknown key', () => {
+        const error = pm.response.json().data.errors.find((e) => e.field === 'data.pages.home')
+        pm.expect(error.code).to.eql('unrecognized_keys')
+        pm.expect(error.message).to.include('sections')
+      })
+examples: './.resources/Create site with sections list.resources/examples/'

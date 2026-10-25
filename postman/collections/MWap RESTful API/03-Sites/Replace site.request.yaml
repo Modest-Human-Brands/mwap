@@ -53,19 +53,16 @@ body:
           "home": {
             "title": "Harbor Films",
             "description": "A coastal production studio.",
-            "sections": [
-              {
-                "type": "hero",
-                "id": "hero",
-                "title": "Stories From The Waterfront.",
-                "subtitle": "A coastal production studio for films, series and campaigns.",
-                "cta": {
-                  "label": "Get in touch",
-                  "href": "#contact"
-                },
-                "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
-              }
-            ]
+            "hero": {
+              "enabled": true,
+              "title": "Stories From The Waterfront.",
+              "subtitle": "A coastal production studio for films, series and campaigns.",
+              "cta": {
+                "label": "Get in touch",
+                "href": "#contact"
+              },
+              "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
+            }
           }
         }
       }
@@ -100,7 +97,7 @@ scripts:
               pages: {
                 type: 'object',
                 required: ['home', 'projects', 'about'],
-                additionalProperties: { type: 'object', required: ['title', 'description', 'sections'], properties: { sections: { type: 'array' } } }
+                properties: { home: { required: ['title', 'description', 'hero', 'projects', 'pricing', 'contact'] }, projects: { required: ['title', 'description', 'projects', 'contact'] }, about: { required: ['title', 'description', 'hero', 'story', 'contact'] } }
               }
             }
           },

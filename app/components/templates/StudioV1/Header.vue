@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <header class="bg-brand-bg/90 sticky top-0 z-50 w-full border-b border-white/10 backdrop-blur-md">
+  <header class="sticky top-0 z-50 w-full border-b border-brand-text/10 bg-brand-bg/90 backdrop-blur-md">
     <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
       <TemplatesStudioV1Link href="/" class="flex items-center gap-3">
         <img :src="site.brand.logoUrl" :alt="site.brand.name" class="size-9 rounded-md object-cover" />

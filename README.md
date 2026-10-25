@@ -4,7 +4,7 @@ A stateless, template-driven site builder. Pick a template, send a brand and a p
 
 ## How it works
 
-- A **template** (currently `studio-v1`) defines a payload schema, placeholders and the Vue components that render it. Missing payload fields are filled from the placeholders.
+- A **template** (currently `studio-v1`) defines a payload schema, a sample payload and the Vue components that render it. Missing payload fields are filled from the template's `sample`, a complete payload that `GET /api/site/template/:id` also returns for prefilling an editor.
 - A **site** is `{ slug, orgId, templateId, brand, data, domains, updatedAt }`. The brand (name, logo, favicon, font, five colors) is shared by every template.
 - Sites are served at `/<slug>`, `/<slug>/projects`, `/<slug>/about`, or at the root of a custom domain.
 - Every site belongs to one **organization** (`orgId`, a lowercase slug); one organization can own many sites. Slugs are unique across all organizations, reads are public, and a site without an organization belongs to `default`.
@@ -58,12 +58,12 @@ Validation failures answer 400 with `data.errors[{ field, message, code }]`; a m
 
 ## Configuration
 
-| Variable                                      | Purpose                                                                  |
-| --------------------------------------------- | ------------------------------------------------------------------------ |
-| `NUXT_PUBLIC_SITE_URL`                        | public URL of the service (canonical URLs, sitemap)                      |
-| `NUXT_PRIVATE_API_KEY`                        | key for write endpoints; unset means every write is 401                  |
-| `NUXT_PRIVATE_SITES_DIR`                      | where saved sites are stored, default `./data/sites`                     |
-| `NOTION_API_KEY`, `NUXT_PRIVATE_NOTION_DB_ID` | enable the Notion source (integration token, and the id of the database) |
+| Variable                                           | Purpose                                                                  |
+| -------------------------------------------------- | ------------------------------------------------------------------------ |
+| `NUXT_PUBLIC_SITE_URL`                             | public URL of the service (canonical URLs, sitemap)                      |
+| `NUXT_PRIVATE_API_KEY`                             | key for write endpoints; unset means every write is 401                  |
+| `NUXT_PRIVATE_SITES_DIR`                           | where saved sites are stored, default `./data/sites`                     |
+| `NOTION_API_KEY`, `NUXT_PRIVATE_SITE_NOTION_DB_ID` | enable the Notion source (integration token, and the id of the database) |
 
 See `.env.example`.
 

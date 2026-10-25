@@ -23,12 +23,12 @@ const envelopeSchema = z.object({
 
 /**
  * Validates a template + brand + payload body. Missing payload fields are filled from the template
- * placeholders; every problem is reported at once as 400 with `data.errors`.
+ * sample; every problem is reported at once as 400 with `data.errors`.
  */
 export function parseSiteInput<Extra extends z.ZodRawShape>(body: unknown, extra: Extra) {
   const template = getTemplate((body as { templateId?: unknown } | null)?.templateId)
   const parsed = envelopeSchema.extend(extra).safeParse(body)
-  const data = mergeWithPlaceholders(template.placeholders, (body as { data?: unknown } | null)?.data)
+  const data = mergeWithSample(template.sample, (body as { data?: unknown } | null)?.data)
   const dataResult = template.schema.safeParse(data)
 
   const issues = [...(parsed.success ? [] : toIssues(parsed.error.issues)), ...(dataResult.success ? [] : toIssues(dataResult.error.issues, 'data'))]

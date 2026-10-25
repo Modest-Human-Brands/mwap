@@ -1,0 +1,34 @@
+$kind: http-request
+name: 'Preview site empty brand'
+description: |-
+  A brand is never filled in by the service: only `data` falls back to the template sample. An empty name, empty logo and favicon URLs and missing colors are rejected with 400 and one entry per field in data.errors, so a client must send a complete brand (or keep the editor's draft out of the preview call until it is).
+order: 5500
+method: POST
+url: '{{baseUrl}}/api/site/template/preview'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "",
+        "logoUrl": "",
+        "faviconUrl": "",
+        "fontFamily": "Oxanium"
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('reports every empty brand field', () => {
+        const fields = pm.response.json().data.errors.map((e) => e.field)
+        for (const field of ['brand.name', 'brand.logoUrl', 'brand.faviconUrl', 'brand.colors']) pm.expect(fields).to.include(field)
+      })
+examples: './.resources/Preview site empty brand.resources/examples/'

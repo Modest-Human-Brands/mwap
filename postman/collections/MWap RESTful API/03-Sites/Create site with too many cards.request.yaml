@@ -1,0 +1,134 @@
+$kind: http-request
+name: 'Create site with too many cards'
+description: |-
+  Card lists have limits (projects 1 to 12, pricing tiers 1 to 4, features per tier 1 to 8, contact links up to 6), published in the JSON Schema of "Get template by ID". 13 projects is 400 with one entry for the list.
+order: 5700
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{newSiteSlug}}-many",
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "Harbor Films",
+        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "#0EA5E9",
+          "secondary": "#0F172A",
+          "accent": "#38BDF8",
+          "background": "#020617",
+          "text": "#F8FAFC"
+        }
+      },
+      "data": {
+        "pages": {
+          "home": {
+            "projects": {
+              "items": [
+                {
+                  "title": "Project 1",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 2",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 3",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 4",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 5",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 6",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 7",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 8",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 9",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 10",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 11",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 12",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                },
+                {
+                  "title": "Project 13",
+                  "category": "Narrative Short",
+                  "description": "A short description.",
+                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('names the list and the limit', () => {
+        const error = pm.response.json().data.errors.find((e) => e.field === 'data.pages.home.projects.items')
+        pm.expect(error.code).to.eql('too_big')
+      })
+examples: './.resources/Create site with too many cards.resources/examples/'

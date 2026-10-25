@@ -1,11 +1,12 @@
 <script setup lang="ts">
 defineProps<{
-  section: SiteSectionOf<'projects'>
+  id: string
+  section: ProjectsSlot
 }>()
 </script>
 
 <template>
-  <section :id="section.id" class="mx-auto w-full max-w-6xl px-6 py-20">
+  <section :id="id" class="mx-auto w-full max-w-6xl px-6 py-20">
     <h2 class="text-3xl font-bold">{{ section.title }}</h2>
     <p v-if="section.subtitle" class="mt-3 max-w-xl opacity-70">{{ section.subtitle }}</p>
     <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

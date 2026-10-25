@@ -1,0 +1,31 @@
+$kind: http-example
+name: '400 Too many cards'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/site'
+  method: POST
+response:
+  statusCode: 400
+  statusText: 'Bad Request'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "error": true,
+        "url": "http://localhost:3000/api/site",
+        "statusCode": 400,
+        "statusMessage": "Bad Request",
+        "message": "Bad Request",
+        "data": {
+          "errors": [
+            {
+              "field": "data.pages.home.projects.items",
+              "message": "Too big: expected array to have <=12 items",
+              "code": "too_big"
+            }
+          ]
+        }
+      }

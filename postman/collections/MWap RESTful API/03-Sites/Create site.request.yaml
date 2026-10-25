@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Create site'
 description: |-
-  Validates brand and payload against the template schema (missing fields are filled from the template placeholders) and stores the site. Needs the x-api-key and x-org-id headers (400 with data.errors[{ field: "x-org-id" }] when x-org-id is missing or not a lowercase slug of at most 60 characters); the site belongs to that organization. The site is stored by the service, never written to Notion. 409 when the slug exists in any source (a Notion row counts), 404 when the template does not, 400 with data.errors when a field is invalid. `domains` (optional, lowercase apex hostnames) makes the site answer on its own domain; a domain can belong to one site only (409 otherwise) and www hosts are rejected because www redirects to the apex. A new slug and domain are generated for every run; the collection variables newSiteSlug and customDomain carry them to the following requests.
+  Validates brand and payload against the template schema (missing fields are filled from the template sample (see "Get template by ID")) and stores the site. Needs the x-api-key and x-org-id headers (400 with data.errors[{ field: "x-org-id" }] when x-org-id is missing or not a lowercase slug of at most 60 characters); the site belongs to that organization. The site is stored by the service, never written to Notion. 409 when the slug exists in any source (a Notion row counts), 404 when the template does not, 400 with data.errors when a field is invalid. `domains` (optional, lowercase apex hostnames) makes the site answer on its own domain; a domain can belong to one site only (409 otherwise) and www hosts are rejected because www redirects to the apex. A new slug and domain are generated for every run; the collection variables newSiteSlug and customDomain carry them to the following requests.
 order: 4000
 method: POST
 url: '{{baseUrl}}/api/site'
@@ -51,19 +51,16 @@ body:
           "home": {
             "title": "Harbor Films",
             "description": "A coastal production studio.",
-            "sections": [
-              {
-                "type": "hero",
-                "id": "hero",
-                "title": "Stories From The Waterfront.",
-                "subtitle": "A coastal production studio for films, series and campaigns.",
-                "cta": {
-                  "label": "Get in touch",
-                  "href": "#contact"
-                },
-                "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
-              }
-            ]
+            "hero": {
+              "enabled": true,
+              "title": "Stories From The Waterfront.",
+              "subtitle": "A coastal production studio for films, series and campaigns.",
+              "cta": {
+                "label": "Get in touch",
+                "href": "#contact"
+              },
+              "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
+            }
           }
         }
       }
@@ -106,12 +103,12 @@ scripts:
               pages: {
                 type: 'object',
                 required: ['home', 'projects', 'about'],
-                additionalProperties: { type: 'object', required: ['title', 'description', 'sections'], properties: { sections: { type: 'array' } } }
+                properties: { home: { required: ['title', 'description', 'hero', 'projects', 'pricing', 'contact'] }, projects: { required: ['title', 'description', 'projects', 'contact'] }, about: { required: ['title', 'description', 'hero', 'story', 'contact'] } }
               }
             }
           },
           updatedAt: { type: 'string' }
         }
       }))
-      pm.test('missing pages are filled from placeholders', () => pm.expect(Object.keys(pm.response.json().data.pages)).to.have.members(['home', 'projects', 'about']))
+      pm.test('missing pages are filled from the sample', () => pm.expect(Object.keys(pm.response.json().data.pages)).to.have.members(['home', 'projects', 'about']))
 examples: './.resources/Create site.resources/examples/'

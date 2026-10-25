@@ -1,11 +1,12 @@
 <script setup lang="ts">
 defineProps<{
-  section: SiteSectionOf<'about-contact'>
+  id: string
+  section: AboutContactSlot
 }>()
 </script>
 
 <template>
-  <section :id="section.id" class="mx-auto w-full max-w-6xl px-6 py-20">
+  <section :id="id" class="mx-auto w-full max-w-6xl px-6 py-20">
     <h2 class="text-3xl font-bold">{{ section.title }}</h2>
     <p class="mt-4 max-w-2xl opacity-80">{{ section.body }}</p>
     <ul class="mt-8 space-y-2 text-sm">

@@ -1,0 +1,66 @@
+$kind: http-request
+name: 'Create site with hidden section'
+description: |-
+  A section can be hidden, not removed: `enabled: false` keeps its content but the page skips it when rendering. Sending only `{ "enabled": false }` is enough, the rest of the slot comes from the sample.
+order: 4700
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{newSiteSlug}}-hidden",
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "Harbor Films",
+        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "#0EA5E9",
+          "secondary": "#0F172A",
+          "accent": "#38BDF8",
+          "background": "#020617",
+          "text": "#F8FAFC"
+        }
+      },
+      "data": {
+        "pages": {
+          "home": {
+            "pricing": {
+              "enabled": false
+            }
+          },
+          "about": {
+            "hero": {
+              "enabled": false
+            }
+          }
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 201', () => pm.response.to.have.status(201))
+      pm.test('the sections are hidden', () => {
+        const { pages } = pm.response.json().data
+        pm.expect(pages.home.pricing.enabled).to.eql(false)
+        pm.expect(pages.about.hero.enabled).to.eql(false)
+      })
+      pm.test('hidden sections keep their content, the others stay visible', () => {
+        const { pages } = pm.response.json().data
+        pm.expect(pages.home.pricing.tiers.length).to.be.above(0)
+        pm.expect(pages.home.hero.enabled).to.eql(true)
+      })
+examples: './.resources/Create site with hidden section.resources/examples/'

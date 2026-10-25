@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get template by ID'
 description: |-
-  JSON Schema of the template payload (`data`). The shared `brand` block is not part of it: it is the same for every template. Missing fields are filled from the template placeholders on preview and create.
+  JSON Schema of the template payload (`data`): the page layout is fixed as named slots (`additionalProperties: false` at every level) and the card lists carry `minItems`/`maxItems`. The shared `brand` block is not part of it: it is the same for every template. Also returns `sample`: a complete, valid payload with neutral wording (real titles, descriptions and sections on every page), so a client can prefill an editor with it. It is exactly what fills the fields a caller leaves out on preview and create: fields the caller sends win, missing ones fall back to the sample.
 order: 2000
 method: GET
 url: '{{baseUrl}}/api/site/template/:id'
@@ -18,8 +18,31 @@ scripts:
       pm.test('status is 200', () => pm.response.to.have.status(200))
       pm.test('matches Template Detail schema', () => pm.response.to.have.jsonSchema({
         type: 'object',
-        required: ['id', 'label', 'shortLabel', 'category', 'description', 'schema'],
-        properties: { id: { type: 'string' }, schema: { type: 'object', required: ['type', 'properties'] } }
+        required: ['id', 'label', 'shortLabel', 'category', 'description', 'schema', 'sample'],
+        properties: { id: { type: 'string' }, schema: { type: 'object', required: ['type', 'properties'] }, sample: { type: 'object', required: ['seo', 'navigation', 'pages'] } }
       }))
       pm.test('brand is not part of the payload schema', () => pm.expect(pm.response.json().schema.properties).to.not.have.property('brand'))
+      pm.test('sample is a complete payload without placeholder tokens', () => {
+        const { sample } = pm.response.json()
+        pm.expect(JSON.stringify(sample)).to.not.include('{{')
+        pm.expect(sample.navigation.length).to.be.above(0)
+        for (const [page, slots] of Object.entries({ home: ['hero', 'projects', 'pricing', 'contact'], projects: ['projects', 'contact'], about: ['hero', 'story', 'contact'] })) {
+          pm.expect(sample.pages[page].title, page + ' title').to.be.a('string').and.not.empty
+          for (const slot of slots) pm.expect(sample.pages[page][slot].enabled, page + '.' + slot).to.eql(true)
+        }
+      })
+      pm.test('schema fixes the layout and limits the cards', () => {
+        const pages = pm.response.json().schema.properties.pages
+        pm.expect(pages.additionalProperties).to.eql(false)
+        pm.expect(Object.keys(pages.properties)).to.have.members(['home', 'projects', 'about'])
+        for (const [page, slots] of Object.entries({ home: ['hero', 'projects', 'pricing', 'contact'], projects: ['projects', 'contact'], about: ['hero', 'story', 'contact'] })) {
+          pm.expect(pages.properties[page].additionalProperties, page).to.eql(false)
+          pm.expect(Object.keys(pages.properties[page].properties), page).to.have.members(['title', 'description', ...slots])
+        }
+        const home = pages.properties.home.properties
+        pm.expect([home.projects.properties.items.minItems, home.projects.properties.items.maxItems]).to.eql([1, 12])
+        pm.expect([home.pricing.properties.tiers.minItems, home.pricing.properties.tiers.maxItems]).to.eql([1, 4])
+        pm.expect([home.pricing.properties.tiers.items.properties.features.minItems, home.pricing.properties.tiers.items.properties.features.maxItems]).to.eql([1, 8])
+        pm.expect(home.contact.properties.contact.properties.links.maxItems).to.eql(6)
+      })
 examples: './.resources/Get template by ID.resources/examples/'

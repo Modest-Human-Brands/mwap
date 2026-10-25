@@ -1,0 +1,43 @@
+$kind: http-request
+name: 'Preview site without data'
+description: |-
+  A preview with only template and brand (no `data`) renders the full sample page: hero, featured projects, pricing and contact, not just the header.
+order: 4500
+method: POST
+url: '{{baseUrl}}/api/site/template/preview'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "Harbor Films",
+        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "#0EA5E9",
+          "secondary": "#0F172A",
+          "accent": "#38BDF8",
+          "background": "#020617",
+          "text": "#F8FAFC"
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('renders the hero and the other sections', () => {
+        const { html } = pm.response.json()
+        pm.expect(html).to.include('<h1')
+        for (const id of ['projects', 'pricing', 'contact']) pm.expect(html, id).to.include('id="' + id + '"')
+      })
+      pm.test('no placeholder tokens are rendered', () => pm.expect(pm.response.json().html).to.not.include('{{'))
+examples: './.resources/Preview site without data.resources/examples/'

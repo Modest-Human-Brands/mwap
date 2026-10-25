@@ -17,7 +17,7 @@ useSeoMeta({
 <template>
   <NuxtRouteAnnouncer />
   <NuxtPwaAssets />
-  <NuxtLoadingIndicator color="#0593FA" />
+  <NuxtLoadingIndicator color="rgb(var(--brand-primary-rgb, 5 147 250))" />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
@@ -32,11 +32,11 @@ useSeoMeta({
 }
 
 *::-webkit-scrollbar {
-  @apply block size-[6px] bg-light-400 dark:bg-dark-400;
+  @apply block size-[6px] bg-brand-bg;
 }
 
 *::-webkit-scrollbar-thumb {
-  @apply rounded-md bg-light-600 dark:bg-dark-600;
+  @apply rounded-md bg-brand-text/30;
 }
 
 html {
@@ -44,7 +44,7 @@ html {
 }
 
 body {
-  @apply relative min-h-screen overflow-x-hidden bg-light-400 fill-black font-main text-black dark:bg-dark-400 dark:fill-white dark:text-white;
+  @apply relative min-h-screen overflow-x-hidden bg-brand-bg fill-brand-text font-main text-brand-text;
 }
 
 svg.iconify--local {

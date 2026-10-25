@@ -18,14 +18,14 @@ let inflight: Promise<SitePayload[]> | undefined
 let dataSourceId: string | undefined
 
 export function notionEnabled(): boolean {
-  return Boolean(import.meta.env.NOTION_API_KEY && useRuntimeConfig().private.notionDbId)
+  return Boolean(import.meta.env.NOTION_API_KEY && useRuntimeConfig().private.siteNotionDbId)
 }
 
 /** The configured id may be a database (resolved to its first data source) or already a data source */
 async function resolveDataSourceId(): Promise<string> {
   if (dataSourceId) return dataSourceId
 
-  const configured = useRuntimeConfig().private.notionDbId
+  const configured = useRuntimeConfig().private.siteNotionDbId
   try {
     const database = await notion.databases.retrieve({ database_id: configured })
     dataSourceId = ('data_sources' in database && database.data_sources[0]?.id) || configured
@@ -88,7 +88,9 @@ async function toSite(page: PageObjectResponse, orgTitles: Map<string, Promise<s
 
   const json = (await pageBlocks(page.id)).map((b) => (b.type === 'code' ? text(b.code.rich_text) : '')).join('')
   const body = bodySchema.parse(JSON.parse(json))
-  const data = template.schema.parse(mergeWithPlaceholders(template.placeholders, body.data)) as StudioData
+  // Rows written in the old `sections` shape are converted, then filled from the sample like any payload
+  const content = isLegacyData(body.data) ? migrateLegacyData(template.sample, body.data) : body.data
+  const data = template.schema.parse(mergeWithSample(template.sample, content)) as StudioData
 
   return { slug, orgId, templateId: template.id, brand: body.brand, data, domains, updatedAt: page.last_edited_time }
 }
