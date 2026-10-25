@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.0.2
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.1...v0.0.2)
+
+### 🚀 Enhancements
+
+- Enhance site template functionality and add new preview endpoints ([f002b41](https://github.com/Modest-Human-Brands/mwap/commit/f002b41))
+
+### 🏡 Chore
+
+- Comment out unused build jobs in deploy workflow ([7478dd9](https://github.com/Modest-Human-Brands/mwap/commit/7478dd9))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.1
 
 ### 🚀 Enhancements
