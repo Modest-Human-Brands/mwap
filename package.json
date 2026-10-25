@@ -1,6 +1,6 @@
 {
   "name": "mwap",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Stateless, template-driven site builder: a template, a brand and a payload become a server-rendered website (Nuxt 4 + Nitro)",
   "author": "Shirsendu Bairagi <shirsendu2001@gmail.com>",
   "license": "MIT",
