@@ -15,6 +15,7 @@ response:
     content: |-
       {
         "slug": "harbor-films",
+        "orgId": "pm-org",
         "templateId": "studio-v1",
         "brand": {
           "name": "Harbor Films Studio",
@@ -73,5 +74,5 @@ response:
         "domains": [
           "harbor-films.example.test"
         ],
-        "updatedAt": "2026-10-24T17:26:39.956Z"
+        "updatedAt": "2026-10-25T13:08:26.208Z"
       }

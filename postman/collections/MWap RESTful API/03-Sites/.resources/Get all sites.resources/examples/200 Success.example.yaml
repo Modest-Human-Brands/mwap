@@ -17,6 +17,7 @@ response:
         "results": [
           {
             "slug": "northlight-studio",
+            "orgId": "default",
             "templateId": "studio-v1",
             "name": "Northlight Studio",
             "updatedAt": "2026-01-01T00:00:00.000Z"

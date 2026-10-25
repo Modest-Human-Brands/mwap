@@ -118,8 +118,16 @@ export const domainSchema = z
 
 export const domainsSchema = z.array(domainSchema).max(10).default([])
 
+/** Organization that owns a site; sites without one belong to `default` */
+export const DEFAULT_ORG_ID = 'default'
+export const orgIdSchema = z
+  .string()
+  .regex(/^[a-z0-9-]+$/, 'Send the organization as a lowercase slug of at most 60 characters')
+  .max(60)
+
 export const siteSchema = z.object({
   slug: slugSchema,
+  orgId: orgIdSchema.default(DEFAULT_ORG_ID),
   templateId: z.string(),
   brand: brandSchema,
   data: studioDataSchema,

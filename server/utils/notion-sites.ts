@@ -42,6 +42,31 @@ function readDomains(property?: Property): string[] {
   return raw.map((d) => d.trim().toLowerCase()).filter(Boolean)
 }
 
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60)
+
+/** Organization of a row: its `Organization` relation, as the slugified title of the related page */
+async function readOrgId(property: Property | undefined, titles: Map<string, Promise<string>>): Promise<string> {
+  const relatedId = property?.type === 'relation' ? property.relation[0]?.id : undefined
+  if (!relatedId) return DEFAULT_ORG_ID
+
+  // One lookup per organization and refresh, however many rows point at it
+  if (!titles.has(relatedId)) {
+    titles.set(
+      relatedId,
+      notion.pages.retrieve({ page_id: relatedId }).then((related) => {
+        const title = 'properties' in related ? Object.values(related.properties).find((p) => p.type === 'title') : undefined
+        return slugify(title?.type === 'title' ? text(title.title) : '') || DEFAULT_ORG_ID
+      })
+    )
+  }
+  return titles.get(relatedId)!
+}
+
 async function pageBlocks(pageId: string): Promise<BlockObjectResponse[]> {
   const blocks: BlockObjectResponse[] = []
   let cursor: string | undefined
@@ -53,18 +78,19 @@ async function pageBlocks(pageId: string): Promise<BlockObjectResponse[]> {
   return blocks
 }
 
-async function toSite(page: PageObjectResponse): Promise<SitePayload> {
+async function toSite(page: PageObjectResponse, orgTitles: Map<string, Promise<string>>): Promise<SitePayload> {
   const slugProperty = page.properties.Slug
   const templateProperty = page.properties.Template
   const slug = slugSchema.parse(slugProperty?.type === 'title' ? text(slugProperty.title).trim() : '')
   const template = getTemplate(templateProperty?.type === 'select' ? templateProperty.select?.name : undefined)
   const domains = domainsSchema.parse(readDomains(page.properties.Domains))
+  const orgId = await readOrgId(page.properties.Organization, orgTitles)
 
   const json = (await pageBlocks(page.id)).map((b) => (b.type === 'code' ? text(b.code.rich_text) : '')).join('')
   const body = bodySchema.parse(JSON.parse(json))
   const data = template.schema.parse(mergeWithPlaceholders(template.placeholders, body.data)) as StudioData
 
-  return { slug, templateId: template.id, brand: body.brand, data, domains, updatedAt: page.last_edited_time }
+  return { slug, orgId, templateId: template.id, brand: body.brand, data, domains, updatedAt: page.last_edited_time }
 }
 
 async function load(): Promise<SitePayload[]> {
@@ -79,6 +105,7 @@ async function load(): Promise<SitePayload[]> {
     cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined
   } while (cursor)
 
+  const orgTitles = new Map<string, Promise<string>>()
   const sites: SitePayload[] = []
   let next = 0
   // A row that does not validate is skipped, so one bad row cannot take every site down
@@ -87,7 +114,7 @@ async function load(): Promise<SitePayload[]> {
       while (next < pages.length) {
         const page = pages[next++]!
         try {
-          sites.push(await toSite(page))
+          sites.push(await toSite(page, orgTitles))
         } catch (error) {
           console.warn(`[notion] skipped row ${page.id}: ${error instanceof Error ? error.message : error}`)
         }

@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Create site'
 description: |-
-  Validates brand and payload against the template schema (missing fields are filled from the template placeholders) and stores the site. Needs the x-api-key header. The site is stored by the service, never written to Notion. 409 when the slug exists in any source (a Notion row counts), 404 when the template does not, 400 with data.errors when a field is invalid. `domains` (optional, lowercase apex hostnames) makes the site answer on its own domain; a domain can belong to one site only (409 otherwise) and www hosts are rejected because www redirects to the apex. A new slug and domain are generated for every run; the collection variables newSiteSlug and customDomain carry them to the following requests.
+  Validates brand and payload against the template schema (missing fields are filled from the template placeholders) and stores the site. Needs the x-api-key and x-org-id headers (400 with data.errors[{ field: "x-org-id" }] when x-org-id is missing or not a lowercase slug of at most 60 characters); the site belongs to that organization. The site is stored by the service, never written to Notion. 409 when the slug exists in any source (a Notion row counts), 404 when the template does not, 400 with data.errors when a field is invalid. `domains` (optional, lowercase apex hostnames) makes the site answer on its own domain; a domain can belong to one site only (409 otherwise) and www hosts are rejected because www redirects to the apex. A new slug and domain are generated for every run; the collection variables newSiteSlug and customDomain carry them to the following requests.
 order: 4000
 method: POST
 url: '{{baseUrl}}/api/site'
@@ -12,6 +12,8 @@ headers:
     value: 'application/json'
   - key: x-api-key
     value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
 body:
   type: json
   content: |-
@@ -77,12 +79,14 @@ scripts:
     language: text/javascript
     code: |-
       pm.test('status is 201', () => pm.response.to.have.status(201))
+      pm.test('belongs to the organization of x-org-id', () => pm.expect(pm.response.json().orgId).to.eql(pm.collectionVariables.get('orgId')))
       pm.test('points to the new resource', () => pm.expect(pm.response.headers.get('Location')).to.eql('/api/site/' + pm.collectionVariables.get('newSiteSlug')))
       pm.test('matches Site schema', () => pm.response.to.have.jsonSchema({
         type: 'object',
-        required: ['slug', 'templateId', 'brand', 'domains', 'data', 'updatedAt'],
+        required: ['slug', 'orgId', 'templateId', 'brand', 'domains', 'data', 'updatedAt'],
         properties: {
           slug: { type: 'string', pattern: '^[a-z0-9-]+$' },
+          orgId: { type: 'string', pattern: '^[a-z0-9-]{1,60}$' },
           templateId: { type: 'string' },
           domains: { type: 'array', items: { type: 'string', pattern: '^[a-z0-9.-]+$' } },
           brand: {

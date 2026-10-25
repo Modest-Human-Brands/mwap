@@ -3,7 +3,7 @@ name: MWap RESTful API
 description: |-
   Contract for the MWap site-builder microservice (Nuxt/Nitro): pick a template, send a brand and a payload, get a website.
   The zod schemas in the service are the runtime source of truth; this collection documents and tests the contract.
-  Write endpoints (create/replace site) need the x-api-key header: set the secret environment variable apiKey.
+  Write endpoints (create/replace site) need the x-api-key header (secret environment variable apiKey) and the x-org-id header (lowercase slug-style organization id). Every site belongs to exactly one organization, slugs stay unique across all of them, and reads are public. A site without an organization (older stored sites, the built-in example, a Notion row without an Organization relation) belongs to the organization "default". A Notion row gets its organization from its Organization relation (the related page title, slugified).
   A site can own custom domains: a request whose Host matches one is served at the domain root (/projects instead of /<slug>/projects); www redirects to the apex, slug paths redirect to the clean URL, any other host keeps the /<slug> routes.
   Where sites come from: a site saved through the API wins, then a published row of the Notion database (read-only, edits show up within about 60 seconds), then the built-in example. Without a Notion token only the API-saved sites and the example exist. When Notion cannot be reached and nothing is cached, reads answer 503.
   Errors use the Nitro shape { statusCode, statusMessage, message, data? }; validation failures return 400 with data.errors[{ field, message, code }].
@@ -23,3 +23,9 @@ variables:
   - key: customDomain
     value: pm-example-site.example.test
     description: Domain given to the created site (regenerated on every run); the Domains requests send it as Host header
+  - key: orgId
+    value: pm-org
+    description: Organization that owns the created site, sent as x-org-id header on writes
+  - key: otherOrgId
+    value: pm-other-org
+    description: A different organization, used to prove that it cannot replace the site of orgId

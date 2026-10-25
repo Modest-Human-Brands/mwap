@@ -1,0 +1,76 @@
+$kind: http-request
+name: 'Create site without org id'
+description: |-
+  Writes need an organization: a missing x-org-id header is 400 with data.errors[{ field: 'x-org-id' }]. This request deliberately sends none.
+order: 6500
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{newSiteSlug}}-noorg",
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "Harbor Films",
+        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "#0EA5E9",
+          "secondary": "#0F172A",
+          "accent": "#38BDF8",
+          "background": "#020617",
+          "text": "#F8FAFC"
+        }
+      },
+      "domains": [
+        "{{customDomain}}"
+      ],
+      "data": {
+        "seo": {
+          "ogImage": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&h=630&fit=crop&q=80",
+          "canonicalUrl": "https://harbor.example.com"
+        },
+        "navigation": [
+          {
+            "label": "Home",
+            "href": "/"
+          }
+        ],
+        "pages": {
+          "home": {
+            "title": "Harbor Films",
+            "description": "A coastal production studio.",
+            "sections": [
+              {
+                "type": "hero",
+                "id": "hero",
+                "title": "Stories From The Waterfront.",
+                "subtitle": "A coastal production studio for films, series and campaigns.",
+                "cta": {
+                  "label": "Get in touch",
+                  "href": "#contact"
+                },
+                "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
+              }
+            ]
+          }
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('matches Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'statusMessage'], properties: { statusCode: { type: 'number' }, statusMessage: { type: 'string' } } }))
+      pm.test('names the x-org-id header', () => pm.expect(pm.response.json().data.errors.map((e) => e.field)).to.include('x-org-id'))
+examples: './.resources/Create site without org id.resources/examples/'

@@ -19,9 +19,10 @@ scripts:
       pm.test('is cacheable at the edge', () => pm.expect(pm.response.headers.get('Cache-Control')).to.eql('s-maxage=60, stale-while-revalidate=300'))
       pm.test('matches Site schema', () => pm.response.to.have.jsonSchema({
         type: 'object',
-        required: ['slug', 'templateId', 'brand', 'domains', 'data', 'updatedAt'],
+        required: ['slug', 'orgId', 'templateId', 'brand', 'domains', 'data', 'updatedAt'],
         properties: {
           slug: { type: 'string', pattern: '^[a-z0-9-]+$' },
+          orgId: { type: 'string', pattern: '^[a-z0-9-]{1,60}$' },
           templateId: { type: 'string' },
           domains: { type: 'array', items: { type: 'string', pattern: '^[a-z0-9.-]+$' } },
           brand: {
@@ -48,5 +49,6 @@ scripts:
           updatedAt: { type: 'string' }
         }
       }))
+      pm.test('seeded site belongs to the default organization', () => pm.expect(pm.response.json().orgId).to.eql('default'))
       pm.test('slug matches the request', () => pm.expect(pm.response.json().slug).to.eql(pm.collectionVariables.get('siteSlug')))
 examples: './.resources/Get site.resources/examples/'

@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 
   if (!(page in data.pages)) throw validationError([{ field: 'page', message: `Unknown page "${page}"`, code: 'invalid_value' }])
 
-  const site: SitePayload = { slug: 'preview', templateId, brand, data, domains: [], updatedAt: new Date().toISOString() }
+  const site: SitePayload = { slug: 'preview', orgId: DEFAULT_ORG_ID, templateId, brand, data, domains: [], updatedAt: new Date().toISOString() }
 
   // The page is rendered by the app itself, in this process
   const response = await useNitroApp().localFetch(`/_preview?page=${encodeURIComponent(page)}&token=${putPreview(site)}`)

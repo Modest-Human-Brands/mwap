@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Replace site'
 description: |-
-  Replaces brand, domains and payload of the site created by "Create site" (the whole record, not a merge: omitted domains are removed). Same validation as create. Needs the x-api-key header. A site that only exists in Notion can be replaced too: the saved copy then wins over the Notion row from that moment on.
+  Replaces brand, domains and payload of the site created by "Create site" (the whole record, not a merge: omitted domains are removed). Same validation as create. Needs the x-api-key and x-org-id headers; the site keeps its organization. Another organization's site answers 404, like an unknown slug, so slugs of other organizations are not revealed. A site that only exists in Notion can be replaced too: the saved copy then wins over the Notion row from that moment on.
 order: 8000
 method: PUT
 url: '{{baseUrl}}/api/site/:slug'
@@ -15,6 +15,8 @@ headers:
     value: 'application/json'
   - key: x-api-key
     value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
 body:
   type: json
   content: |-
@@ -75,9 +77,10 @@ scripts:
       pm.test('status is 200', () => pm.response.to.have.status(200))
       pm.test('matches Site schema', () => pm.response.to.have.jsonSchema({
         type: 'object',
-        required: ['slug', 'templateId', 'brand', 'domains', 'data', 'updatedAt'],
+        required: ['slug', 'orgId', 'templateId', 'brand', 'domains', 'data', 'updatedAt'],
         properties: {
           slug: { type: 'string', pattern: '^[a-z0-9-]+$' },
+          orgId: { type: 'string', pattern: '^[a-z0-9-]{1,60}$' },
           templateId: { type: 'string' },
           domains: { type: 'array', items: { type: 'string', pattern: '^[a-z0-9.-]+$' } },
           brand: {
@@ -104,5 +107,6 @@ scripts:
           updatedAt: { type: 'string' }
         }
       }))
+      pm.test('stays in its organization', () => pm.expect(pm.response.json().orgId).to.eql(pm.collectionVariables.get('orgId')))
       pm.test('brand was replaced', () => pm.expect(pm.response.json().brand.name).to.eql('Harbor Films Studio'))
 examples: './.resources/Replace site.resources/examples/'

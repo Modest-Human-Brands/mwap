@@ -1,0 +1,31 @@
+$kind: http-example
+name: '200 Organization sites'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/site?limit=50&offset=0&org={{orgId}}'
+  method: GET
+response:
+  statusCode: 200
+  statusText: 'OK'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "results": [
+          {
+            "slug": "harbor-films",
+            "orgId": "pm-org",
+            "templateId": "studio-v1",
+            "name": "Harbor Films Studio",
+            "updatedAt": "2026-10-25T13:08:26.208Z"
+          }
+        ],
+        "pagination": {
+          "total": 1,
+          "limit": 50,
+          "offset": 0
+        }
+      }

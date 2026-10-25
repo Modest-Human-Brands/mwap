@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get all sites'
 description: |-
-  Paginated list of sites from every source (API-saved, published Notion rows and the built-in example; the API-saved one wins on a slug clash). 503 when the Notion source is unreachable and has no cached copy. `pagination.total` is the full count.
+  Public, paginated list of sites from every source (API-saved, published Notion rows and the built-in example; the API-saved one wins on a slug clash). 503 when the Notion source is unreachable and has no cached copy. `pagination.total` is the full count. Optional `org` query parameter keeps only the sites of one organization.
 order: 1000
 method: GET
 url: '{{baseUrl}}/api/site?limit=50&offset=0'
@@ -22,7 +22,7 @@ scripts:
         type: 'object',
         required: ['results', 'pagination'],
         properties: {
-          results: { type: 'array', items: { type: 'object', required: ['slug', 'templateId', 'name', 'updatedAt'], properties: { slug: { type: 'string' }, templateId: { type: 'string' }, name: { type: 'string' }, updatedAt: { type: 'string' } } } },
+          results: { type: 'array', items: { type: 'object', required: ['slug', 'orgId', 'templateId', 'name', 'updatedAt'], properties: { slug: { type: 'string' }, orgId: { type: 'string' }, templateId: { type: 'string' }, name: { type: 'string' }, updatedAt: { type: 'string' } } } },
           pagination: { type: 'object', required: ['total', 'limit', 'offset'], properties: { total: { type: 'number' }, limit: { type: 'number' }, offset: { type: 'number' } } }
         }
       }))

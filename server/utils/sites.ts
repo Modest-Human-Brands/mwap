@@ -185,8 +185,8 @@ const seeds: Record<string, SitePayload> = Object.fromEntries(
 const storage = () => useStorage('sites')
 const key = (slug: string) => `${slug}.json`
 
-// Sites stored before custom domains existed have no `domains`
-const withDomains = (site: SitePayload): SitePayload => ({ ...site, domains: site.domains ?? [] })
+// Sites stored before custom domains and organizations existed have neither `domains` nor `orgId`
+const withDomains = (site: SitePayload): SitePayload => ({ ...site, domains: site.domains ?? [], orgId: site.orgId ?? DEFAULT_ORG_ID })
 
 // Precedence: saved through the API, then a published Notion row, then the built-in example
 export async function getSite(slug: string): Promise<SitePayload | undefined> {

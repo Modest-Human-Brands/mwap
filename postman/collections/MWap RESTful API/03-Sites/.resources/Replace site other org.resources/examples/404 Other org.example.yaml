@@ -1,0 +1,22 @@
+$kind: http-example
+name: '404 Other org'
+order: 1000
+request:
+  url: '{{baseUrl}}/api/site/harbor-films'
+  method: PUT
+response:
+  statusCode: 404
+  statusText: 'Not Found'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "error": true,
+        "url": "http://localhost:3000/api/site/harbor-films",
+        "statusCode": 404,
+        "statusMessage": "No site found for slug: \"harbor-films\"",
+        "message": "No site found for slug: \"harbor-films\""
+      }

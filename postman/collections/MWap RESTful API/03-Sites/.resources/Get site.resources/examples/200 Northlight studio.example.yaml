@@ -17,6 +17,7 @@ response:
     content: |-
       {
         "slug": "northlight-studio",
+        "orgId": "default",
         "templateId": "studio-v1",
         "brand": {
           "name": "Northlight Studio",

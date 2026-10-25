@@ -1,0 +1,34 @@
+$kind: http-request
+name: 'Get all sites of an org'
+description: |-
+  The `org` query parameter keeps only the sites of one organization: here the organization of the site created above. Public, like the unfiltered list.
+order: 8500
+method: GET
+url: '{{baseUrl}}/api/site?limit=50&offset=0&org={{orgId}}'
+queryParams:
+  - key: limit
+    value: '50'
+  - key: offset
+    value: '0'
+  - key: org
+    value: '{{orgId}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('lists only the organization', () => {
+        const { results, pagination } = pm.response.json()
+        pm.expect(results.length).to.be.above(0)
+        pm.expect(results.every((s) => s.orgId === pm.collectionVariables.get('orgId'))).to.eql(true)
+        pm.expect(pagination.total).to.eql(results.length)
+      })
+      pm.test('includes the created site, not the seeded one', () => {
+        const slugs = pm.response.json().results.map((s) => s.slug)
+        pm.expect(slugs).to.include(pm.collectionVariables.get('newSiteSlug'))
+        pm.expect(slugs).to.not.include(pm.collectionVariables.get('siteSlug'))
+      })
+examples: './.resources/Get all sites of an org.resources/examples/'
