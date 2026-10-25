@@ -5,8 +5,9 @@ A stateless, template-driven site builder. Pick a template, send a brand and a p
 ## How it works
 
 - A **template** (currently `studio-v1`) defines a payload schema, placeholders and the Vue components that render it. Missing payload fields are filled from the placeholders.
-- A **site** is `{ slug, templateId, brand, data, domains, updatedAt }`. The brand (name, logo, favicon, font, five colors) is shared by every template.
+- A **site** is `{ slug, orgId, templateId, brand, data, domains, updatedAt }`. The brand (name, logo, favicon, font, five colors) is shared by every template.
 - Sites are served at `/<slug>`, `/<slug>/projects`, `/<slug>/about`, or at the root of a custom domain.
+- Every site belongs to one **organization** (`orgId`, a lowercase slug); one organization can own many sites. Slugs are unique across all organizations, reads are public, and a site without an organization belongs to `default`.
 - The zod schemas in `shared/utils` are the runtime source of truth.
 
 ### Where sites come from
@@ -19,7 +20,7 @@ In order of precedence:
 
 ### Notion database
 
-One row per site, with these properties: `Slug` (title), `Template` (select), `Domains` (multi-select, or comma-separated text) and `Published` (checkbox). The brand and payload are JSON in the code block(s) of the row's page:
+One row per site, with these properties: `Slug` (title), `Template` (select), `Domains` (multi-select, or comma-separated text), `Organization` (relation to a page in your workspace; the page title, slugified, is the `orgId`, and a row without one is `default`) and `Published` (checkbox). The brand and payload are JSON in the code block(s) of the row's page:
 
 ```json
 {
@@ -44,16 +45,16 @@ A site can list `domains` (lowercase apex hostnames). A request whose `Host` mat
 
 The contract lives in the Postman collection `postman/collections/MWap RESTful API` (requests, examples and assertions).
 
-| Method | Path                                           | Notes                                     |
-| ------ | ---------------------------------------------- | ----------------------------------------- |
-| GET    | `/api/health`                                  | liveness                                  |
-| GET    | `/api/site/template`, `/api/site/template/:id` | template catalog, schema and placeholders |
-| POST   | `/api/site/template/preview`                   | validate a payload and get rendered HTML  |
-| GET    | `/api/site`, `/api/site/:slug`                 | list (paginated) and read                 |
-| POST   | `/api/site`                                    | create, needs `x-api-key`                 |
-| PUT    | `/api/site/:slug`                              | replace, needs `x-api-key`                |
+| Method | Path                                           | Notes                                              |
+| ------ | ---------------------------------------------- | -------------------------------------------------- |
+| GET    | `/api/health`                                  | liveness                                           |
+| GET    | `/api/site/template`, `/api/site/template/:id` | template catalog, schema and placeholders          |
+| POST   | `/api/site/template/preview`                   | validate a payload and get rendered HTML           |
+| GET    | `/api/site`, `/api/site/:slug`                 | list (paginated, optional `?org=` filter) and read |
+| POST   | `/api/site`                                    | create, needs `x-api-key` and `x-org-id`           |
+| PUT    | `/api/site/:slug`                              | replace, needs `x-api-key` and `x-org-id`          |
 
-Validation failures answer 400 with `data.errors[{ field, message, code }]`.
+Validation failures answer 400 with `data.errors[{ field, message, code }]`; a missing or malformed `x-org-id` is reported with `field: "x-org-id"`. Replacing a site that belongs to another organization answers 404, like an unknown slug, so slugs of other organizations are not revealed.
 
 ## Configuration
 
