@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Replace site'
 description: |-
-  Replaces brand, domains and payload of the site created by "Create site" (the whole record, not a merge: omitted domains are removed). Same validation as create. Needs the x-api-key header.
+  Replaces brand, domains and payload of the site created by "Create site" (the whole record, not a merge: omitted domains are removed). Same validation as create. Needs the x-api-key header. A site that only exists in Notion can be replaced too: the saved copy then wins over the Notion row from that moment on.
 order: 8000
 method: PUT
 url: '{{baseUrl}}/api/site/:slug'

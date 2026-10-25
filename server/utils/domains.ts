@@ -11,7 +11,8 @@ async function domainMap(): Promise<Map<string, string>> {
   if (cache && Date.now() - cache.at < TTL_MS) return cache.map
 
   const map = new Map<string, string>()
-  for (const site of await listSites()) for (const domain of site.domains) map.set(domain, site.slug)
+  // Every request goes through the host lookup: it must keep working while Notion is down
+  for (const site of await listSites({ tolerant: true })) for (const domain of site.domains) map.set(domain, site.slug)
   cache = { at: Date.now(), map }
   return map
 }

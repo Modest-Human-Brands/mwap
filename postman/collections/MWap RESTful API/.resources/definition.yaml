@@ -5,6 +5,7 @@ description: |-
   The zod schemas in the service are the runtime source of truth; this collection documents and tests the contract.
   Write endpoints (create/replace site) need the x-api-key header: set the secret environment variable apiKey.
   A site can own custom domains: a request whose Host matches one is served at the domain root (/projects instead of /<slug>/projects); www redirects to the apex, slug paths redirect to the clean URL, any other host keeps the /<slug> routes.
+  Where sites come from: a site saved through the API wins, then a published row of the Notion database (read-only, edits show up within about 60 seconds), then the built-in example. Without a Notion token only the API-saved sites and the example exist. When Notion cannot be reached and nothing is cached, reads answer 503.
   Errors use the Nitro shape { statusCode, statusMessage, message, data? }; validation failures return 400 with data.errors[{ field, message, code }].
 variables:
   - key: baseUrl

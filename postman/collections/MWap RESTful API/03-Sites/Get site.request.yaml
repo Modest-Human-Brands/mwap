@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get site'
 description: |-
-  The stored site: template id, brand and template payload. This is what the website renders from. Cached at the edge for 60 seconds.
+  The stored site: template id, brand and template payload. This is what the website renders from. Cached at the edge for 60 seconds. The site may come from the API, from the Notion database or from the built-in example; the response looks the same. 404 when no source has the slug, 503 when the Notion source is unreachable and has no cached copy.
 order: 2000
 method: GET
 url: '{{baseUrl}}/api/site/:slug'

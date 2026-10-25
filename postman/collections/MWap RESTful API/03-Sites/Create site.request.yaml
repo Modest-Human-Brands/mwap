@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Create site'
 description: |-
-  Validates brand and payload against the template schema (missing fields are filled from the template placeholders) and stores the site. Needs the x-api-key header. 409 when the slug exists, 404 when the template does not, 400 with data.errors when a field is invalid. `domains` (optional, lowercase apex hostnames) makes the site answer on its own domain; a domain can belong to one site only (409 otherwise) and www hosts are rejected because www redirects to the apex. A new slug and domain are generated for every run; the collection variables newSiteSlug and customDomain carry them to the following requests.
+  Validates brand and payload against the template schema (missing fields are filled from the template placeholders) and stores the site. Needs the x-api-key header. The site is stored by the service, never written to Notion. 409 when the slug exists in any source (a Notion row counts), 404 when the template does not, 400 with data.errors when a field is invalid. `domains` (optional, lowercase apex hostnames) makes the site answer on its own domain; a domain can belong to one site only (409 otherwise) and www hosts are rejected because www redirects to the apex. A new slug and domain are generated for every run; the collection variables newSiteSlug and customDomain carry them to the following requests.
 order: 4000
 method: POST
 url: '{{baseUrl}}/api/site'

@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get all sites'
 description: |-
-  Paginated list of stored sites (the seeded example site plus every created one). `pagination.total` is the full count.
+  Paginated list of sites from every source (API-saved, published Notion rows and the built-in example; the API-saved one wins on a slug clash). 503 when the Notion source is unreachable and has no cached copy. `pagination.total` is the full count.
 order: 1000
 method: GET
 url: '{{baseUrl}}/api/site?limit=50&offset=0'

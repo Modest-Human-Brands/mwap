@@ -188,10 +188,22 @@ const key = (slug: string) => `${slug}.json`
 // Sites stored before custom domains existed have no `domains`
 const withDomains = (site: SitePayload): SitePayload => ({ ...site, domains: site.domains ?? [] })
 
+// Precedence: saved through the API, then a published Notion row, then the built-in example
 export async function getSite(slug: string): Promise<SitePayload | undefined> {
   const stored = await storage().getItem<SitePayload>(key(slug))
-  const site = stored ?? seeds[slug]
-  return site && withDomains(site)
+  if (stored) return withDomains(stored)
+
+  if (notionEnabled()) {
+    try {
+      const site = (await getNotionSites()).find((s) => s.slug === slug)
+      if (site) return site
+    } catch (error) {
+      // The built-in example stays reachable while Notion is down; anything else cannot be told apart from a missing site
+      if (!seeds[slug]) throw error
+    }
+  }
+
+  return seeds[slug]
 }
 
 export async function saveSite(site: SitePayload): Promise<void> {
@@ -199,10 +211,23 @@ export async function saveSite(site: SitePayload): Promise<void> {
   invalidateDomains()
 }
 
-export async function listSites(): Promise<SitePayload[]> {
+/**
+ * Every site of every source. `tolerant` leaves the Notion sites out instead of failing when that source
+ * is unavailable, for callers (routing, sitemap) that must not break because of it.
+ */
+export async function listSites({ tolerant = false } = {}): Promise<SitePayload[]> {
+  const bySlug = new Map<string, SitePayload>(Object.entries(seeds))
+
+  if (notionEnabled()) {
+    try {
+      for (const site of await getNotionSites()) bySlug.set(site.slug, site)
+    } catch (error) {
+      if (!tolerant) throw error
+    }
+  }
+
   const storedKeys = await storage().getKeys()
   const stored = await Promise.all(storedKeys.map((k) => storage().getItem<SitePayload>(k)))
-  const bySlug = new Map<string, SitePayload>(Object.entries(seeds))
   for (const site of stored) if (site) bySlug.set(site.slug, withDomains(site))
 
   return [...bySlug.values()].sort((a, b) => a.slug.localeCompare(b.slug))
@@ -210,5 +235,5 @@ export async function listSites(): Promise<SitePayload[]> {
 
 /** Public paths of every page of every site, e.g. `/slug`, `/slug/projects` */
 export async function listSitePaths(): Promise<string[]> {
-  return (await listSites()).flatMap((site) => Object.keys(site.data.pages).map((page) => (page === 'home' ? `/${site.slug}` : `/${site.slug}/${page}`)))
+  return (await listSites({ tolerant: true })).flatMap((site) => Object.keys(site.data.pages).map((page) => (page === 'home' ? `/${site.slug}` : `/${site.slug}/${page}`)))
 }

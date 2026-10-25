@@ -1,0 +1,22 @@
+$kind: http-example
+name: '503 Source unavailable'
+order: 9000
+request:
+  url: '{{baseUrl}}/api/site?limit=50&offset=0'
+  method: GET
+response:
+  statusCode: 503
+  statusText: 'Service Unavailable'
+  headers:
+    - key: Content-Type
+      value: 'application/json'
+  body:
+    type: json
+    content: |-
+      {
+        "error": true,
+        "url": "http://localhost:3000/api/site?limit=50&offset=0",
+        "statusCode": 503,
+        "statusMessage": "Site source unavailable",
+        "message": "Site source unavailable"
+      }
