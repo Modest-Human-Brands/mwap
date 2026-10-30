@@ -14,20 +14,20 @@ name = "app_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.7", features = [] }
+tauri-build = { version = "2.7.4", features = [] }
 
 [dependencies]
-serde_json = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-log = "0.4"
-tauri = { version = "2.12", features = [] }
-tauri-plugin-log = "2.10"
-tauri-plugin-opener = "2.7"
-tauri-plugin-shell = "2.5"
+serde_json = "1.0.154"
+serde = { version = "1.0.229", features = ["derive"] }
+log = "0.4.34"
+tauri = { version = "2.12.5", features = [] }
+tauri-plugin-log = "2.10.1"
+tauri-plugin-opener = "2.7.2"
+tauri-plugin-shell = "2.6.0"
 tauri-plugin-process = "2.4"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-updater = "2.14"
+tauri-plugin-updater = "2.14.1"
 
 [patch.crates-io]
 zip = { git = "https://github.com/zip-rs/zip2", tag = "v4.6.1" }
