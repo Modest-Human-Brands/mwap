@@ -62,7 +62,9 @@
     "@vite-pwa/nuxt": "^1.1.1",
     "@vueuse/core": "^15.0.0",
     "@vueuse/nuxt": "^15.0.0",
+    "gsap": "^3.15.1",
     "nuxt": "^4.6.1",
+    "v-gsap-nuxt": "^1.5.12",
     "vue": "^3.5.44",
     "vue-router": "^5.4.0",
     "zod": "^4.6.7"

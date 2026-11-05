@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CoverSlot } from '../schema'
 const props = defineProps<{
   slotContent: CoverSlot
 }>()
@@ -10,7 +11,10 @@ const chars = computed(() => Math.max(4, ...words.value.map((word) => word.lengt
 
 <template>
   <section id="cover" class="cover" :style="{ '--chars': chars }">
-    <h1 class="title" :style="{ '--image': `url(${JSON.stringify(slotContent.imageUrl)})` }">
+    <h1
+      v-gsap.whenVisible.to="{ backgroundPosition: '50% 75%', ease: 'none', start: 'top top', end: 'bottom top', scrub: true }"
+      class="title"
+      :style="{ '--image': `url(${JSON.stringify(slotContent.imageUrl)})` }">
       <span v-for="word in words" :key="word" class="word">{{ word }}</span>
     </h1>
 
@@ -20,7 +24,7 @@ const chars = computed(() => Math.max(4, ...words.value.map((word) => word.lengt
       <p v-if="slotContent.availability" class="availability">{{ slotContent.availability }}</p>
     </div>
 
-    <img class="portrait" :src="slotContent.portraitUrl" alt="" width="230" height="300" loading="eager" />
+    <img v-gsap.parallax.faster-1 class="portrait" :src="slotContent.portraitUrl" alt="" width="230" height="300" loading="eager" />
   </section>
 </template>
 

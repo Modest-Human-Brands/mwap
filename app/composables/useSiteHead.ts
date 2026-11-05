@@ -22,8 +22,15 @@ export function useBrandHead(brand: MaybeRefOrGetter<BrandPayload>) {
   useHead(() => {
     const { colors, faviconUrl, fontFamily } = toValue(brand)
 
+    // Browser-drawn parts (scrollbars, form controls) follow the brand background, not the visitor's OS
+    const scheme = onColor(colors.background) === '255 255 255' ? 'dark' : 'light'
+
     return {
       titleTemplate: '%s',
+      meta: [
+        { name: 'color-scheme', content: scheme },
+        { name: 'theme-color', content: colors.background },
+      ],
       link: [
         { rel: 'icon', href: faviconUrl },
         { rel: 'stylesheet', href: `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@400;500;600;700&display=swap` },
@@ -31,7 +38,7 @@ export function useBrandHead(brand: MaybeRefOrGetter<BrandPayload>) {
       style: [
         {
           // Hex values for plain CSS, RGB channels for Tailwind (opacity modifiers); on-primary and on-secondary are the readable text colors on top of those colors
-          textContent: `:root{--brand-primary:${colors.primary};--brand-secondary:${colors.secondary};--brand-accent:${colors.accent};--brand-bg:${colors.background};--brand-text:${colors.text};--brand-primary-rgb:${channels(colors.primary)};--brand-secondary-rgb:${channels(colors.secondary)};--brand-accent-rgb:${channels(colors.accent)};--brand-bg-rgb:${channels(colors.background)};--brand-text-rgb:${channels(colors.text)};--brand-on-primary-rgb:${onColor(colors.primary)};--brand-on-secondary-rgb:${onColor(colors.secondary)};--brand-font:'${fontFamily}',sans-serif;}`,
+          textContent: `:root{color-scheme:${scheme};--brand-primary:${colors.primary};--brand-secondary:${colors.secondary};--brand-accent:${colors.accent};--brand-bg:${colors.background};--brand-text:${colors.text};--brand-primary-rgb:${channels(colors.primary)};--brand-secondary-rgb:${channels(colors.secondary)};--brand-accent-rgb:${channels(colors.accent)};--brand-bg-rgb:${channels(colors.background)};--brand-text-rgb:${channels(colors.text)};--brand-on-primary-rgb:${onColor(colors.primary)};--brand-on-secondary-rgb:${onColor(colors.secondary)};--brand-font:'${fontFamily}',sans-serif;}`,
         },
       ],
     }

@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Create site'
 description: |-
-  Validates brand and payload against the template schema (missing fields are filled from the template sample (see "Get template by ID")) and stores the site. Needs the x-api-key and x-org-id headers (400 with data.errors[{ field: "x-org-id" }] when x-org-id is missing or not a lowercase slug of at most 60 characters); the site belongs to that organization. The site is stored by the service, never written to Notion. 409 when the slug exists in any source (a Notion row counts), 404 when the template does not, 400 with data.errors when a field is invalid. `domains` (optional, lowercase apex hostnames) makes the site answer on its own domain; a domain can belong to one site only (409 otherwise) and www hosts are rejected because www redirects to the apex. A new slug and domain are generated for every run; the collection variables newSiteSlug and customDomain carry them to the following requests.
+  Validates brand and payload against the template schema (missing fields are filled from the template sample (see "Get template by ID")) and stores the site. Needs the x-api-key and x-org-id headers (400 with data.errors[{ field: "x-org-id" }] when x-org-id is missing or not a lowercase slug of at most 60 characters); the site belongs to that organization. The site is stored by the service, never written to Notion. 409 when the slug exists in any source (a Notion row counts), 404 when the template does not, 400 with data.errors when a field is invalid. `domains` (optional, lowercase apex hostnames) makes the site answer on its own domain; a domain can belong to one site only (409 otherwise) and www hosts are rejected because www redirects to the apex. `googleAnalyticsId` (optional, a GA4 measurement id such as G-ABC123DEF4) turns on Google Analytics for this site only: the site reports to its own property and a site without it sends nothing. A new slug and domain are generated for every run; the collection variables newSiteSlug and customDomain carry them to the following requests.
 order: 4000
 method: POST
 url: '{{baseUrl}}/api/site'
@@ -36,6 +36,7 @@ body:
       "domains": [
         "{{customDomain}}"
       ],
+      "googleAnalyticsId": "G-IRISVALE01",
       "data": {
         "seo": {
           "ogImage": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1200&fit=crop&q=80",
@@ -78,6 +79,7 @@ scripts:
     code: |-
       pm.test('status is 201', () => pm.response.to.have.status(201))
       pm.test('belongs to the organization of x-org-id', () => pm.expect(pm.response.json().orgId).to.eql(pm.collectionVariables.get('orgId')))
+      pm.test('stores the analytics id of the site', () => pm.expect(pm.response.json().googleAnalyticsId).to.eql('G-IRISVALE01'))
       pm.test('points to the new resource', () => pm.expect(pm.response.headers.get('Location')).to.eql('/api/site/' + pm.collectionVariables.get('newSiteSlug')))
       pm.test('matches Site schema', () => pm.response.to.have.jsonSchema({
         type: 'object',
@@ -87,6 +89,7 @@ scripts:
           orgId: { type: 'string', pattern: '^[a-z0-9-]{1,60}$' },
           templateId: { type: 'string' },
           domains: { type: 'array', items: { type: 'string', pattern: '^[a-z0-9.-]+$' } },
+          googleAnalyticsId: { type: 'string', pattern: '^G-[A-Z0-9]{6,12}$' },
           brand: {
             type: 'object',
             required: ['name', 'logoUrl', 'faviconUrl', 'fontFamily', 'colors'],

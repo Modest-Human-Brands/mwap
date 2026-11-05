@@ -1,0 +1,19 @@
+$kind: http-request
+name: 'Get site manifest not found'
+description: |-
+  Unknown slug.
+order: 3500
+method: GET
+url: '{{baseUrl}}/api/site/:slug/manifest'
+pathVariables:
+  - key: slug
+    value: 'does-not-exist'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('matches Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'statusMessage'], properties: { statusCode: { type: 'number' }, statusMessage: { type: 'string' } } }))

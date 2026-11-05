@@ -1,3 +1,5 @@
+import { useHead } from '#imports'
+
 /** The typefaces of the Contact Sheet template; the brand font is only the body font */
 export function useContactSheetFonts() {
   useHead({

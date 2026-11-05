@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { BookingSlot } from '../schema'
+import type { SitePayload } from '../../../../shared/types/site'
+import { useBooking } from '../../_shared/useBooking'
 const props = defineProps<{
   slotContent: BookingSlot
   contact: SitePayload['data']['contact']
@@ -20,13 +23,13 @@ const action = computed(() => props.contact.bookingEndpoint ?? `mailto:${props.c
     <p class="eyebrow">(05) Booking</p>
 
     <div class="top">
-      <h2 class="title">
+      <h2 v-gsap.whenVisible.once.stagger.from="{ opacity: 0, yPercent: 40, duration: 0.8, ease: 'power3.out', stagger: 0.1, start: 'top 80%' }" class="title">
         <span v-for="word in words" :key="word" class="word">{{ word }}</span>
       </h2>
-      <p class="intro">{{ slotContent.intro }}</p>
+      <p v-gsap.whenVisible.once.from="{ opacity: 0, y: 24, duration: 0.7, ease: 'power2.out', start: 'top 85%' }" class="intro">{{ slotContent.intro }}</p>
     </div>
 
-    <form class="form" :action="action" method="post" @submit.prevent="submit">
+    <form v-gsap.whenVisible.once.from="{ opacity: 0, y: 24, duration: 0.7, ease: 'power2.out', start: 'top 90%' }" class="form" :action="action" method="post" @submit.prevent="submit">
       <label class="field">
         <span>Name</span>
         <input name="Name" type="text" autocomplete="name" required />

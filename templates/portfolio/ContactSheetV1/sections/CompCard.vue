@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CompCardSlot } from '../schema'
+import { useSiteHref } from '../../_shared/useSiteHref'
 defineProps<{
   slotContent: CompCardSlot
 }>()
@@ -9,9 +11,16 @@ const isFile = (url: string) => /^https?:/.test(url)
 
 <template>
   <section id="comp-card" class="comp">
-    <img class="portrait" :src="slotContent.portraitUrl" alt="" width="520" height="600" loading="lazy" />
+    <img
+      v-gsap.whenVisible.once.from="{ opacity: 0, y: 40, duration: 0.9, ease: 'power3.out', start: 'top 80%' }"
+      class="portrait"
+      :src="slotContent.portraitUrl"
+      alt=""
+      width="520"
+      height="600"
+      loading="lazy" />
 
-    <div class="body">
+    <div v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 24, duration: 0.7, ease: 'power2.out', stagger: 0.08, start: 'top 88%' }" class="body">
       <p class="eyebrow">(04) Comp card</p>
       <h2 class="title">{{ slotContent.title }}</h2>
 

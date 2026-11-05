@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { LightboxEntry } from '../schema'
 const props = defineProps<{
   entries: LightboxEntry[]
   storageKey: string

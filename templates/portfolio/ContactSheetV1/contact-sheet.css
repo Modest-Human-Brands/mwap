@@ -53,3 +53,87 @@
   outline: 2px solid var(--brand-accent);
   outline-offset: 2px;
 }
+
+/* Entrances and overlay transitions are plain CSS: they work in script-free previews and cost nothing at load.
+   Scroll motion is GSAP (_shared/useContactSheetMotion.ts). Both stand down for visitors who prefer reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.cs) {
+    scroll-behavior: smooth;
+  }
+
+  .cs .cover .word {
+    animation: cs-word 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .cs .cover .word:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+
+  .cs .cover .word:nth-child(3) {
+    animation-delay: 0.24s;
+  }
+
+  .cs .cover .info {
+    animation: cs-rise 0.8s 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .cs .cover .portrait {
+    animation: cs-fade 1s 0.5s ease-out both;
+  }
+
+  .cs .lightbox:target {
+    animation: cs-fade 0.3s ease-out;
+  }
+
+  .cs .lightbox:target .photo {
+    animation: cs-rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .cs .overlay:target {
+    animation: cs-fade 0.25s ease-out;
+  }
+
+  .cs .drawer:target .backdrop {
+    animation: cs-fade 0.35s ease-out;
+  }
+
+  .cs .drawer:target .panel {
+    animation: cs-slide 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .cs .button,
+  .cs .cs-button {
+    transition: filter 0.2s ease;
+  }
+
+  .cs .cs-button:hover {
+    filter: brightness(1.12);
+  }
+}
+
+@keyframes cs-word {
+  from {
+    opacity: 0;
+    transform: translateY(14%);
+  }
+}
+
+@keyframes cs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+@keyframes cs-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes cs-slide {
+  from {
+    transform: translateX(8%);
+    opacity: 0;
+  }
+}

@@ -1,0 +1,36 @@
+$kind: http-request
+name: 'Get site manifest'
+description: |-
+  Web app manifest of the site, linked from every page of it so that installing the site uses its own name, colors and icon instead of MWap's. The start URL and scope are `/<slug>`, or `/` when the site is served on its own domain. Cached at the edge for 60 seconds. 404 when no source has the slug.
+order: 2500
+method: GET
+url: '{{baseUrl}}/api/site/:slug/manifest'
+pathVariables:
+  - key: slug
+    value: '{{siteSlug}}'
+headers:
+  - key: Accept
+    value: 'application/manifest+json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is a web app manifest', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/manifest+json'))
+      pm.test('is cacheable at the edge', () => pm.expect(pm.response.headers.get('Cache-Control')).to.eql('s-maxage=60, stale-while-revalidate=300'))
+      pm.test('matches Manifest schema', () => pm.response.to.have.jsonSchema({
+        type: 'object',
+        required: ['name', 'short_name', 'start_url', 'scope', 'display', 'background_color', 'theme_color', 'icons'],
+        properties: {
+          display: { const: 'standalone' },
+          background_color: { type: 'string', pattern: '^#[0-9a-fA-F]{3,8}$' },
+          theme_color: { type: 'string', pattern: '^#[0-9a-fA-F]{3,8}$' },
+          icons: { type: 'array', minItems: 1, items: { type: 'object', required: ['src', 'sizes'] } }
+        }
+      }))
+      pm.test('is scoped to the site', () => {
+        const manifest = pm.response.json()
+        pm.expect(manifest.scope).to.eql('/' + pm.collectionVariables.get('siteSlug'))
+        pm.expect(manifest.start_url).to.eql(manifest.scope)
+      })
+      pm.test('uses the brand of the site, not MWap', () => pm.expect(pm.response.json().name).to.not.eql('MWap'))

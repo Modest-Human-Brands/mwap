@@ -11,7 +11,7 @@ const CONCURRENCY = 4
 type Property = PageObjectResponse['properties'][string]
 type RichText = { plain_text: string }[]
 
-const bodySchema = z.object({ brand: brandSchema, data: z.record(z.string(), z.unknown()).default({}) })
+const bodySchema = z.object({ brand: brandSchema, data: z.record(z.string(), z.unknown()).default({}), googleAnalyticsId: googleAnalyticsIdSchema.optional() })
 
 let cache: { sites: SitePayload[]; expires: number } | undefined
 let inflight: Promise<SitePayload[]> | undefined
@@ -90,7 +90,7 @@ async function toSite(page: PageObjectResponse, orgTitles: Map<string, Promise<s
   const body = bodySchema.parse(JSON.parse(json))
   const data = template.schema.parse(mergeWithSample(template.sample, body.data)) as ContactSheetData
 
-  return { slug, orgId, templateId: template.id, brand: body.brand, data, domains, updatedAt: page.last_edited_time }
+  return { slug, orgId, templateId: template.id, brand: body.brand, data, domains, ...(body.googleAnalyticsId && { googleAnalyticsId: body.googleAnalyticsId }), updatedAt: page.last_edited_time }
 }
 
 async function load(): Promise<SitePayload[]> {

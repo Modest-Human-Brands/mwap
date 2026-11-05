@@ -2,10 +2,10 @@
 // import iconLogo from '~/assets/icons/logo.svg'
 
 const { $pwa } = useNuxtApp()
-const { proxy: gaProxy } = useScriptGoogleAnalytics()
 
 function onInstall() {
-  gaProxy.gtag('event', 'install')
+  // gtag only exists on a site with an analytics id
+  ;(window as { gtag?: (...args: unknown[]) => void }).gtag?.('event', 'install')
   $pwa?.install()
 }
 </script>

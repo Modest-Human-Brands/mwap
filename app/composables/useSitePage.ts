@@ -24,12 +24,12 @@ export async function useSitePage() {
 
   if (!page) {
     // The error page answers in the look of the site, so it needs its brand and a cover image
-    const { brand, data } = site.value
+    const { brand, data, templateId } = site.value
     throw createError({
       statusCode: 404,
       statusMessage: `Page "${pageKey}" not found.`,
       fatal: true,
-      data: { notFound: { brand, imageUrl: data.pages.home.cover.imageUrl, homeHref: customDomain.value ? '/' : `/${site.value.slug}` } },
+      data: { notFound: { templateId, brand, imageUrl: data.pages.home.cover.imageUrl, homeHref: customDomain.value ? '/' : `/${site.value.slug}` } },
     })
   }
 
@@ -42,6 +42,10 @@ export async function useSitePage() {
       useSeoMeta({ ogUrl: url })
     }
 
+    // Installing the site uses its own identity; MWap's manifest is not linked from site pages
+    useHead({ link: [{ rel: 'manifest', href: `/api/site/${site.value!.slug}/manifest` }] })
+    // Each site reports to its own property; a site without an id sends nothing
+    if (site.value!.googleAnalyticsId) useScriptGoogleAnalytics({ id: site.value!.googleAnalyticsId })
     useSiteHead(site as Ref<SitePayload>, page)
   })
 

@@ -10,13 +10,11 @@ useSeoMeta({
   ogImageWidth: 1280,
   ogImageHeight: 640,
   twitterCard: 'summary_large_image',
-  colorScheme: 'light dark',
 })
 </script>
 
 <template>
   <NuxtRouteAnnouncer />
-  <NuxtPwaAssets />
   <NuxtLoadingIndicator color="rgb(var(--brand-primary-rgb, 5 147 250))" />
   <NuxtLayout>
     <NuxtPage />

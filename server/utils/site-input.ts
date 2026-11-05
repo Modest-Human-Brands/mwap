@@ -19,6 +19,7 @@ const envelopeSchema = z.object({
   brand: brandSchema,
   data: z.record(z.string(), z.unknown()).default({}),
   domains: domainsSchema,
+  googleAnalyticsId: googleAnalyticsIdSchema.optional(),
 })
 
 /**

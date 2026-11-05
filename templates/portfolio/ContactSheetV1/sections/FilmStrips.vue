@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SheetSlot } from '../schema'
 defineProps<{
   slotContent: SheetSlot
   /** Lightbox index of the first frame */
@@ -8,7 +9,7 @@ defineProps<{
 
 <template>
   <section id="sheet" class="sheet">
-    <div class="head">
+    <div v-gsap.whenVisible.once.from="{ opacity: 0, y: 20, duration: 0.7, ease: 'power2.out', start: 'top 90%' }" class="head">
       <div>
         <p class="cs-eyebrow">(03) Contact sheet</p>
         <h2 class="title">{{ slotContent.title }}</h2>
@@ -16,7 +17,7 @@ defineProps<{
       <p v-if="slotContent.label" class="label">{{ slotContent.label }}</p>
     </div>
 
-    <ul class="strip">
+    <ul v-gsap.whenVisible.once.stagger.from="{ opacity: 0, scale: 0.94, duration: 0.6, ease: 'power2.out', stagger: 0.05, start: 'top 88%' }" class="strip">
       <li v-for="(frame, i) in slotContent.frames" :key="frame.label + i" class="cell" :class="{ circled: frame.circled }">
         <a class="frame" :href="`#lb-${start + i}`" :aria-label="`Frame ${frame.label}`">
           <img :src="frame.imageUrl" alt="" width="318" height="340" loading="lazy" />

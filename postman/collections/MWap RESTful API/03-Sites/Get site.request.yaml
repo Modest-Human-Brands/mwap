@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get site'
 description: |-
-  The stored site: template id, brand and template payload in the fixed slot shape. This is what the website renders from. Cached at the edge for 60 seconds. The site may come from the API, from the Notion database or from the built-in example; the response looks the same. 404 when no source has the slug, 503 when the Notion source is unreachable and has no cached copy.
+  The stored site: template id, brand, optional `googleAnalyticsId` (absent when the site has no analytics) and template payload in the fixed slot shape. This is what the website renders from. Cached at the edge for 60 seconds. The site may come from the API, from the Notion database or from the built-in example; the response looks the same. 404 when no source has the slug, 503 when the Notion source is unreachable and has no cached copy.
 order: 2000
 method: GET
 url: '{{baseUrl}}/api/site/:slug'
@@ -25,6 +25,7 @@ scripts:
           orgId: { type: 'string', pattern: '^[a-z0-9-]{1,60}$' },
           templateId: { type: 'string' },
           domains: { type: 'array', items: { type: 'string', pattern: '^[a-z0-9.-]+$' } },
+          googleAnalyticsId: { type: 'string', pattern: '^G-[A-Z0-9]{6,12}$' },
           brand: {
             type: 'object',
             required: ['name', 'logoUrl', 'faviconUrl', 'fontFamily', 'colors'],

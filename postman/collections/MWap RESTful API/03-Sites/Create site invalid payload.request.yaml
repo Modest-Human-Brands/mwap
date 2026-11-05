@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Create site invalid payload'
 description: |-
-  Invalid slug, colour and a www domain: 400 with one data.errors entry per field. Nothing is stored.
+  Invalid slug, colour, www domain and analytics id: 400 with one data.errors entry per field. Nothing is stored.
 order: 7000
 method: POST
 url: '{{baseUrl}}/api/site'
@@ -36,6 +36,7 @@ body:
       "domains": [
         "www.example.com"
       ],
+      "googleAnalyticsId": "UA-123",
       "data": {
         "seo": {
           "ogImage": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1200&fit=crop&q=80",
@@ -77,5 +78,6 @@ scripts:
         pm.expect(fields).to.include('slug')
         pm.expect(fields).to.include('brand.colors.primary')
         pm.expect(fields).to.include('domains.0')
+        pm.expect(fields).to.include('googleAnalyticsId')
       })
 examples: './.resources/Create site invalid payload.resources/examples/'

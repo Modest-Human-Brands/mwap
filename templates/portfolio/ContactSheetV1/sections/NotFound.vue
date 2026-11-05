@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useContactSheetFonts } from '../../_shared/useContactSheetFonts'
 defineProps<{
   brandName: string
   imageUrl: string
@@ -26,7 +27,7 @@ useContactSheetFonts()
   </div>
 </template>
 
-<style src="./contact-sheet.css"></style>
+<style src="../contact-sheet.css"></style>
 
 <style scoped>
 .nav {

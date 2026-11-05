@@ -53,6 +53,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@vite-pwa/nuxt',
     '@vueuse/nuxt',
+    'v-gsap-nuxt',
   ],
   nitro: {
     compressPublicAssets: true,
@@ -90,11 +91,6 @@ export default defineNuxtConfig({
     },
     public: {
       siteUrl: '',
-      scripts: {
-        googleAnalytics: {
-          id: '',
-        },
-      },
       vapidKey: '',
     },
     private: {
@@ -127,11 +123,6 @@ export default defineNuxtConfig({
     },
   },
   image: {},
-  scripts: {
-    registry: {
-      googleAnalytics: true,
-    },
-  },
   aiReady: {
     database: false,
   },

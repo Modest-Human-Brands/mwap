@@ -1,15 +1,15 @@
 <script setup lang="ts">
-defineProps<{
+import { templateComponents } from '~~/templates/components'
+
+const props = defineProps<{
   site: SitePayload
   pageKey: PageKey
 }>()
 
-// One entry per template in the shared registry
-const templateComponents: Record<string, Component> = {
-  'contact-sheet': resolveComponent('TemplatesContactSheet') as Component,
-}
+// Loaded on demand, one component per template id (see templates/components.ts)
+const TemplateComponent = computed(() => defineAsyncComponent(templateComponents[props.site.templateId]!))
 </script>
 
 <template>
-  <component :is="templateComponents[site.templateId]" :site="site" :page-key="pageKey" />
+  <component :is="TemplateComponent" :site="site" :page-key="pageKey" />
 </template>

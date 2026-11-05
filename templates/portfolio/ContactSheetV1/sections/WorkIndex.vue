@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { IndexSlot } from '../schema'
 defineProps<{
   slotContent: IndexSlot
 }>()
@@ -8,12 +9,12 @@ const pad = (n: number) => String(n).padStart(2, '0')
 
 <template>
   <section id="index" class="index">
-    <div class="head">
+    <div v-gsap.whenVisible.once.from="{ opacity: 0, y: 20, duration: 0.7, ease: 'power2.out', start: 'top 90%' }" class="head">
       <p class="cs-eyebrow">(02) Index — {{ slotContent.title }}</p>
       <p v-if="slotContent.hint" class="hint">{{ slotContent.hint }}</p>
     </div>
 
-    <ul class="list">
+    <ul v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 28, duration: 0.7, ease: 'power2.out', stagger: 0.06, start: 'top 88%' }" class="list">
       <li v-for="(item, i) in slotContent.items" :key="item.title + i" class="item">
         <a class="row" :href="`#lb-${i}`">
           <span class="num">{{ pad(i + 1) }}</span>

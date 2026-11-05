@@ -1,4 +1,16 @@
 <script setup lang="ts">
+import type { LightboxEntry, PageKey } from './schema'
+import type { SitePayload } from '../../../shared/types/site'
+import { useContactSheetFonts } from '../_shared/useContactSheetFonts'
+import BookingForm from './sections/BookingForm.vue'
+import CompCard from './sections/CompCard.vue'
+import CoverHero from './sections/CoverHero.vue'
+import BookingDrawer from './sections/BookingDrawer.vue'
+import SiteFooter from './sections/SiteFooter.vue'
+import PhotoLightbox from './sections/PhotoLightbox.vue'
+import SiteNav from './sections/SiteNav.vue'
+import FilmStrips from './sections/FilmStrips.vue'
+import WorkIndex from './sections/WorkIndex.vue'
 const props = defineProps<{
   site: SitePayload
   pageKey: PageKey
@@ -39,17 +51,17 @@ const sheetStart = computed(() => (page.value.index.enabled ? page.value.index.i
 
 <template>
   <div class="cs">
-    <TemplatesContactSheetNav :brand-name="brand.name" :initials="initials" :links="site.data.navigation" />
+    <SiteNav :brand-name="brand.name" :initials="initials" :links="site.data.navigation" />
     <main>
-      <TemplatesContactSheetCover v-if="page.cover.enabled" :slot-content="page.cover" />
-      <TemplatesContactSheetWork v-if="page.index.enabled" :slot-content="page.index" />
-      <TemplatesContactSheetStrips v-if="page.sheet.enabled" :slot-content="page.sheet" :start="sheetStart" />
-      <TemplatesContactSheetCompCard v-if="page.compCard.enabled" :slot-content="page.compCard" />
-      <TemplatesContactSheetBooking v-if="page.booking.enabled" :slot-content="page.booking" :contact="contact" :subject="subject" />
+      <CoverHero v-if="page.cover.enabled" :slot-content="page.cover" />
+      <WorkIndex v-if="page.index.enabled" :slot-content="page.index" />
+      <FilmStrips v-if="page.sheet.enabled" :slot-content="page.sheet" :start="sheetStart" />
+      <CompCard v-if="page.compCard.enabled" :slot-content="page.compCard" />
+      <BookingForm v-if="page.booking.enabled" :slot-content="page.booking" :contact="contact" :subject="subject" />
     </main>
-    <TemplatesContactSheetFooter v-if="page.footer.enabled" :slot-content="page.footer" :brand-name="brand.name" :email="contact.email" />
-    <TemplatesContactSheetLightbox :entries="lightbox" :storage-key="`cs-shortlist:${site.slug}`" />
-    <TemplatesContactSheetDrawer v-if="page.booking.enabled" :slot-content="page.booking" :contact="contact" :subject="subject" />
+    <SiteFooter v-if="page.footer.enabled" :slot-content="page.footer" :brand-name="brand.name" :email="contact.email" />
+    <PhotoLightbox :entries="lightbox" :storage-key="`cs-shortlist:${site.slug}`" />
+    <BookingDrawer v-if="page.booking.enabled" :slot-content="page.booking" :contact="contact" :subject="subject" />
   </div>
 </template>
 

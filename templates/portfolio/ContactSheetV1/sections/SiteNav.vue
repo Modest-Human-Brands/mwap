@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SitePayload } from '../../../../shared/types/site'
+import { useSiteHref } from '../../_shared/useSiteHref'
 defineProps<{
   brandName: string
   initials: string
