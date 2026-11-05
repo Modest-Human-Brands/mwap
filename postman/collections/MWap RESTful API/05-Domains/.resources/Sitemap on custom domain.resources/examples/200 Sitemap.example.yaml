@@ -13,4 +13,4 @@ response:
   body:
     type: text
     content: |-
-      <?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>http://harbor.example.com/</loc></url><url><loc>http://harbor.example.com/projects</loc></url><url><loc>http://harbor.example.com/about</loc></url></urlset>
+      <?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>http://irisvale.example.com/</loc></url></urlset>

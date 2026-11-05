@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Create site with fewer cards'
 description: |-
-  Cards are content: a payload may carry fewer projects and pricing tiers than the sample (arrays replace the sample's as a whole, within the limits of "Get template by ID"). Everything it leaves out is filled from the sample.
+  Cards are content: a payload may carry fewer index items and sheet frames than the sample (arrays replace the sample's as a whole, within the limits of "Get template by ID"). Everything it leaves out is filled from the sample.
 order: 4600
 method: POST
 url: '{{baseUrl}}/api/site'
@@ -21,50 +21,57 @@ body:
       "slug": "{{newSiteSlug}}-cards",
       "templateId": "{{templateId}}",
       "brand": {
-        "name": "Harbor Films",
-        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
-        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
-        "fontFamily": "Oxanium",
+        "name": "Iris Vale",
+        "logoUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F",
+        "fontFamily": "Geist",
         "colors": {
-          "primary": "#0EA5E9",
-          "secondary": "#0F172A",
-          "accent": "#38BDF8",
-          "background": "#020617",
-          "text": "#F8FAFC"
+          "primary": "#FF3B1F",
+          "secondary": "#EEEAE0",
+          "accent": "#E8A33D",
+          "background": "#0E0E0C",
+          "text": "#F2EFE6"
         }
       },
       "data": {
         "pages": {
           "home": {
-            "projects": {
+            "index": {
               "items": [
                 {
                   "title": "Project 1",
-                  "category": "Narrative Short",
+                  "category": "Campaign",
+                  "year": "2026",
                   "description": "A short description.",
-                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                  "imageUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&fit=crop&q=80"
                 },
                 {
                   "title": "Project 2",
-                  "category": "Narrative Short",
+                  "category": "Campaign",
+                  "year": "2026",
                   "description": "A short description.",
-                  "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&fit=crop&q=80"
+                  "imageUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&fit=crop&q=80"
                 }
               ]
             },
-            "pricing": {
-              "tiers": [
+            "sheet": {
+              "frames": [
                 {
-                  "name": "Starter",
-                  "price": "from $1,500",
-                  "description": "A single short film or photo set.",
-                  "features": [
-                    "1 day shoot"
-                  ],
-                  "cta": {
-                    "label": "Get started",
-                    "href": "#contact"
-                  }
+                  "label": "01",
+                  "imageUrl": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=600&fit=crop&q=80"
+                },
+                {
+                  "label": "01A",
+                  "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&fit=crop&q=80",
+                  "circled": true
+                },
+                {
+                  "label": "02",
+                  "imageUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&fit=crop&q=80"
+                },
+                {
+                  "label": "02A",
+                  "imageUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&fit=crop&q=80"
                 }
               ]
             }
@@ -79,12 +86,12 @@ scripts:
       pm.test('status is 201', () => pm.response.to.have.status(201))
       pm.test('keeps only the cards that were sent', () => {
         const home = pm.response.json().data.pages.home
-        pm.expect(home.projects.items.length).to.eql(2)
-        pm.expect(home.pricing.tiers.length).to.eql(1)
+        pm.expect(home.index.items.length).to.eql(2)
+        pm.expect(home.sheet.frames.length).to.eql(4)
       })
       pm.test('the rest is filled from the sample', () => {
-        const { pages } = pm.response.json().data
-        pm.expect(pages.home.hero.title).to.be.a('string').and.not.empty
-        pm.expect(pages.projects.projects.items.length).to.be.above(2)
+        const home = pm.response.json().data.pages.home
+        pm.expect(home.cover.title).to.be.a('string').and.not.empty
+        pm.expect(home.compCard.measurements.length).to.be.above(2)
       })
 examples: './.resources/Create site with fewer cards.resources/examples/'

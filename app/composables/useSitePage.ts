@@ -23,7 +23,14 @@ export async function useSitePage() {
   const page = extraSegment ? undefined : site.value.data.pages[pageKey]
 
   if (!page) {
-    throw createError({ statusCode: 404, statusMessage: `Page "${pageKey}" not found.`, fatal: true })
+    // The error page answers in the look of the site, so it needs its brand and a cover image
+    const { brand, data } = site.value
+    throw createError({
+      statusCode: 404,
+      statusMessage: `Page "${pageKey}" not found.`,
+      fatal: true,
+      data: { notFound: { brand, imageUrl: data.pages.home.cover.imageUrl, homeHref: customDomain.value ? '/' : `/${site.value.slug}` } },
+    })
   }
 
   // The Nuxt context is lost after the await above

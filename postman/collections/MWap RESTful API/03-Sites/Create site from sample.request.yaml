@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Create site from sample'
 description: |-
-  A site created from only slug, template, brand and domains (no `data`) is filled from the template sample: every page has a real title, description and sections, and no title contains a `{{ }}` token. Same headers and rules as "Create site".
+  A site created from only slug, template, brand and domains (no `data`) is filled from the template sample: the page has a real title, description and every section, and no title contains a `{{ }}` token. Same headers and rules as "Create site".
 order: 4500
 method: POST
 url: '{{baseUrl}}/api/site'
@@ -21,16 +21,16 @@ body:
       "slug": "{{newSiteSlug}}-sample",
       "templateId": "{{templateId}}",
       "brand": {
-        "name": "Harbor Films",
-        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
-        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
-        "fontFamily": "Oxanium",
+        "name": "Iris Vale",
+        "logoUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F",
+        "fontFamily": "Geist",
         "colors": {
-          "primary": "#0EA5E9",
-          "secondary": "#0F172A",
-          "accent": "#38BDF8",
-          "background": "#020617",
-          "text": "#F8FAFC"
+          "primary": "#FF3B1F",
+          "secondary": "#EEEAE0",
+          "accent": "#E8A33D",
+          "background": "#0E0E0C",
+          "text": "#F2EFE6"
         }
       },
       "domains": [
@@ -42,17 +42,17 @@ scripts:
     language: text/javascript
     code: |-
       pm.test('status is 201', () => pm.response.to.have.status(201))
-      pm.test('every page is filled from the sample', () => {
-        const { pages } = pm.response.json().data
-        for (const [page, slots] of Object.entries({ home: ['hero', 'projects', 'pricing', 'contact'], projects: ['projects', 'contact'], about: ['hero', 'story', 'contact'] })) {
-          pm.expect(pages[page].title, page + ' title').to.be.a('string').and.not.empty
-          pm.expect(pages[page].description, page + ' description').to.be.a('string').and.not.empty
-          for (const slot of slots) pm.expect(pages[page][slot].enabled, page + '.' + slot).to.eql(true)
-        }
+      pm.test('the page is filled from the sample', () => {
+        const { pages, contact } = pm.response.json().data
+        pm.expect(Object.keys(pages)).to.have.members(['home'])
+        pm.expect(pages.home.title, 'title').to.be.a('string').and.not.empty
+        pm.expect(pages.home.description, 'description').to.be.a('string').and.not.empty
+        for (const slot of ['cover','index','sheet','compCard','booking','footer']) pm.expect(pages.home[slot].enabled, slot).to.eql(true)
+        pm.expect(contact.email).to.be.a('string').and.not.empty
       })
-      pm.test('home has the hero, projects, pricing and contact slots and no sections list', () => {
+      pm.test('the home page has the named slots and no sections list', () => {
         const home = pm.response.json().data.pages.home
-        pm.expect(home).to.include.keys('hero', 'projects', 'pricing', 'contact')
+        pm.expect(home).to.include.keys('cover', 'index', 'sheet', 'compCard', 'booking', 'footer')
         pm.expect(home).to.not.have.property('sections')
       })
       pm.test('no placeholder tokens are left', () => pm.expect(pm.response.text()).to.not.include('{{'))

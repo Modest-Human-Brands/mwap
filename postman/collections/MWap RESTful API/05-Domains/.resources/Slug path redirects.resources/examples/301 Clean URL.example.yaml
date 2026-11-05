@@ -2,14 +2,14 @@ $kind: http-example
 name: '301 Clean URL'
 order: 1000
 request:
-  url: '{{baseUrl}}/harbor-films/projects'
+  url: '{{baseUrl}}/iris-vale'
   method: GET
 response:
   statusCode: 301
   statusText: 'Moved Permanently'
   headers:
     - key: Location
-      value: '/projects'
+      value: '/'
   body:
     type: text
     content: |-

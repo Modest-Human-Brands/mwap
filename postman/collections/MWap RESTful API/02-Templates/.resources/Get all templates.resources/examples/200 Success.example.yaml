@@ -15,10 +15,10 @@ response:
     content: |-
       [
         {
-          "id": "studio-v1",
-          "label": "Studio",
-          "shortLabel": "Studio",
-          "category": "Studios",
-          "description": "Brand site for film and photo studios with Home, Projects and About pages built from hero, projects, pricing and contact sections."
+          "id": "contact-sheet",
+          "label": "Contact Sheet",
+          "shortLabel": "Contact Sheet",
+          "category": "Portfolios",
+          "description": "Single-page portfolio for fashion and editorial models: cover, work index with preview, contact sheet, comp card and booking, built from cover, index, sheet, comp card, booking and footer sections."
         }
       ]

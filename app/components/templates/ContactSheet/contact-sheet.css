@@ -1,0 +1,55 @@
+.cs {
+  --cs-pad: clamp(1rem, 0.4rem + 2.8vw, 3rem);
+  --cs-display: 'Anton', 'Impact', 'Arial Narrow', sans-serif;
+  --cs-serif: 'Instrument Serif', Georgia, serif;
+  --cs-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Surfaces and lines are derived from the brand background and text, so a brand only picks five colors */
+  --cs-strip: color-mix(in srgb, var(--brand-text) 6%, var(--brand-bg));
+  --cs-frame: color-mix(in srgb, var(--brand-text) 12%, var(--brand-bg));
+  --cs-line: color-mix(in srgb, var(--brand-text) 22%, var(--brand-bg));
+  --cs-muted: color-mix(in srgb, var(--brand-text) 62%, var(--brand-bg));
+  --cs-on-primary: rgb(var(--brand-on-primary-rgb));
+  --cs-on-secondary: rgb(var(--brand-on-secondary-rgb));
+  --cs-on-secondary-muted: color-mix(in srgb, var(--cs-on-secondary) 60%, var(--brand-secondary));
+  --cs-on-secondary-line: color-mix(in srgb, var(--cs-on-secondary) 25%, var(--brand-secondary));
+
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--brand-bg);
+  color: var(--brand-text);
+  font-family: var(--brand-font, sans-serif);
+}
+
+.cs a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cs .cs-eyebrow {
+  margin: 0;
+  font: 500 0.75rem/1 var(--cs-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand-accent);
+}
+
+.cs .cs-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.125rem 1.75rem;
+  border: 0;
+  background: var(--brand-primary);
+  color: var(--cs-on-primary);
+  font: 500 0.75rem/1 var(--cs-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.cs :focus-visible {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 2px;
+}

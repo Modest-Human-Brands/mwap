@@ -22,7 +22,7 @@ response:
         "data": {
           "errors": [
             {
-              "field": "data.pages.home.projects.items",
+              "field": "data.pages.home.index.items",
               "message": "Too big: expected array to have <=12 items",
               "code": "too_big"
             }

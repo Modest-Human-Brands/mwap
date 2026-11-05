@@ -21,27 +21,25 @@ body:
       "slug": "{{newSiteSlug}}-hidden",
       "templateId": "{{templateId}}",
       "brand": {
-        "name": "Harbor Films",
-        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
-        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
-        "fontFamily": "Oxanium",
+        "name": "Iris Vale",
+        "logoUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F",
+        "fontFamily": "Geist",
         "colors": {
-          "primary": "#0EA5E9",
-          "secondary": "#0F172A",
-          "accent": "#38BDF8",
-          "background": "#020617",
-          "text": "#F8FAFC"
+          "primary": "#FF3B1F",
+          "secondary": "#EEEAE0",
+          "accent": "#E8A33D",
+          "background": "#0E0E0C",
+          "text": "#F2EFE6"
         }
       },
       "data": {
         "pages": {
           "home": {
-            "pricing": {
+            "sheet": {
               "enabled": false
-            }
-          },
-          "about": {
-            "hero": {
+            },
+            "compCard": {
               "enabled": false
             }
           }
@@ -54,13 +52,14 @@ scripts:
     code: |-
       pm.test('status is 201', () => pm.response.to.have.status(201))
       pm.test('the sections are hidden', () => {
-        const { pages } = pm.response.json().data
-        pm.expect(pages.home.pricing.enabled).to.eql(false)
-        pm.expect(pages.about.hero.enabled).to.eql(false)
+        const { home } = pm.response.json().data.pages
+        pm.expect(home.sheet.enabled).to.eql(false)
+        pm.expect(home.compCard.enabled).to.eql(false)
       })
       pm.test('hidden sections keep their content, the others stay visible', () => {
-        const { pages } = pm.response.json().data
-        pm.expect(pages.home.pricing.tiers.length).to.be.above(0)
-        pm.expect(pages.home.hero.enabled).to.eql(true)
+        const { home } = pm.response.json().data.pages
+        pm.expect(home.sheet.frames.length).to.be.above(0)
+        pm.expect(home.compCard.measurements.length).to.be.above(0)
+        pm.expect(home.cover.enabled).to.eql(true)
       })
 examples: './.resources/Create site with hidden section.resources/examples/'

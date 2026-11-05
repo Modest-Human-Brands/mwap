@@ -17,28 +17,32 @@ function onColor(hex: string): string {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.179 ? '0 0 0' : '255 255 255'
 }
 
-export function useSiteHead(site: MaybeRefOrGetter<SitePayload>, page: PagePayload) {
-  // `meta` is private runtime config: it only exists during SSR
-  const buildTime = useRuntimeConfig().meta?.buildTime
-
+/** Icon, font and the brand variables (`--brand-*`) every template styles itself with */
+export function useBrandHead(brand: MaybeRefOrGetter<BrandPayload>) {
   useHead(() => {
-    const { brand } = toValue(site)
-    const { colors } = brand
+    const { colors, faviconUrl, fontFamily } = toValue(brand)
 
     return {
       titleTemplate: '%s',
       link: [
-        { rel: 'icon', href: brand.faviconUrl },
-        { rel: 'stylesheet', href: `https://fonts.googleapis.com/css2?family=${brand.fontFamily.replace(/ /g, '+')}:wght@400;500;600;700&display=swap` },
+        { rel: 'icon', href: faviconUrl },
+        { rel: 'stylesheet', href: `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@400;500;600;700&display=swap` },
       ],
       style: [
         {
-          // Hex values for plain CSS, RGB channels for Tailwind (opacity modifiers); on-primary is the readable text color for primary buttons
-          textContent: `:root{--brand-primary:${colors.primary};--brand-secondary:${colors.secondary};--brand-accent:${colors.accent};--brand-bg:${colors.background};--brand-text:${colors.text};--brand-primary-rgb:${channels(colors.primary)};--brand-secondary-rgb:${channels(colors.secondary)};--brand-accent-rgb:${channels(colors.accent)};--brand-bg-rgb:${channels(colors.background)};--brand-text-rgb:${channels(colors.text)};--brand-on-primary-rgb:${onColor(colors.primary)};--brand-font:'${brand.fontFamily}',sans-serif;}`,
+          // Hex values for plain CSS, RGB channels for Tailwind (opacity modifiers); on-primary and on-secondary are the readable text colors on top of those colors
+          textContent: `:root{--brand-primary:${colors.primary};--brand-secondary:${colors.secondary};--brand-accent:${colors.accent};--brand-bg:${colors.background};--brand-text:${colors.text};--brand-primary-rgb:${channels(colors.primary)};--brand-secondary-rgb:${channels(colors.secondary)};--brand-accent-rgb:${channels(colors.accent)};--brand-bg-rgb:${channels(colors.background)};--brand-text-rgb:${channels(colors.text)};--brand-on-primary-rgb:${onColor(colors.primary)};--brand-on-secondary-rgb:${onColor(colors.secondary)};--brand-font:'${fontFamily}',sans-serif;}`,
         },
       ],
     }
   })
+}
+
+export function useSiteHead(site: MaybeRefOrGetter<SitePayload>, page: PagePayload) {
+  // `meta` is private runtime config: it only exists during SSR
+  const buildTime = useRuntimeConfig().meta?.buildTime
+
+  useBrandHead(() => toValue(site).brand)
 
   useSeoMeta({
     title: page.title,

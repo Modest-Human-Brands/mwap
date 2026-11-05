@@ -1,16 +1,16 @@
 $kind: http-example
-name: '200 Projects'
+name: '404 Unknown page'
 order: 1000
 request:
   url: '{{baseUrl}}/projects'
   method: GET
 response:
-  statusCode: 200
-  statusText: 'OK'
+  statusCode: 404
+  statusText: 'Not Found'
   headers:
     - key: Content-Type
       value: 'text/html; charset=utf-8'
   body:
     type: html
     content: |-
-      <!DOCTYPE html><html lang="en"><head><title>Harbor Films</title>…</head><body>…<h1>Stories From The Waterfront.</h1>…</body></html>
+      <!DOCTYPE html><html lang="en"><head><title>Iris Vale</title>…</head><body>…<h1>404</h1>…</body></html>

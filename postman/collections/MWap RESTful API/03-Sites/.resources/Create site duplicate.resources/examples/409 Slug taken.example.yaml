@@ -17,6 +17,6 @@ response:
         "error": true,
         "url": "http://localhost:3000/api/site",
         "statusCode": 409,
-        "statusMessage": "Site \"harbor-films\" already exists",
-        "message": "Site \"harbor-films\" already exists"
+        "statusMessage": "Site \"iris-vale\" already exists",
+        "message": "Site \"iris-vale\" already exists"
       }

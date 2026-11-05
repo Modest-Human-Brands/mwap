@@ -11,27 +11,29 @@ const linkSchema = z.strictObject({
 
 /**
  * The layout of a template is fixed: a page has named slots, never a list of sections. A slot can be hidden
- * (`enabled: false`) and its content edited; only the card lists (items, tiers, features, links) can grow or
+ * (`enabled: false`) and its content edited; only the card lists (items, frames, measurements, links) can grow or
  * shrink, within limits. Unknown keys are rejected at every level.
  */
 const slot = <T extends z.ZodRawShape>(shape: T) => z.strictObject({ enabled: z.boolean(), ...shape })
 
-export const heroSlotSchema = slot({
+export const coverSlotSchema = slot({
   title: z.string(),
-  subtitle: z.string(),
-  cta: linkSchema,
-  mediaUrl: z.url(),
+  tagline: z.string(),
+  label: z.string(),
+  availability: z.string().optional(),
+  imageUrl: z.url(),
+  portraitUrl: z.url(),
 })
 
-export const projectsSlotSchema = slot({
+export const indexSlotSchema = slot({
   title: z.string(),
-  subtitle: z.string().optional(),
-  cta: linkSchema.optional(),
+  hint: z.string().optional(),
   items: z
     .array(
       z.strictObject({
         title: z.string(),
         category: z.string(),
+        year: z.string(),
         description: z.string(),
         imageUrl: z.url(),
       })
@@ -40,33 +42,44 @@ export const projectsSlotSchema = slot({
     .max(12),
 })
 
-export const pricingSlotSchema = slot({
+export const sheetSlotSchema = slot({
   title: z.string(),
-  subtitle: z.string().optional(),
-  tiers: z
+  label: z.string().optional(),
+  frames: z
     .array(
       z.strictObject({
-        name: z.string(),
-        price: z.string(),
-        description: z.string(),
-        features: z.array(z.string()).min(1).max(8),
-        cta: linkSchema,
-        highlighted: z.boolean().optional(),
+        label: z.string(),
+        imageUrl: z.url(),
+        circled: z.boolean().optional(),
       })
     )
     .min(1)
-    .max(4),
+    .max(16),
 })
 
-/** Used for both the "story" and the "contact" slot */
-export const aboutContactSlotSchema = slot({
+export const compCardSlotSchema = slot({
   title: z.string(),
-  body: z.string(),
-  contact: z.strictObject({
-    email: z.email(),
-    phone: z.string().optional(),
-    links: z.array(linkSchema).max(6).optional(),
-  }),
+  portraitUrl: z.url(),
+  measurements: z
+    .array(z.strictObject({ label: z.string(), value: z.string() }))
+    .min(1)
+    .max(10),
+  stats: z.array(z.strictObject({ value: z.string(), label: z.string() })).max(3),
+  download: linkSchema,
+})
+
+export const bookingSlotSchema = slot({
+  title: z.string(),
+  intro: z.string(),
+  drawerTitle: z.string(),
+  drawerIntro: z.string(),
+})
+
+export const footerSlotSchema = slot({
+  management: z.strictObject({ name: z.string(), address: z.string() }),
+  links: z.array(linkSchema).max(6),
+  location: z.string(),
+  legal: z.array(linkSchema).max(3),
 })
 
 const page = <T extends z.ZodRawShape>(slots: T) => z.strictObject({ title: z.string(), description: z.string(), ...slots })
@@ -95,18 +108,21 @@ export const brandSchema = z.object({
   }),
 })
 
-/** Payload of the `studio-v1` template */
-export const studioDataSchema = z.strictObject({
+/** Payload of the `contact-sheet` template */
+export const contactSheetDataSchema = z.strictObject({
   seo: z.object({
     ogImage: z.url(),
     canonicalUrl: z.url(),
     keywords: z.array(z.string()).optional(),
   }),
-  navigation: z.array(linkSchema),
+  navigation: z.array(linkSchema).max(6),
+  // Booking email, and where the booking forms POST to (without it they open a mailto link)
+  contact: z.strictObject({
+    email: z.email(),
+    bookingEndpoint: z.url().optional(),
+  }),
   pages: z.strictObject({
-    home: page({ hero: heroSlotSchema, projects: projectsSlotSchema, pricing: pricingSlotSchema, contact: aboutContactSlotSchema }),
-    projects: page({ projects: projectsSlotSchema, contact: aboutContactSlotSchema }),
-    about: page({ hero: heroSlotSchema, story: aboutContactSlotSchema, contact: aboutContactSlotSchema }),
+    home: page({ cover: coverSlotSchema, index: indexSlotSchema, sheet: sheetSlotSchema, compCard: compCardSlotSchema, booking: bookingSlotSchema, footer: footerSlotSchema }),
   }),
 })
 
@@ -130,7 +146,7 @@ export const siteSchema = z.object({
   orgId: orgIdSchema.default(DEFAULT_ORG_ID),
   templateId: z.string(),
   brand: brandSchema,
-  data: studioDataSchema,
+  data: contactSheetDataSchema,
   domains: domainsSchema,
   updatedAt: z.string(),
 })

@@ -2,14 +2,14 @@ $kind: http-example
 name: '301 Apex domain'
 order: 1000
 request:
-  url: '{{baseUrl}}/projects'
+  url: '{{baseUrl}}/'
   method: GET
 response:
   statusCode: 301
   statusText: 'Moved Permanently'
   headers:
     - key: Location
-      value: 'http://harbor.example.com/projects'
+      value: 'http://irisvale.example.com/'
   body:
     type: text
     content: |-

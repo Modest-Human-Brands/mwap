@@ -34,5 +34,5 @@ export function parseSiteInput<Extra extends z.ZodRawShape>(body: unknown, extra
   const issues = [...(parsed.success ? [] : toIssues(parsed.error.issues)), ...(dataResult.success ? [] : toIssues(dataResult.error.issues, 'data'))]
   if (issues.length || !parsed.success || !dataResult.success) throw validationError(issues)
 
-  return { ...parsed.data, template, data: dataResult.data as StudioData }
+  return { ...parsed.data, template, data: dataResult.data as ContactSheetData }
 }

@@ -15,10 +15,11 @@ scripts:
     language: text/javascript
     code: |-
       pm.test('status is 200', () => pm.response.to.have.status(200))
-      pm.test('lists the clean urls of the site', () => {
+      pm.test('lists the clean url of the home page and no other page', () => {
         const xml = pm.response.text()
-        pm.expect(xml).to.include('/projects</loc>')
-        pm.expect(xml).to.include('/about</loc>')
+        pm.expect(xml).to.match(/<loc>[^<]+\/<\/loc>/)
+        pm.expect(xml).to.not.include('/projects</loc>')
+        pm.expect(xml).to.not.include('/about</loc>')
       })
       pm.test('lists no other site and no slug', () => {
         const xml = pm.response.text()

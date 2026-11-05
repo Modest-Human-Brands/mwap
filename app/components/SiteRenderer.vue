@@ -6,7 +6,7 @@ defineProps<{
 
 // One entry per template in the shared registry
 const templateComponents: Record<string, Component> = {
-  'studio-v1': resolveComponent('TemplatesStudioV1') as Component,
+  'contact-sheet': resolveComponent('TemplatesContactSheet') as Component,
 }
 </script>
 

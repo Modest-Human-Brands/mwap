@@ -22,5 +22,5 @@ scripts:
           properties: { id: { type: 'string' }, label: { type: 'string' }, shortLabel: { type: 'string' }, category: { type: ['string', 'null'] }, description: { type: 'string' } }
         }
       }))
-      pm.test('lists the studio-v1 template', () => pm.expect(pm.response.json().map((t) => t.id)).to.include('studio-v1'))
+      pm.test('lists the contact-sheet template', () => pm.expect(pm.response.json().map((t) => t.id)).to.include('contact-sheet'))
 examples: './.resources/Get all templates.resources/examples/'

@@ -26,23 +26,28 @@ scripts:
         const { sample } = pm.response.json()
         pm.expect(JSON.stringify(sample)).to.not.include('{{')
         pm.expect(sample.navigation.length).to.be.above(0)
-        for (const [page, slots] of Object.entries({ home: ['hero', 'projects', 'pricing', 'contact'], projects: ['projects', 'contact'], about: ['hero', 'story', 'contact'] })) {
-          pm.expect(sample.pages[page].title, page + ' title').to.be.a('string').and.not.empty
-          for (const slot of slots) pm.expect(sample.pages[page][slot].enabled, page + '.' + slot).to.eql(true)
-        }
+        pm.expect(sample.contact.email).to.be.a('string').and.not.empty
+        pm.expect(Object.keys(sample.pages)).to.have.members(['home'])
+        pm.expect(sample.pages.home.title, 'title').to.be.a('string').and.not.empty
+        for (const slot of ['cover','index','sheet','compCard','booking','footer']) pm.expect(sample.pages.home[slot].enabled, slot).to.eql(true)
       })
       pm.test('schema fixes the layout and limits the cards', () => {
         const pages = pm.response.json().schema.properties.pages
         pm.expect(pages.additionalProperties).to.eql(false)
-        pm.expect(Object.keys(pages.properties)).to.have.members(['home', 'projects', 'about'])
-        for (const [page, slots] of Object.entries({ home: ['hero', 'projects', 'pricing', 'contact'], projects: ['projects', 'contact'], about: ['hero', 'story', 'contact'] })) {
-          pm.expect(pages.properties[page].additionalProperties, page).to.eql(false)
-          pm.expect(Object.keys(pages.properties[page].properties), page).to.have.members(['title', 'description', ...slots])
-        }
+        pm.expect(Object.keys(pages.properties)).to.have.members(['home'])
+        pm.expect(pages.properties.home.additionalProperties).to.eql(false)
+        pm.expect(Object.keys(pages.properties.home.properties)).to.have.members(['title', 'description', ...['cover','index','sheet','compCard','booking','footer']])
         const home = pages.properties.home.properties
-        pm.expect([home.projects.properties.items.minItems, home.projects.properties.items.maxItems]).to.eql([1, 12])
-        pm.expect([home.pricing.properties.tiers.minItems, home.pricing.properties.tiers.maxItems]).to.eql([1, 4])
-        pm.expect([home.pricing.properties.tiers.items.properties.features.minItems, home.pricing.properties.tiers.items.properties.features.maxItems]).to.eql([1, 8])
-        pm.expect(home.contact.properties.contact.properties.links.maxItems).to.eql(6)
+        const limits = (list) => [list.minItems, list.maxItems]
+        pm.expect(limits(home.index.properties.items)).to.eql([1, 12])
+        pm.expect(limits(home.sheet.properties.frames)).to.eql([1, 16])
+        pm.expect(limits(home.compCard.properties.measurements)).to.eql([1, 10])
+        pm.expect(home.compCard.properties.stats.maxItems).to.eql(3)
+        pm.expect(home.footer.properties.links.maxItems).to.eql(6)
+        pm.expect(home.footer.properties.legal.maxItems).to.eql(3)
+      })
+      pm.test('the contact email is required, the booking endpoint is optional', () => {
+        const contact = pm.response.json().schema.properties.contact
+        pm.expect(contact.required).to.include('email').and.not.include('bookingEndpoint')
       })
 examples: './.resources/Get template by ID.resources/examples/'

@@ -16,17 +16,17 @@ response:
       {
         "results": [
           {
-            "slug": "harbor-films",
+            "slug": "iris-vale",
             "orgId": "pm-org",
-            "templateId": "studio-v1",
-            "name": "Harbor Films Studio",
+            "templateId": "contact-sheet",
+            "name": "Iris Vale Studio",
             "updatedAt": "2026-10-25T20:35:03.521Z"
           },
           {
-            "slug": "harbor-films-sample",
+            "slug": "iris-vale-sample",
             "orgId": "pm-org",
-            "templateId": "studio-v1",
-            "name": "Harbor Films",
+            "templateId": "contact-sheet",
+            "name": "Iris Vale",
             "updatedAt": "2026-10-25T20:35:03.486Z"
           }
         ],

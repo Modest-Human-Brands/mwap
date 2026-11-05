@@ -23,16 +23,16 @@ body:
     {
       "templateId": "{{templateId}}",
       "brand": {
-        "name": "Harbor Films Studio",
-        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
-        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
-        "fontFamily": "Oxanium",
+        "name": "Iris Vale Studio",
+        "logoUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F",
+        "fontFamily": "Geist",
         "colors": {
-          "primary": "#0EA5E9",
-          "secondary": "#0F172A",
-          "accent": "#38BDF8",
-          "background": "#020617",
-          "text": "#F8FAFC"
+          "primary": "#FF3B1F",
+          "secondary": "#EEEAE0",
+          "accent": "#E8A33D",
+          "background": "#0E0E0C",
+          "text": "#F2EFE6"
         }
       },
       "domains": [
@@ -40,28 +40,29 @@ body:
       ],
       "data": {
         "seo": {
-          "ogImage": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&h=630&fit=crop&q=80",
-          "canonicalUrl": "https://harbor.example.com"
+          "ogImage": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1200&fit=crop&q=80",
+          "canonicalUrl": "https://irisvale.example.com"
         },
         "navigation": [
           {
-            "label": "Home",
-            "href": "/"
+            "label": "Index",
+            "href": "#index"
           }
         ],
+        "contact": {
+          "email": "booking@irisvale.example.com"
+        },
         "pages": {
           "home": {
-            "title": "Harbor Films",
-            "description": "A coastal production studio.",
-            "hero": {
+            "title": "Iris Vale",
+            "description": "Portfolio of Iris Vale, a fashion and editorial model.",
+            "cover": {
               "enabled": true,
-              "title": "Stories From The Waterfront.",
-              "subtitle": "A coastal production studio for films, series and campaigns.",
-              "cta": {
-                "label": "Get in touch",
-                "href": "#contact"
-              },
-              "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
+              "title": "Iris Vale",
+              "tagline": "Fashion and editorial model, based in Berlin.",
+              "label": "Frame 00 / Cover",
+              "imageUrl": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1920&fit=crop&q=80",
+              "portraitUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&fit=crop&q=80"
             }
           }
         }
@@ -96,8 +97,8 @@ scripts:
               navigation: { type: 'array', items: { type: 'object', required: ['label', 'href'] } },
               pages: {
                 type: 'object',
-                required: ['home', 'projects', 'about'],
-                properties: { home: { required: ['title', 'description', 'hero', 'projects', 'pricing', 'contact'] }, projects: { required: ['title', 'description', 'projects', 'contact'] }, about: { required: ['title', 'description', 'hero', 'story', 'contact'] } }
+                required: ['home'],
+                properties: { home: { required: ['title', 'description', 'cover', 'index', 'sheet', 'compCard', 'booking', 'footer'] } }
               }
             }
           },
@@ -105,5 +106,5 @@ scripts:
         }
       }))
       pm.test('stays in its organization', () => pm.expect(pm.response.json().orgId).to.eql(pm.collectionVariables.get('orgId')))
-      pm.test('brand was replaced', () => pm.expect(pm.response.json().brand.name).to.eql('Harbor Films Studio'))
+      pm.test('brand was replaced', () => pm.expect(pm.response.json().brand.name).to.eql('Iris Vale Studio'))
 examples: './.resources/Replace site.resources/examples/'

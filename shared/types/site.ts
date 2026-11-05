@@ -1,12 +1,14 @@
 import type { z } from 'zod'
-import type { aboutContactSlotSchema, brandSchema, heroSlotSchema, pricingSlotSchema, projectsSlotSchema, siteSchema, studioDataSchema } from '../utils/site'
+import type { bookingSlotSchema, brandSchema, compCardSlotSchema, contactSheetDataSchema, coverSlotSchema, footerSlotSchema, indexSlotSchema, sheetSlotSchema, siteSchema } from '../utils/site'
 
 export type SitePayload = z.infer<typeof siteSchema>
 export type BrandPayload = z.infer<typeof brandSchema>
-export type StudioData = z.infer<typeof studioDataSchema>
-export type PageKey = keyof StudioData['pages']
-export type PagePayload = StudioData['pages'][PageKey]
-export type HeroSlot = z.infer<typeof heroSlotSchema>
-export type ProjectsSlot = z.infer<typeof projectsSlotSchema>
-export type PricingSlot = z.infer<typeof pricingSlotSchema>
-export type AboutContactSlot = z.infer<typeof aboutContactSlotSchema>
+export type ContactSheetData = z.infer<typeof contactSheetDataSchema>
+export type PageKey = keyof ContactSheetData['pages']
+export type PagePayload = ContactSheetData['pages'][PageKey]
+export type CoverSlot = z.infer<typeof coverSlotSchema>
+export type IndexSlot = z.infer<typeof indexSlotSchema>
+export type SheetSlot = z.infer<typeof sheetSlotSchema>
+export type CompCardSlot = z.infer<typeof compCardSlotSchema>
+export type BookingSlot = z.infer<typeof bookingSlotSchema>
+export type FooterSlot = z.infer<typeof footerSlotSchema>

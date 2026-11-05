@@ -16,5 +16,5 @@ scripts:
     language: text/javascript
     code: |-
       pm.test('status is 200', () => pm.response.to.have.status(200))
-      pm.test('shows the requested site', () => pm.expect(pm.response.text()).to.include('Northlight Studio'))
+      pm.test('shows the requested site', () => pm.expect(pm.response.text()).to.include('Nova Marek'))
 examples: './.resources/Unknown host keeps slug routes.resources/examples/'

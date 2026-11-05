@@ -17,6 +17,6 @@ response:
         "error": true,
         "url": "http://localhost:3000/api/site",
         "statusCode": 409,
-        "statusMessage": "Domain \"harbor-films.example.test\" is already used by site \"harbor-films\"",
-        "message": "Domain \"harbor-films.example.test\" is already used by site \"harbor-films\""
+        "statusMessage": "Domain \"iris-vale.example.test\" is already used by site \"iris-vale\"",
+        "message": "Domain \"iris-vale.example.test\" is already used by site \"iris-vale\""
       }

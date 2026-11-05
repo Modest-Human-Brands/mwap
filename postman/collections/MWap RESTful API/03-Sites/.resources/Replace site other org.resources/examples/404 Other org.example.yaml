@@ -2,7 +2,7 @@ $kind: http-example
 name: '404 Other org'
 order: 1000
 request:
-  url: '{{baseUrl}}/api/site/harbor-films'
+  url: '{{baseUrl}}/api/site/iris-vale'
   method: PUT
 response:
   statusCode: 404
@@ -15,8 +15,8 @@ response:
     content: |-
       {
         "error": true,
-        "url": "http://localhost:3000/api/site/harbor-films",
+        "url": "http://localhost:3000/api/site/iris-vale",
         "statusCode": 404,
-        "statusMessage": "No site found for slug: \"harbor-films\"",
-        "message": "No site found for slug: \"harbor-films\""
+        "statusMessage": "No site found for slug: \"iris-vale\"",
+        "message": "No site found for slug: \"iris-vale\""
       }

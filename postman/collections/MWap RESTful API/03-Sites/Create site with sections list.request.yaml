@@ -21,16 +21,16 @@ body:
       "slug": "{{newSiteSlug}}-list",
       "templateId": "{{templateId}}",
       "brand": {
-        "name": "Harbor Films",
-        "logoUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9&width=64&height=64",
-        "faviconUrl": "https://api.iconify.design/lucide/anchor.svg?color=%230EA5E9",
-        "fontFamily": "Oxanium",
+        "name": "Iris Vale",
+        "logoUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F",
+        "fontFamily": "Geist",
         "colors": {
-          "primary": "#0EA5E9",
-          "secondary": "#0F172A",
-          "accent": "#38BDF8",
-          "background": "#020617",
-          "text": "#F8FAFC"
+          "primary": "#FF3B1F",
+          "secondary": "#EEEAE0",
+          "accent": "#E8A33D",
+          "background": "#0E0E0C",
+          "text": "#F2EFE6"
         }
       },
       "data": {
@@ -38,15 +38,10 @@ body:
           "home": {
             "sections": [
               {
-                "type": "hero",
-                "id": "hero",
-                "title": "Hello",
-                "subtitle": "World",
-                "cta": {
-                  "label": "Go",
-                  "href": "#contact"
-                },
-                "mediaUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&fit=crop&q=80"
+                "type": "cover",
+                "id": "cover",
+                "title": "Iris Vale",
+                "tagline": "Fashion and editorial model."
               }
             ]
           }

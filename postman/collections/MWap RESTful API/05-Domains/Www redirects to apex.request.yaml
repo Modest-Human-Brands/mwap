@@ -4,7 +4,7 @@ description: |-
   www.<domain> redirects (301) to the apex domain, keeping the path.
 order: 4000
 method: GET
-url: '{{baseUrl}}/projects'
+url: '{{baseUrl}}/'
 headers:
   - key: Accept
     value: 'text/html'
@@ -17,5 +17,5 @@ scripts:
     language: text/javascript
     code: |-
       pm.test('status is 301', () => pm.response.to.have.status(301))
-      pm.test('points to the apex domain', () => pm.expect(pm.response.headers.get('Location')).to.eql('http://' + pm.collectionVariables.get('customDomain') + '/projects'))
+      pm.test('points to the apex domain', () => pm.expect(pm.response.headers.get('Location')).to.eql('http://' + pm.collectionVariables.get('customDomain') + '/'))
 examples: './.resources/Www redirects to apex.resources/examples/'

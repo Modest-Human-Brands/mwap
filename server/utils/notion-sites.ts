@@ -88,9 +88,7 @@ async function toSite(page: PageObjectResponse, orgTitles: Map<string, Promise<s
 
   const json = (await pageBlocks(page.id)).map((b) => (b.type === 'code' ? text(b.code.rich_text) : '')).join('')
   const body = bodySchema.parse(JSON.parse(json))
-  // Rows written in the old `sections` shape are converted, then filled from the sample like any payload
-  const content = isLegacyData(body.data) ? migrateLegacyData(template.sample, body.data) : body.data
-  const data = template.schema.parse(mergeWithSample(template.sample, content)) as StudioData
+  const data = template.schema.parse(mergeWithSample(template.sample, body.data)) as ContactSheetData
 
   return { slug, orgId, templateId: template.id, brand: body.brand, data, domains, updatedAt: page.last_edited_time }
 }
