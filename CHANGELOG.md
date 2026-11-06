@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.0.4
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.3...v0.0.4)
+
+### 🚀 Enhancements
+
+- **portfolio:** Add ContactSheetV1 template with various sections ([8913128](https://github.com/Modest-Human-Brands/mwap/commit/8913128))
+- **cors:** Add CORS preflight handling for API requests ([98ecb72](https://github.com/Modest-Human-Brands/mwap/commit/98ecb72))
+
+### 💅 Refactors
+
+- Api tests and site templates for new contact sheet structure ([f67ef2c](https://github.com/Modest-Human-Brands/mwap/commit/f67ef2c))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.3
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.2...v0.0.3)
