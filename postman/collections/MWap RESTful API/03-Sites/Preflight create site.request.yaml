@@ -1,0 +1,22 @@
+$kind: http-request
+name: 'Preflight create site'
+description: |-
+  CORS preflight of a browser calling the API from another origin (for example the editor creating a site with the x-api-key and x-org-id headers). Answered with 204 and the CORS headers for every path under /api; without it the request fell through to the public site route and answered 404, which a browser rejects. Needs no API key.
+order: 3800
+method: OPTIONS
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Origin
+    value: 'https://editor.example.com'
+  - key: Access-Control-Request-Method
+    value: 'POST'
+  - key: Access-Control-Request-Headers
+    value: 'content-type,x-api-key,x-org-id'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 204', () => pm.response.to.have.status(204))
+      pm.test('allows any origin once', () => pm.expect(pm.response.headers.filter((h) => h.key.toLowerCase() === 'access-control-allow-origin').length).to.eql(1))
+      pm.test('allows the custom headers', () => pm.expect(pm.response.headers.get('Access-Control-Allow-Headers')).to.match(/\*|x-api-key/i))
+      pm.test('has no body', () => pm.expect(pm.response.text()).to.eql(''))
