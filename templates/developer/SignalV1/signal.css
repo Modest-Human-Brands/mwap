@@ -1,0 +1,113 @@
+/* Signal: dark developer portfolio. Colors come from the brand (--brand-*); Exo 2 headings and JetBrains Mono are fixed, the brand font is the body font */
+:where(.sg) {
+  --sg-bg: var(--brand-bg);
+  --sg-raised: var(--brand-secondary);
+  --sg-text: var(--brand-text);
+  --sg-muted: color-mix(in srgb, var(--brand-text) 80%, var(--brand-bg));
+  --sg-line: color-mix(in srgb, var(--brand-text) 20%, var(--brand-bg));
+  --sg-sunken: color-mix(in srgb, var(--brand-bg) 40%, #000);
+  --sg-primary: var(--brand-primary);
+  --sg-accent: var(--brand-accent);
+  --sg-on-primary: rgb(var(--brand-on-primary-rgb));
+  --sg-display: 'Exo 2', var(--brand-font), sans-serif;
+  --sg-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --sg-pad: clamp(1.25rem, 5vw, 4rem);
+
+  background: var(--sg-bg);
+  color: var(--sg-text);
+  font-family: var(--brand-font);
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+:where(.sg) :is(h1, h2, h3, h4, p, ul, ol, dl, dd, figure) {
+  margin: 0;
+}
+
+:where(.sg) :is(ul, ol) {
+  padding: 0;
+  list-style: none;
+}
+
+:where(.sg) a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:where(.sg) .sg-display {
+  font-family: var(--sg-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+:where(.sg) .sg-mono {
+  font-family: var(--sg-mono);
+}
+
+:where(.sg) .sg-eyebrow {
+  color: var(--sg-accent);
+  font-family: var(--sg-display);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+:where(.sg) .sg-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0 1.5rem;
+  border: 1px solid var(--sg-primary);
+  border-radius: 999px;
+  background: var(--sg-primary);
+  color: var(--sg-on-primary);
+  font-family: var(--sg-display);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+:where(.sg) .sg-button:hover {
+  transform: translateY(-2px);
+}
+
+:where(.sg) .sg-button--ghost {
+  background: transparent;
+  color: var(--sg-text);
+  border-color: var(--sg-line);
+}
+
+:where(.sg) .sg-button--ghost:hover {
+  border-color: var(--sg-accent);
+}
+
+:where(.sg) .sg-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--sg-line);
+  border-radius: 999px;
+  color: var(--sg-muted);
+  font-family: var(--sg-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+:where(.sg) :focus-visible {
+  outline: 2px solid var(--sg-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :where(.sg) .sg-button {
+    will-change: transform;
+  }
+}

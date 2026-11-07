@@ -7,7 +7,7 @@ method: DELETE
 url: '{{baseUrl}}/api/site/:slug'
 pathVariables:
   - key: slug
-    value: 'nova-marek'
+    value: 'sample-model'
 headers:
   - key: Accept
     value: 'application/json'

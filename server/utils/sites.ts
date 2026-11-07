@@ -2,11 +2,11 @@
 const SEED_UPDATED_AT = '2026-01-01T00:00:00.000Z'
 
 const seeds: Record<string, SitePayload> = {
-  'nova-marek': siteSchema.parse({
-    slug: 'nova-marek',
+  'sample-model': siteSchema.parse({
+    slug: 'sample-model',
     templateId: 'contact-sheet',
     brand: {
-      name: 'Nova Marek',
+      name: 'Sample Model',
       logoUrl: 'https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F&width=64&height=64',
       faviconUrl: 'https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F',
       fontFamily: 'Geist',
@@ -18,7 +18,7 @@ const seeds: Record<string, SitePayload> = {
         text: '#F2EFE6',
       },
     },
-    data: mergeWithSample(templates['contact-sheet']!.sample, { seo: { canonicalUrl: 'https://novamarek.example.com' }, contact: { email: 'booking@novamarek.example.com' } }),
+    data: mergeWithSample(templates['contact-sheet']!.sample, { seo: { canonicalUrl: 'https://samplemodel.example.com' }, contact: { email: 'booking@samplemodel.example.com' } }),
     updatedAt: SEED_UPDATED_AT,
   }),
 }
@@ -89,5 +89,5 @@ export async function listSites({ tolerant = false } = {}): Promise<SitePayload[
 
 /** Public paths of every page of every site, e.g. `/slug`, `/slug/projects` */
 export async function listSitePaths(): Promise<string[]> {
-  return (await listSites({ tolerant: true })).flatMap((site) => Object.keys(site.data.pages).map((page) => (page === 'home' ? `/${site.slug}` : `/${site.slug}/${page}`)))
+  return (await listSites({ tolerant: true })).flatMap((site) => sitePageKeys(site.data).map((page) => (page === 'home' ? `/${site.slug}` : `/${site.slug}/${page}`)))
 }

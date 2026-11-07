@@ -1,0 +1,32 @@
+$kind: http-request
+name: 'Get signal project page'
+description: |-
+  The page of one project of the site created by "Create site signal", server-rendered at /<slug>/work/<project.slug> with the project name as title and h1, the meta bar (version, last update, status), overview, capabilities, releases and the analytics script of the site.
+order: 4791
+method: GET
+url: '{{baseUrl}}/:slug/work/:project'
+pathVariables:
+  - key: slug
+    value: '{{signalSlug}}'
+  - key: project
+    value: 'rune-infer'
+headers:
+  - key: Accept
+    value: 'text/html'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is HTML with the project as title', () => {
+        pm.expect(pm.response.headers.get('Content-Type')).to.include('text/html')
+        const html = pm.response.text()
+        pm.expect(html).to.include('<title>Rune Infer')
+        pm.expect(html).to.include('<h1')
+      })
+      pm.test('has the sections and the dates of the project', () => {
+        const html = pm.response.text()
+        for (const id of ['overview', 'capabilities', 'releases']) pm.expect(html, id).to.include('id="' + id + '"')
+        pm.expect(html).to.include('datetime="2026-03-02"')
+      })
+      pm.test('reports to the analytics property of the site', () => pm.expect(pm.response.text()).to.include('G-NOVADEV001'))

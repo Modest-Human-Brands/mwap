@@ -16,10 +16,10 @@ response:
       {
         "results": [
           {
-            "slug": "nova-marek",
+            "slug": "sample-model",
             "orgId": "default",
             "templateId": "contact-sheet",
-            "name": "Nova Marek",
+            "name": "Sample Model",
             "updatedAt": "2026-01-01T00:00:00.000Z"
           }
         ],

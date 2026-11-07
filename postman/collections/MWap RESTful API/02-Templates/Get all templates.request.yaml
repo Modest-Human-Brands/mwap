@@ -22,10 +22,11 @@ scripts:
           properties: { id: { type: 'string' }, label: { type: 'string' }, shortLabel: { type: 'string' }, category: { type: ['string', 'null'] }, description: { type: 'string' } }
         }
       }))
-      pm.test('lists both templates', () => pm.expect(pm.response.json().map((t) => t.id)).to.have.members(['contact-sheet', 'psychiatrist-editorial']))
+      pm.test('lists all templates', () => pm.expect(pm.response.json().map((t) => t.id)).to.have.members(['contact-sheet', 'psychiatrist-editorial', 'developer-signal']))
       pm.test('groups them by category', () => {
         const byId = Object.fromEntries(pm.response.json().map((t) => [t.id, t.category]))
         pm.expect(byId['contact-sheet']).to.eql('Portfolios')
         pm.expect(byId['psychiatrist-editorial']).to.eql('Psychiatrists')
+        pm.expect(byId['developer-signal']).to.eql('Developers')
       })
 examples: './.resources/Get all templates.resources/examples/'

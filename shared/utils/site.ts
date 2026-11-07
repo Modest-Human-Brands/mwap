@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // The payload of a template lives next to it
 import { contactSheetDataSchema } from '../../templates/portfolio/ContactSheetV1/schema'
+import { signalDataSchema } from '../../templates/developer/SignalV1/schema'
 import { editorialDataSchema } from '../../templates/psychiatrist/EditorialV1/schema'
 
 const hexColor = z.string().regex(/^#[0-9a-fA-F]{3,8}$/, 'Expected a hex color')
@@ -53,14 +54,27 @@ export const siteSchema = z.object({
   orgId: orgIdSchema.default(DEFAULT_ORG_ID),
   templateId: z.string(),
   brand: brandSchema,
-  data: z.union([contactSheetDataSchema, editorialDataSchema]),
+  data: z.union([contactSheetDataSchema, editorialDataSchema, signalDataSchema]),
   domains: domainsSchema,
   googleAnalyticsId: googleAnalyticsIdSchema.optional(),
   updatedAt: z.string(),
 })
 
+type SiteData = z.infer<typeof siteSchema>['data']
+type PageMeta = { title: string; description: string }
+
+/** Templates with a list of projects give each one a page at `work/<slug>` */
+const projectsOf = (data: SiteData) => ('projects' in data ? data.projects : [])
+
+/** Every page key of a site payload: the named pages and one per project, e.g. `home`, `about`, `work/rune-infer` */
+export function sitePageKeys(data: SiteData): string[] {
+  return [...Object.keys(data.pages), ...projectsOf(data).map((project) => `work/${project.slug}`)]
+}
+
 /** The page `key` of a site payload, or undefined when the template has no such page */
-export function sitePage(data: z.infer<typeof siteSchema>['data'], key: string): { title: string; description: string } | undefined {
-  const pages = data.pages as Record<string, { title: string; description: string }>
-  return Object.hasOwn(pages, key) ? pages[key] : undefined
+export function sitePage(data: SiteData, key: string, brandName?: string): PageMeta | undefined {
+  const pages = data.pages as Record<string, PageMeta>
+  if (Object.hasOwn(pages, key)) return pages[key]
+  const project = key.startsWith('work/') ? projectsOf(data).find((p) => `work/${p.slug}` === key) : undefined
+  return project ? { title: brandName ? `${project.name} | ${brandName}` : project.name, description: project.summary } : undefined
 }

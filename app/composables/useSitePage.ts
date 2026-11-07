@@ -10,9 +10,10 @@ export async function useSitePage() {
   const customDomain = useState<{ slug: string; origin: string } | null>('customDomain', () => useRequestEvent()?.context.customDomain ?? null)
 
   const siteSlug = customDomain.value?.slug ?? (route.params.siteSlug as string | undefined)
-  const pageSlug = (customDomain.value ? route.params.siteSlug : route.params.pageSlug) as string | undefined
-  const extraSegment = customDomain.value ? route.params.pageSlug : undefined
-  const pageKey = (pageSlug || 'home') as PageKey
+  // `/work/rune` is two segments: pages may be nested (a project lives at `work/<slug>`)
+  const rest = [route.params.pageSlug ?? []].flat().filter(Boolean) as string[]
+  const segments = customDomain.value ? ([route.params.siteSlug as string | undefined, ...rest].filter(Boolean) as string[]) : rest
+  const pageKey = (segments.join('/') || 'home') as PageKey
 
   const { data: site } = await useFetch<SitePayload>(`/api/site/${siteSlug}`, { key: `site-${siteSlug}` })
 
@@ -20,7 +21,7 @@ export async function useSitePage() {
     throw createError({ statusCode: 404, statusMessage: `Site "${siteSlug}" not found.`, fatal: true })
   }
 
-  const page = extraSegment ? undefined : sitePage(site.value.data, pageKey)
+  const page = sitePage(site.value.data, pageKey, site.value.brand.name)
 
   if (!page) {
     // The error page answers in the look of the site, so it needs its brand and, for some templates, a picture

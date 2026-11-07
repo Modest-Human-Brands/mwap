@@ -2,7 +2,7 @@ $kind: http-example
 name: '503 Source unavailable'
 order: 9000
 request:
-  url: '{{baseUrl}}/api/site/nova-marek'
+  url: '{{baseUrl}}/api/site/sample-model'
   method: GET
 response:
   statusCode: 503
@@ -15,7 +15,7 @@ response:
     content: |-
       {
         "error": true,
-        "url": "http://localhost:3000/api/site/nova-marek",
+        "url": "http://localhost:3000/api/site/sample-model",
         "statusCode": 503,
         "statusMessage": "Site source unavailable",
         "message": "Site source unavailable"

@@ -24,12 +24,12 @@ export const sample: Record<string, unknown> = {
   },
   pages: {
     home: {
-      title: 'Nova Marek | Fashion & Editorial Model',
-      description: 'Portfolio of Nova Marek, a fashion and editorial model based in Warsaw: selected work, contact sheet, comp card and booking.',
+      title: 'Sample Model | Fashion & Editorial Model',
+      description: 'Portfolio of Sample Model, a fashion and editorial model based in Sample City: selected work, contact sheet, comp card and booking.',
       cover: {
         enabled: true,
-        title: 'Nova Marek',
-        tagline: 'Fashion and editorial model, based in Warsaw.',
+        title: 'Sample Model',
+        tagline: 'Fashion and editorial model, based in Sample City.',
         label: 'Frame 00 / Cover',
         availability: 'Available 12 Nov 2026',
         imageUrl: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1920&fit=crop&q=80',
@@ -41,45 +41,45 @@ export const sample: Record<string, unknown> = {
         hint: 'Hover a title to preview the shoot.',
         items: [
           {
-            title: 'Lumen Studio',
+            title: 'Example Studio',
             category: 'Campaign',
             year: '2026',
-            description: 'Campaign for Lumen Studio, shot on 35 mm in Warsaw.',
+            description: 'Campaign for Example Studio, shot on 35 mm in Sample City.',
             imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&fit=crop&q=80',
           },
           {
-            title: 'Atelier Nord',
+            title: 'Example Atelier',
             category: 'Lookbook',
             year: '2025',
-            description: 'Autumn lookbook for Atelier Nord.',
+            description: 'Autumn lookbook for Example Atelier.',
             imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&fit=crop&q=80',
           },
           {
-            title: 'Paper Tide',
+            title: 'Example Paper',
             category: 'Editorial',
             year: '2025',
-            description: 'Editorial for Paper Tide, shot on 35 mm in Lisbon.',
+            description: 'Editorial for Example Paper, shot on 35 mm in Sample City.',
             imageUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&fit=crop&q=80',
           },
           {
-            title: 'Verre Magazine',
+            title: 'Example Magazine',
             category: 'Cover story',
             year: '2025',
-            description: 'Cover story for Verre Magazine.',
+            description: 'Cover story for Example Magazine.',
             imageUrl: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&fit=crop&q=80',
           },
           {
-            title: 'Maison Orel',
+            title: 'Example Maison',
             category: 'Runway',
             year: '2024',
-            description: 'Runway season for Maison Orel.',
+            description: 'Runway season for Example Maison.',
             imageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&fit=crop&q=80',
           },
           {
-            title: 'Fieldnote',
+            title: 'Example Label',
             category: 'Campaign',
             year: '2024',
-            description: 'Campaign for the Fieldnote stationery label.',
+            description: 'Campaign for an example stationery label.',
             imageUrl: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=800&fit=crop&q=80',
           },
         ],
@@ -199,14 +199,14 @@ export const sample: Record<string, unknown> = {
         enabled: true,
         title: 'Let’s shoot.',
         intro: 'Planning a shoot, campaign or show? Tell me the brief and I reply within two working days.',
-        drawerTitle: 'Book Nova',
+        drawerTitle: 'Book Sample',
         drawerIntro: 'Tell me the brief. I reply within two working days.',
       },
       footer: {
         enabled: true,
         management: {
-          name: 'Aster Talent',
-          address: '12 Example Street, Warsaw',
+          name: 'Example Talent',
+          address: '12 Example Street, Sample City',
         },
         links: [
           {
@@ -218,7 +218,7 @@ export const sample: Record<string, unknown> = {
             href: 'https://youtube.com/',
           },
         ],
-        location: 'Warsaw · available worldwide',
+        location: 'Sample City · available worldwide',
         legal: [
           {
             label: 'Privacy policy',

@@ -5,10 +5,12 @@ import type { Component } from 'vue'
 export const templateComponents: Record<string, () => Promise<Component>> = {
   'contact-sheet': () => import('./portfolio/ContactSheetV1/component.vue'),
   'psychiatrist-editorial': () => import('./psychiatrist/EditorialV1/component.vue'),
+  'developer-signal': () => import('./developer/SignalV1/component.vue'),
 }
 
 /** Page shown in the look of the template when a page of its site does not exist */
 export const templateNotFound: Record<string, () => Promise<Component>> = {
   'contact-sheet': () => import('./portfolio/ContactSheetV1/sections/NotFound.vue'),
   'psychiatrist-editorial': () => import('./psychiatrist/EditorialV1/sections/NotFound.vue'),
+  'developer-signal': () => import('./developer/SignalV1/sections/NotFound.vue'),
 }

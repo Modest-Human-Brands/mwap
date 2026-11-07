@@ -9,7 +9,7 @@ if (!site.value) {
   throw createError({ statusCode: 404, statusMessage: 'Not found', fatal: true })
 }
 
-useSiteHead(site as Ref<SitePayload>, sitePage(site.value.data, pageKey)!)
+useSiteHead(site as Ref<SitePayload>, sitePage(site.value.data, pageKey, site.value.brand.name)!)
 useHead({ meta: [{ name: 'robots', content: 'noindex' }] })
 </script>
 

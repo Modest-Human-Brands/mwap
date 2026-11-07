@@ -3,7 +3,7 @@ import { z } from 'zod'
 export default defineEventHandler(async (event) => {
   const { templateId, brand, data, page } = parseSiteInput(await readBody(event), { page: z.string().default('home') })
 
-  if (!(page in data.pages)) throw validationError([{ field: 'page', message: `Unknown page "${page}"`, code: 'invalid_value' }])
+  if (!sitePage(data, page)) throw validationError([{ field: 'page', message: `Unknown page "${page}"`, code: 'invalid_value' }])
 
   const site: SitePayload = { slug: 'preview', orgId: DEFAULT_ORG_ID, templateId, brand, data, domains: [], updatedAt: new Date().toISOString() }
 

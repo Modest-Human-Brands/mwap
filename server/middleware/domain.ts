@@ -29,14 +29,14 @@ export default defineEventHandler(async (event) => {
   const origin = `${protocol}://${host}`
 
   if (pathname === '/sitemap.xml') {
-    const urls = Object.keys(site.data.pages).map((page) => `  <url><loc>${escapeXml(page === 'home' ? `${origin}/` : `${origin}/${page}`)}</loc></url>`)
+    const urls = sitePageKeys(site.data).map((page) => `  <url><loc>${escapeXml(page === 'home' ? `${origin}/` : `${origin}/${page}`)}</loc></url>`)
     setHeader(event, 'Content-Type', 'application/xml; charset=utf-8')
     return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`
   }
 
   // `/<slug>/projects` -> `/projects`, unless the slug is also the name of one of the pages
   const [first, ...rest] = pathname.split('/').filter(Boolean)
-  if (first === slug && !(first in site.data.pages)) return sendRedirect(event, `/${rest.join('/')}${search}`, 301)
+  if (first === slug && !sitePageKeys(site.data).some((key) => key.split('/')[0] === first)) return sendRedirect(event, `/${rest.join('/')}${search}`, 301)
 
   event.context.customDomain = { slug, origin }
 })

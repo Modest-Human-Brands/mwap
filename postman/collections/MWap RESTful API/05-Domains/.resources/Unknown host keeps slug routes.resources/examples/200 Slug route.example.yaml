@@ -2,7 +2,7 @@ $kind: http-example
 name: '200 Slug route'
 order: 1000
 request:
-  url: '{{baseUrl}}/nova-marek'
+  url: '{{baseUrl}}/sample-model'
   method: GET
 response:
   statusCode: 200
@@ -13,4 +13,4 @@ response:
   body:
     type: html
     content: |-
-      <!DOCTYPE html><html lang="en"><head><title>Nova Marek | Film & Photo Production</title>…</head><body>…</body></html>
+      <!DOCTYPE html><html lang="en"><head><title>Sample Model | Film & Photo Production</title>…</head><body>…</body></html>

@@ -5,8 +5,8 @@ const closing = {
   eyebrow: 'Take the next step toward feeling better',
   title: "Let's talk.",
   button: { label: 'Book a consultation', href: '/#visit' },
-  details: 'Dr. Purbasha Sengupta · hello@example.com · (000) 000 0000 · Co-founder, Soul Solutions',
-  legal: '© 2026 Dr. Purbasha Sengupta. Co-founder, Soul Solutions (soulsolutions.in). For appointments only; not for emergencies.',
+  details: 'Dr. Alex Sample · hello@example.com · (000) 000 0000 · Co-founder, Example Clinic',
+  legal: '© 2026 Dr. Alex Sample. Co-founder, Example Clinic (example.com). For appointments only; not for emergencies.',
 }
 
 // Complete, valid payload with neutral wording: fills whatever a caller leaves out and is returned to clients to prefill an editor
@@ -30,16 +30,16 @@ export const sample: Record<string, unknown> = {
   },
   pages: {
     home: {
-      title: 'Dr. Purbasha Sengupta | Consultant Psychiatrist',
-      description: 'Calm, unhurried psychiatric care for anxiety, depression and sleep, in person or by secure video. Request an appointment with Dr. Purbasha Sengupta.',
+      title: 'Dr. Alex Sample | Consultant Psychiatrist',
+      description: 'Calm, unhurried psychiatric care for anxiety, depression and sleep, in person or by secure video. Request an appointment with Dr. Alex Sample.',
       hero: {
         enabled: true,
         eyebrow: 'Consultant psychiatrist · MBBS, MD',
-        titleLines: ['Dr. Purbasha', 'Sengupta'],
+        titleLines: ['Dr. Alex', 'Sample'],
         tagline: 'Calm, unhurried psychiatric care for anxiety, depression and sleep. In person or by secure video.',
         imageUrl: img('1594824476967-48c8b964273f', 1400),
         primaryCta: { label: 'Book a consultation', href: '#visit' },
-        secondaryLink: { label: 'Co-founder, Soul Solutions', href: 'https://soulsolutions.in' },
+        secondaryLink: { label: 'Co-founder, Example Clinic', href: 'https://example.com' },
         rating: { value: '4.9 / 5', caption: 'from over 120 patient reviews' },
       },
       ticker: {
@@ -108,14 +108,14 @@ export const sample: Record<string, unknown> = {
       closing,
     },
     about: {
-      title: 'About Dr. Purbasha Sengupta | Consultant Psychiatrist',
-      description: 'Training, recognition and approach of Dr. Purbasha Sengupta, consultant psychiatrist and co-founder of Soul Solutions.',
+      title: 'About Dr. Alex Sample | Consultant Psychiatrist',
+      description: 'Training, recognition and approach of Dr. Alex Sample, consultant psychiatrist and co-founder of Example Clinic.',
       hero: {
         enabled: true,
         eyebrow: '(About) Consultant psychiatrist · MBBS, MD',
-        titleLines: ['Hello, I am', 'Purbasha.'],
-        intro: 'Dr. Purbasha Sengupta is a consultant psychiatrist and co-founder of Soul Solutions, Kolkata.',
-        link: { label: 'Co-founder, Soul Solutions', href: 'https://soulsolutions.in' },
+        titleLines: ['Hello, I am', 'Alex.'],
+        intro: 'Dr. Alex Sample is a consultant psychiatrist and co-founder of Example Clinic, Sample City.',
+        link: { label: 'Co-founder, Example Clinic', href: 'https://example.com' },
         imageUrl: img('1559839734-2b71ea197ec2', 900),
         badge: { value: '12+', label: 'years of practice' },
       },
@@ -143,17 +143,17 @@ export const sample: Record<string, unknown> = {
       clinic: {
         enabled: true,
         eyebrow: '(03) Beyond the consulting room',
-        titleLines: ['Co-founder of', 'Soul Solutions.'],
-        body: 'A Kolkata mental health clinic where a psychiatrist and a clinical psychologist work together to understand each person before deciding on treatment. By appointment only.',
-        link: { label: 'soulsolutions.in', href: 'https://soulsolutions.in' },
+        titleLines: ['Co-founder of', 'Example Clinic.'],
+        body: 'A Sample City mental health clinic where a psychiatrist and a clinical psychologist work together to understand each person before deciding on treatment. By appointment only.',
+        link: { label: 'example.com', href: 'https://example.com' },
         tagline: 'Heal · Understand · Grow',
       },
       testimonial: {
         enabled: true,
         eyebrow: "(04) In patients' words",
-        quote: 'Dr. Sengupta explained every option and never rushed me. I finally felt understood.',
+        quote: 'Dr. Sample explained every option and never rushed me. I finally felt understood.',
         rating: 5,
-        author: 'A. R. · shared with permission',
+        author: 'A patient · shared with permission',
       },
       closing,
     },

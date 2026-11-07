@@ -1,0 +1,84 @@
+$kind: http-request
+name: 'Create site signal'
+description: |-
+  Creates a site from the developer-signal template. Only the content that differs from the template sample is sent (here the contact data and the list of projects, which replaces the sample list as a whole); everything else is filled from the sample. The site has the home page at /<slug> and one page per project at /<slug>/work/<project.slug>. A new slug is generated for every run and kept in the collection variable signalSlug for the requests that follow.
+order: 4790
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{signalSlug}}",
+      "templateId": "developer-signal",
+      "googleAnalyticsId": "G-NOVADEV001",
+      "brand": {
+        "name": "Nova Dev",
+        "logoUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF",
+        "fontFamily": "Exo 2",
+        "colors": {
+          "primary": "#0593FA",
+          "secondary": "#262626",
+          "accent": "#5BBBFF",
+          "background": "#171717",
+          "text": "#F8FAFC"
+        }
+      },
+      "data": {
+        "seo": {
+          "canonicalUrl": "https://novadev.example.com"
+        },
+        "contact": {
+          "email": "hello@novadev.example.com",
+          "links": [{ "label": "github.com/novadev", "url": "https://github.com/novadev" }]
+        },
+        "projects": [
+          {
+            "slug": "rune-infer",
+            "name": "Rune Infer",
+            "summary": "A small inference runtime for local models.",
+            "posterUrl": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80",
+            "stack": ["Rust", "WASM"],
+            "version": "1.4.0",
+            "updated": "2026-03-02",
+            "status": "Open source",
+            "url": "https://example.com/rune-infer",
+            "overview": "Rune Infer runs quantised models on the CPU with a tiny memory footprint.",
+            "capabilities": [{ "title": "Fast start", "text": "Models load in under a second." }],
+            "releases": [{ "version": "1.4.0", "date": "2026-03-02", "current": true }]
+          }
+        ]
+      }
+    }
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      pm.collectionVariables.set('signalSlug', 'pm-sig-' + Date.now())
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 201', () => pm.response.to.have.status(201))
+      pm.test('points to the new resource', () => pm.expect(pm.response.headers.get('Location')).to.eql('/api/site/' + pm.collectionVariables.get('signalSlug')))
+      pm.test('stores the template and the brand', () => {
+        const site = pm.response.json()
+        pm.expect(site.templateId).to.eql('developer-signal')
+        pm.expect(site.brand.name).to.eql('Nova Dev')
+      })
+      pm.test('has the home page and the sent project, the rest filled from the sample', () => {
+        const { data } = pm.response.json()
+        pm.expect(Object.keys(data.pages)).to.have.members(['home'])
+        pm.expect(data.projects.map((p) => p.slug)).to.eql(['rune-infer'])
+        pm.expect(data.pages.home.career.enabled).to.eql(true)
+        pm.expect(data.contact.email).to.eql('hello@novadev.example.com')
+      })

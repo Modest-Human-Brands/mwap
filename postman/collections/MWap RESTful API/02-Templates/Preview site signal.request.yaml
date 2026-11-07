@@ -1,0 +1,47 @@
+$kind: http-request
+name: 'Preview site signal'
+description: |-
+  Renders the developer-signal home page with its sample content (no `data`) as standalone HTML without scripts: the hero shader is replaced by its static glow and videos by their poster images. Section ids are the anchors of the navigation: work, systems, career, stack and contact.
+order: 4300
+method: POST
+url: '{{baseUrl}}/api/site/template/preview'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {
+      "templateId": "developer-signal",
+      "brand": {
+        "name": "Nova Dev",
+        "logoUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF",
+        "fontFamily": "Exo 2",
+        "colors": {
+          "primary": "#0593FA",
+          "secondary": "#262626",
+          "accent": "#5BBBFF",
+          "background": "#171717",
+          "text": "#F8FAFC"
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('renders the headline and every home section', () => {
+        const { html } = pm.response.json()
+        pm.expect(html).to.include('<h1')
+        for (const id of ['work', 'systems', 'career', 'stack', 'contact']) pm.expect(html, id).to.include('id="' + id + '"')
+      })
+      pm.test('previews are free of scripts and placeholder tokens', () => {
+        const { html } = pm.response.json()
+        pm.expect(html).to.not.include('<script')
+        pm.expect(html).to.not.include('{{')
+      })
+      pm.test('the brand name is used', () => pm.expect(pm.response.json().html).to.include('Nova Dev'))

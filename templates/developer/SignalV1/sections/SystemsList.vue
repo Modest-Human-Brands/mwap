@@ -1,0 +1,88 @@
+<script setup lang="ts">
+import type { SystemsSlot } from '~~/templates/developer/SignalV1/schema'
+
+defineProps<{ slotContent: SystemsSlot }>()
+</script>
+
+<template>
+  <section id="systems" class="systems">
+    <p class="sg-eyebrow">{{ slotContent.eyebrow }}</p>
+    <h2 class="title sg-display">{{ slotContent.title }}</h2>
+    <ul v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 24, duration: 0.7, ease: 'power2.out', stagger: 0.1, start: 'top 88%' }" class="rows">
+      <li v-for="item in slotContent.items" :key="item.name" class="row">
+        <component :is="item.href ? 'a' : 'div'" :href="item.href" class="link">
+          <h3 class="name sg-display">{{ item.name }}</h3>
+          <p class="desc">{{ item.description }}</p>
+          <p class="tags sg-mono">{{ item.tags }}</p>
+        </component>
+      </li>
+    </ul>
+  </section>
+</template>
+
+<style scoped>
+.systems {
+  padding: 3rem var(--sg-pad) 4rem;
+}
+
+.title {
+  margin-top: 0.75rem;
+  font-size: clamp(1.75rem, 7vw, 2.5rem);
+  line-height: 1.2;
+}
+
+.rows {
+  margin-top: 2rem;
+  border-top: 1px solid var(--sg-line);
+}
+
+.row {
+  border-bottom: 1px solid var(--sg-line);
+}
+
+.link {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.5rem 0;
+}
+
+.name {
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+.desc {
+  color: var(--sg-muted);
+}
+
+.tags {
+  color: var(--sg-accent);
+  font-size: 0.8125rem;
+}
+
+a.link:hover .name {
+  color: var(--sg-accent);
+}
+
+@media (min-width: 64rem) {
+  .systems {
+    padding-block: 4rem 6rem;
+  }
+
+  .link {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 12rem;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 0;
+  }
+
+  .name {
+    font-size: 2rem;
+    line-height: 1.25;
+  }
+
+  .tags {
+    text-align: right;
+  }
+}
+</style>

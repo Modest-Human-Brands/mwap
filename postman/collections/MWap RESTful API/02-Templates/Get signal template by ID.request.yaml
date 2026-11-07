@@ -1,0 +1,55 @@
+$kind: http-request
+name: 'Get signal template by ID'
+description: |-
+  The developer-signal template (category Developers): a dark developer portfolio with shader backgrounds. `data.pages.home` is the one fixed page, built from named slots: hero, intro (stats), work (the selected projects), systems, career (experience, education, hackathons, open source and writing), stack and contact. `data.projects` is a list of 1 to 6 projects; every project gets its own page at /<slug>/work/<project.slug> (overview, capabilities, releases) and the work slot of the home page links to them. `data.contact` carries the email, up to six links and an optional bookingEndpoint. Lists carry minItems/maxItems in the JSON Schema. The sample is a complete payload with generic content that prefills an editor.
+order: 2600
+method: GET
+url: '{{baseUrl}}/api/site/template/:id'
+pathVariables:
+  - key: id
+    value: 'developer-signal'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      const homeSlots = ['hero', 'intro', 'work', 'systems', 'career', 'stack', 'contact']
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Template Detail schema', () => pm.response.to.have.jsonSchema({
+        type: 'object',
+        required: ['id', 'label', 'shortLabel', 'category', 'description', 'schema', 'sample'],
+        properties: { id: { const: 'developer-signal' }, category: { const: 'Developers' }, schema: { type: 'object', required: ['type', 'properties'] }, sample: { type: 'object', required: ['seo', 'navigation', 'contact', 'projects', 'pages'] } }
+      }))
+      pm.test('brand is not part of the payload schema', () => pm.expect(pm.response.json().schema.properties).to.not.have.property('brand'))
+      pm.test('sample is a complete payload with generic content', () => {
+        const { sample } = pm.response.json()
+        pm.expect(JSON.stringify(sample)).to.not.include('{{')
+        pm.expect(sample.navigation.length).to.be.within(1, 6)
+        pm.expect(sample.contact.email).to.match(/@example\.(com|org)$/)
+        pm.expect(Object.keys(sample.pages)).to.have.members(['home'])
+        for (const slot of homeSlots) pm.expect(sample.pages.home[slot].enabled, 'home.' + slot).to.eql(true)
+        pm.expect(sample.projects.length).to.be.within(1, 6)
+        sample.projects.forEach((p) => pm.expect(p.slug).to.match(/^[a-z0-9]+(-[a-z0-9]+)*$/))
+        pm.expect(new Set(sample.projects.map((p) => p.slug)).size).to.eql(sample.projects.length)
+      })
+      pm.test('schema fixes the layout and limits the lists', () => {
+        const { properties } = pm.response.json().schema
+        const limits = (list) => [list.minItems, list.maxItems]
+        const home = properties.pages.properties.home.properties
+        pm.expect(properties.pages.additionalProperties).to.eql(false)
+        pm.expect(Object.keys(properties.pages.properties)).to.have.members(['home'])
+        pm.expect(Object.keys(home)).to.have.members(['title', 'description', ...homeSlots])
+        pm.expect(limits(properties.projects)).to.eql([1, 6])
+        pm.expect(limits(properties.projects.items.properties.stack)).to.eql([1, 8])
+        pm.expect(limits(properties.projects.items.properties.capabilities)).to.eql([1, 6])
+        pm.expect(limits(properties.projects.items.properties.releases)).to.eql([1, 10])
+        pm.expect(properties.contact.properties.links.maxItems).to.eql(6)
+        pm.expect(limits(home.hero.properties.terminal)).to.eql([1, 8])
+        pm.expect(limits(home.intro.properties.stats)).to.eql([2, 4])
+      })
+      pm.test('the contact email is required, links and booking endpoint are optional', () => {
+        const contact = pm.response.json().schema.properties.contact
+        pm.expect(contact.required).to.include('email').and.not.include('bookingEndpoint').and.not.include('links')
+      })

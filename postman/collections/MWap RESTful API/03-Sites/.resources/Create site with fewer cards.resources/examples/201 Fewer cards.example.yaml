@@ -61,12 +61,12 @@ response:
           },
           "pages": {
             "home": {
-              "title": "Nova Marek | Fashion & Editorial Model",
-              "description": "Portfolio of Nova Marek, a fashion and editorial model based in Warsaw: selected work, contact sheet, comp card and booking.",
+              "title": "Sample Model | Fashion & Editorial Model",
+              "description": "Portfolio of Sample Model, a fashion and editorial model based in Sample City: selected work, contact sheet, comp card and booking.",
               "cover": {
                 "enabled": true,
-                "title": "Nova Marek",
-                "tagline": "Fashion and editorial model, based in Warsaw.",
+                "title": "Sample Model",
+                "tagline": "Fashion and editorial model, based in Sample City.",
                 "label": "Frame 00 / Cover",
                 "availability": "Available 12 Nov 2026",
                 "imageUrl": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1920&fit=crop&q=80",
@@ -174,14 +174,14 @@ response:
                 "enabled": true,
                 "title": "Let’s shoot.",
                 "intro": "Planning a shoot, campaign or show? Tell me the brief and I reply within two working days.",
-                "drawerTitle": "Book Nova",
+                "drawerTitle": "Book Sample",
                 "drawerIntro": "Tell me the brief. I reply within two working days."
               },
               "footer": {
                 "enabled": true,
                 "management": {
-                  "name": "Aster Talent",
-                  "address": "12 Example Street, Warsaw"
+                  "name": "Example Talent",
+                  "address": "12 Example Street, Sample City"
                 },
                 "links": [
                   {
@@ -193,7 +193,7 @@ response:
                     "href": "https://youtube.com/"
                   }
                 ],
-                "location": "Warsaw · available worldwide",
+                "location": "Sample City · available worldwide",
                 "legal": [
                   {
                     "label": "Privacy policy",

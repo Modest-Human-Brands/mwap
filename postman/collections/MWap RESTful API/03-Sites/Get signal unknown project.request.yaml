@@ -1,0 +1,27 @@
+$kind: http-request
+name: 'Get signal unknown project'
+description: |-
+  A project the site does not have answers 404 with the template's own error page (the brand name, "404" and a link back to the home page), not indexed.
+order: 4792
+method: GET
+url: '{{baseUrl}}/:slug/work/:project'
+pathVariables:
+  - key: slug
+    value: '{{signalSlug}}'
+  - key: project
+    value: 'no-such-project'
+headers:
+  - key: Accept
+    value: 'text/html'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('is the page of the template, not the plain error', () => {
+        const html = pm.response.text()
+        pm.expect(html).to.include('404')
+        pm.expect(html).to.include('Nova Dev')
+        pm.expect(html).to.include('Back home')
+      })
+      pm.test('is not indexed', () => pm.expect(pm.response.text()).to.include('noindex'))
