@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.0.5
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.4...v0.0.5)
+
+### 🚀 Enhancements
+
+- Add new sections for Editorial V1 template ([59412fb](https://github.com/Modest-Human-Brands/mwap/commit/59412fb))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.4
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.3...v0.0.4)
