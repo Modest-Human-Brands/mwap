@@ -1,7 +1,7 @@
 .cs {
   --cs-pad: clamp(1rem, 0.4rem + 2.8vw, 3rem);
-  --cs-display: 'Anton', 'Impact', 'Arial Narrow', sans-serif;
-  --cs-serif: 'Instrument Serif', Georgia, serif;
+  --cs-display: var(--brand-font, sans-serif);
+  --cs-serif: var(--brand-font, sans-serif);
   --cs-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
 
   /* Surfaces and lines are derived from the brand background and text, so a brand only picks five colors */

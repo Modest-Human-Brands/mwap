@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CountUp from './CountUp.vue'
 import type { IntroSlot } from '~~/templates/developer/SignalV1/schema'
 
 defineProps<{ slotContent: IntroSlot }>()
@@ -9,7 +10,7 @@ defineProps<{ slotContent: IntroSlot }>()
     <p v-gsap.whenVisible.once.from="{ opacity: 0, y: 30, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="body">{{ slotContent.body }}</p>
     <dl v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 24, duration: 0.7, ease: 'power2.out', stagger: 0.1, start: 'top 90%' }" class="stats">
       <div v-for="stat in slotContent.stats" :key="stat.label" class="stat">
-        <dt class="value sg-display">{{ stat.value }}</dt>
+        <dt class="value sg-display"><CountUp :value="stat.value" /></dt>
         <dd class="label">{{ stat.label }}</dd>
       </div>
     </dl>
@@ -24,7 +25,7 @@ defineProps<{ slotContent: IntroSlot }>()
 .body {
   max-width: 44rem;
   color: var(--sg-muted);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: 1.6;
 }
 
@@ -53,7 +54,7 @@ defineProps<{ slotContent: IntroSlot }>()
 
 .label {
   color: var(--sg-muted);
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 @media (min-width: 64rem) {

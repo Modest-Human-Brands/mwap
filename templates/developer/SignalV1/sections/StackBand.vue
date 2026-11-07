@@ -8,7 +8,7 @@ defineProps<{ slotContent: StackSlot }>()
   <section id="stack" class="stack">
     <p class="sg-eyebrow">{{ slotContent.eyebrow }}</p>
     <h2 v-gsap.whenVisible.once.from="{ opacity: 0, y: 30, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="title sg-display">{{ slotContent.title }}</h2>
-    <div class="columns">
+    <div v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 28, duration: 0.8, ease: 'power3.out', stagger: 0.12, start: 'top 88%' }" class="columns">
       <div v-for="column in slotContent.columns" :key="column.title" class="column">
         <h3 class="label sg-mono">{{ column.title }}</h3>
         <p class="items sg-display">{{ column.items }}</p>
@@ -42,7 +42,7 @@ defineProps<{ slotContent: StackSlot }>()
 
 .label {
   color: var(--sg-accent);
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-weight: 400;
   letter-spacing: 0.14em;
 }
@@ -50,7 +50,7 @@ defineProps<{ slotContent: StackSlot }>()
 .items {
   margin-top: 0.75rem;
   color: var(--sg-muted);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 400;
 }
 

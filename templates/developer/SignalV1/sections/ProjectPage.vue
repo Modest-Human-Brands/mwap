@@ -17,12 +17,12 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
 <template>
   <main>
     <section class="hero">
-      <img :src="project.posterUrl" :alt="`${project.name} preview`" fetchpriority="high" />
+      <img v-gsap.from="{ scale: 1.18, duration: 1.8, ease: 'power3.out' }" :src="project.posterUrl" :alt="`${project.name} preview`" fetchpriority="high" />
       <video v-if="project.videoUrl" :src="project.videoUrl" :poster="project.posterUrl" autoplay muted loop playsinline aria-hidden="true"></video>
       <div class="veil"></div>
     </section>
 
-    <header class="head">
+    <header v-gsap.stagger.from="{ opacity: 0, y: 36, duration: 0.9, ease: 'power3.out', stagger: 0.1, delay: 0.2 }" class="head">
       <a class="back sg-mono" :href="siteHref('/#work')">← All work</a>
       <h1 class="title sg-display">{{ project.name }}</h1>
       <p class="summary">{{ project.summary }}</p>
@@ -32,7 +32,7 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
     </header>
 
     <div class="bar">
-      <dl class="meta sg-mono">
+      <dl v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 18, duration: 0.7, ease: 'power2.out', stagger: 0.1, start: 'top 92%' }" class="meta sg-mono">
         <div>
           <dt>Current version</dt>
           <dd>{{ project.version }}</dd>
@@ -53,13 +53,13 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
 
     <section id="overview" class="overview">
       <p class="sg-eyebrow">Overview</p>
-      <p class="text">{{ project.overview }}</p>
+      <p v-gsap.whenVisible.once.from="{ opacity: 0, y: 36, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="text">{{ project.overview }}</p>
     </section>
 
     <section id="capabilities" class="capabilities">
-      <h2 class="h2 sg-display">Capabilities</h2>
+      <h2 v-gsap.whenVisible.once.from="{ opacity: 0, y: 36, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="h2 sg-display">Capabilities</h2>
       <ol v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 30, duration: 0.7, ease: 'power2.out', stagger: 0.1, start: 'top 88%' }" class="caps">
-        <li v-for="(cap, index) in project.capabilities" :key="cap.title" class="cap">
+        <li v-for="(cap, index) in project.capabilities" :key="cap.title" class="cap sg-card">
           <span class="num sg-mono">{{ String(index + 1).padStart(2, '0') }}</span>
           <h3 class="cap-title sg-display">{{ cap.title }}</h3>
           <p>{{ cap.text }}</p>
@@ -68,8 +68,8 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
     </section>
 
     <section id="releases" class="releases">
-      <h2 class="h2 sg-display">Releases</h2>
-      <ul class="rel">
+      <h2 v-gsap.whenVisible.once.from="{ opacity: 0, y: 36, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="h2 sg-display">Releases</h2>
+      <ul v-gsap.whenVisible.once.stagger.from="{ opacity: 0, x: -24, duration: 0.7, ease: 'power2.out', stagger: 0.08, start: 'top 90%' }" class="rel">
         <li v-for="release in project.releases" :key="release.version" class="row">
           <span class="ver sg-mono">{{ release.version }}</span>
           <time class="date" :datetime="release.date">{{ formatDate(release.date) }}</time>
@@ -78,7 +78,7 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
       </ul>
     </section>
 
-    <a v-if="showNext" class="next" :href="siteHref(`/work/${next.slug}`)">
+    <a v-if="showNext" v-gsap.whenVisible.once.from="{ opacity: 0, y: 40, duration: 1, ease: 'power3.out', start: 'top 92%' }" class="next" :href="siteHref(`/work/${next.slug}`)">
       <span class="sg-eyebrow">Next project</span>
       <span class="next-title sg-display">{{ next.name }} <span aria-hidden="true">→</span></span>
       <span class="next-text">{{ next.summary }}</span>
@@ -125,7 +125,7 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
 
 .back {
   color: var(--sg-muted);
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .back:hover {
@@ -140,7 +140,7 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
 .summary {
   max-width: 44rem;
   color: var(--sg-muted);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
 }
 
 .chips {
@@ -160,12 +160,12 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
 .meta {
   display: grid;
   gap: 1rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .meta dt {
   color: var(--sg-muted);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
 }
 
 .overview,
@@ -178,7 +178,7 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
   max-width: 52rem;
   margin-top: 1rem;
   color: var(--sg-muted);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: 1.65;
 }
 
@@ -198,15 +198,12 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
   align-content: start;
   gap: 0.5rem;
   padding: 1.5rem;
-  border: 1px solid var(--sg-line);
-  border-radius: 1rem;
-  background: var(--sg-raised);
   color: var(--sg-muted);
 }
 
 .num {
   color: var(--sg-accent);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
 }
 
 .cap-title {
@@ -221,6 +218,7 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
 }
 
 .row {
+  transition: padding-left 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -237,13 +235,17 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
   color: var(--sg-muted);
 }
 
+.row:hover {
+  padding-left: 0.75rem;
+}
+
 .tag {
   margin-left: auto;
   padding: 0.125rem 0.625rem;
   border: 1px solid var(--sg-accent);
   border-radius: 999px;
   color: var(--sg-accent);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
 }
 
 .next {
@@ -255,11 +257,16 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
 }
 
 .next-title {
+  display: inline-block;
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 0.3s ease;
   font-size: clamp(2rem, 8vw, 3rem);
   line-height: 1.2;
 }
 
 .next:hover .next-title {
+  transform: translateX(0.75rem);
   color: var(--sg-accent);
 }
 
@@ -275,7 +282,7 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
   gap: 0.5rem 1.5rem;
   padding: 1.5rem var(--sg-pad) 2rem;
   color: var(--sg-muted);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
 }
 
 .foot a:hover {

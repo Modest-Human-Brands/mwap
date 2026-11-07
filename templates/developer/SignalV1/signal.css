@@ -1,7 +1,7 @@
-/* Signal: dark developer portfolio. Colors come from the brand (--brand-*); Exo 2 headings and JetBrains Mono are fixed, the brand font is the body font */
+/* Signal: dark developer portfolio. Colors come from the brand (--brand-*); the brand font drives all text, JetBrains Mono is fixed for code bits */
 :where(.sg) {
   --sg-bg: var(--brand-bg);
-  --sg-raised: var(--brand-secondary);
+  --sg-raised: color-mix(in srgb, var(--brand-text) 6%, var(--brand-bg));
   --sg-text: var(--brand-text);
   --sg-muted: color-mix(in srgb, var(--brand-text) 80%, var(--brand-bg));
   --sg-line: color-mix(in srgb, var(--brand-text) 20%, var(--brand-bg));
@@ -9,14 +9,14 @@
   --sg-primary: var(--brand-primary);
   --sg-accent: var(--brand-accent);
   --sg-on-primary: rgb(var(--brand-on-primary-rgb));
-  --sg-display: 'Exo 2', var(--brand-font), sans-serif;
+  --sg-display: var(--brand-font, sans-serif);
   --sg-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
   --sg-pad: clamp(1.25rem, 5vw, 4rem);
 
   background: var(--sg-bg);
   color: var(--sg-text);
   font-family: var(--brand-font);
-  font-size: 1rem;
+  font-size: 1.125rem;
   line-height: 1.5;
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
@@ -49,7 +49,7 @@
 :where(.sg) .sg-eyebrow {
   color: var(--sg-accent);
   font-family: var(--sg-display);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: 0.14em;
@@ -68,7 +68,7 @@
   background: var(--sg-primary);
   color: var(--sg-on-primary);
   font-family: var(--sg-display);
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 500;
   transition:
     transform 0.2s ease,
@@ -97,8 +97,42 @@
   border-radius: 999px;
   color: var(--sg-muted);
   font-family: var(--sg-mono);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   line-height: 1.4;
+}
+
+/* Glass card: dark surface, a spotlight that follows the pointer, and a lift on hover */
+:where(.sg) .sg-card {
+  position: relative;
+  border: 1px solid var(--sg-line);
+  border-radius: 1rem;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--brand-text) 9%, var(--brand-bg)), color-mix(in srgb, var(--brand-text) 3%, var(--brand-bg)));
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.3s ease,
+    box-shadow 0.5s ease;
+}
+
+:where(.sg) .sg-card::before {
+  content:;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--brand-primary-rgb) / 0.2), transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+:where(.sg) .sg-card:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--sg-accent) 55%, var(--sg-line));
+  box-shadow: 0 28px 60px -28px rgb(var(--brand-primary-rgb) / 0.55);
+}
+
+:where(.sg) .sg-card:hover::before {
+  opacity: 1;
 }
 
 :where(.sg) :focus-visible {

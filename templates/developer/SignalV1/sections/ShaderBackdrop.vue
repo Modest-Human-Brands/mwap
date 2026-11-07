@@ -1,10 +1,25 @@
 <script setup lang="ts">
 // A static glow (plain CSS) is always there; the shader fades in on top once the browser has loaded it,
 // so the server render, previews, reduced motion and browsers without WebGPU keep the glow
-defineProps<{ variant: 'hero' | 'contact' | 'swirl' }>()
+defineProps<{ variant: 'hero' | 'contact' | 'swirl' | 'ambient' }>()
 
 const ShaderLayer = defineAsyncComponent(() => import('./ShaderLayer.vue'))
-const live = ref(false)
+const root = ref<HTMLElement>()
+const allowed = ref(false)
+const inView = ref(true)
+// A canvas only runs while its section is on screen
+const live = computed(() => allowed.value && inView.value)
+let observer: IntersectionObserver | undefined
+
+// The backdrop sits behind the content, so the shader never receives the mouse itself:
+// the section listens instead and hands every mouse event on to the canvas
+const mouseEvents = ['mousemove', 'mouseenter', 'mouseleave', 'mousedown', 'mouseup'] as const
+const forward = (event: MouseEvent) => {
+  const canvas = root.value?.querySelector('canvas')
+  if (!canvas) return
+  canvas.dispatchEvent(new MouseEvent(event.type, { clientX: event.clientX, clientY: event.clientY, buttons: event.buttons, bubbles: false }))
+}
+let host: HTMLElement | null = null
 const colors = ref({ primary: '#0593fa', accent: '#5bbbff', bg: '#171717', text: '#f8fafc' })
 
 onMounted(() => {
@@ -17,15 +32,26 @@ onMounted(() => {
     bg: read('--brand-bg', colors.value.bg),
     text: read('--brand-text', colors.value.text),
   }
-  live.value = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  allowed.value = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  host = root.value?.parentElement ?? null
+  for (const type of mouseEvents) host?.addEventListener(type, forward, { passive: true })
+  if (root.value && 'IntersectionObserver' in window) {
+    observer = new IntersectionObserver(([entry]) => (inView.value = !!entry?.isIntersecting), { rootMargin: '200px 0px' })
+    observer.observe(root.value)
+  }
+})
+
+onBeforeUnmount(() => {
+  observer?.disconnect()
+  for (const type of mouseEvents) host?.removeEventListener(type, forward)
 })
 </script>
 
 <template>
-  <div class="backdrop" :class="`is-${variant}`" aria-hidden="true">
+  <div ref="root" class="backdrop" :class="`is-${variant}`" aria-hidden="true">
     <div class="glow"></div>
     <div v-if="variant === 'hero'" class="dots"></div>
-    <ShaderLayer v-if="live" :variant="variant" :colors="colors" class="shader" @unavailable="live = false" />
+    <ShaderLayer v-if="live" :variant="variant" :colors="colors" class="shader" @unavailable="allowed = false" />
     <div class="scrim"></div>
   </div>
 </template>
@@ -62,6 +88,23 @@ onMounted(() => {
 .shader {
   opacity: 0.6;
   animation: fade-in 1.2s ease both;
+}
+
+.is-ambient {
+  background: transparent;
+}
+
+.is-ambient .glow {
+  background: radial-gradient(45% 50% at 12% 30%, rgb(var(--brand-primary-rgb) / 0.22), transparent 70%), radial-gradient(40% 45% at 90% 75%, rgb(var(--brand-accent-rgb) / 0.16), transparent 70%);
+}
+
+.is-ambient .shader {
+  opacity: 0.32;
+}
+
+/* The section fades into the page background above and below the shader */
+.is-ambient .scrim {
+  background: linear-gradient(to bottom, var(--sg-bg), transparent 25%, transparent 70%, var(--sg-bg));
 }
 
 .scrim {

@@ -7,7 +7,7 @@ defineProps<{ slotContent: SystemsSlot }>()
 <template>
   <section id="systems" class="systems">
     <p class="sg-eyebrow">{{ slotContent.eyebrow }}</p>
-    <h2 class="title sg-display">{{ slotContent.title }}</h2>
+    <h2 v-gsap.whenVisible.once.from="{ opacity: 0, y: 36, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="title sg-display">{{ slotContent.title }}</h2>
     <ul v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 24, duration: 0.7, ease: 'power2.out', stagger: 0.1, start: 'top 88%' }" class="rows">
       <li v-for="item in slotContent.items" :key="item.name" class="row">
         <component :is="item.href ? 'a' : 'div'" :href="item.href" class="link">
@@ -41,12 +41,14 @@ defineProps<{ slotContent: SystemsSlot }>()
 }
 
 .link {
+  transition: padding-left 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   display: grid;
   gap: 0.5rem;
   padding: 1.5rem 0;
 }
 
 .name {
+  transition: color 0.3s ease;
   font-size: 1.5rem;
   line-height: 1.25;
 }
@@ -57,7 +59,11 @@ defineProps<{ slotContent: SystemsSlot }>()
 
 .tags {
   color: var(--sg-accent);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
+}
+
+a.link:hover {
+  padding-left: 1rem;
 }
 
 a.link:hover .name {

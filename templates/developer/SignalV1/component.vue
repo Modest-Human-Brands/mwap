@@ -22,6 +22,15 @@ provide('siteBase', customDomain.value ? '' : `/${props.site.slug}`)
 
 useSignalFonts()
 
+// One listener for every card: the spotlight follows the pointer through --mx / --my
+function trackPointer(event: PointerEvent) {
+  const card = (event.target as HTMLElement).closest<HTMLElement>('.sg-card')
+  if (!card) return
+  const rect = card.getBoundingClientRect()
+  card.style.setProperty('--mx', `${event.clientX - rect.left}px`)
+  card.style.setProperty('--my', `${event.clientY - rect.top}px`)
+}
+
 const home = computed(() => props.site.data.pages.home)
 const projects = computed(() => props.site.data.projects)
 // `work/<slug>` is a project page; the router has already made sure it exists
@@ -31,7 +40,7 @@ const nextProject = computed(() => projects.value[(projectIndex.value + 1) % pro
 </script>
 
 <template>
-  <div class="sg">
+  <div class="sg" @pointermove="trackPointer">
     <SiteNav :brand-name="site.brand.name" :links="site.data.navigation" :page-key="project ? pageKey : 'home'" />
 
     <main v-if="!project">

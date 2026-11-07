@@ -45,14 +45,14 @@ const closeMenu = () => menu.value?.removeAttribute('open')
 }
 
 .logo {
-  font-size: 1rem;
+  font-size: 1.125rem;
   line-height: 1.5;
 }
 
 .links {
   display: none;
   gap: 2.25rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .links a {
@@ -108,7 +108,7 @@ const closeMenu = () => menu.value?.removeAttribute('open')
   border: 1px solid var(--sg-line);
   border-radius: 1rem;
   background: var(--sg-raised);
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .panel a {

@@ -12,8 +12,8 @@
   --ed-on-deep-soft: color-mix(in srgb, var(--ed-on-deep) 80%, var(--ed-deep));
   --ed-on-deep-faint: color-mix(in srgb, var(--ed-on-deep) 50%, var(--ed-deep));
   --ed-photo: color-mix(in srgb, var(--ed-teal) 30%, var(--ed-deep));
-  --ed-display: 'Fraunces', Georgia, serif;
-  --ed-body: var(--brand-font, 'Outfit', sans-serif);
+  --ed-display: var(--brand-font, sans-serif);
+  --ed-body: var(--brand-font, sans-serif);
 
   /* Mobile first (390 wide): side padding and type steps; tablet grows fluidly, the desktop design starts at 64rem */
   --ed-pad: clamp(1.5rem, 0.6rem + 3vw, 3rem);
@@ -74,10 +74,6 @@
   margin: 0;
   font-family: var(--ed-display);
   font-weight: 400;
-  font-optical-sizing: auto;
-  font-variation-settings:
-    'SOFT' 0,
-    'WONK' 1;
   letter-spacing: -0.02em;
 }
 

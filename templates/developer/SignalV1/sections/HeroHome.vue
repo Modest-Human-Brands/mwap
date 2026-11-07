@@ -10,7 +10,7 @@ defineProps<{ slotContent: HeroSlot }>()
     <ShaderBackdrop variant="hero" />
 
     <div class="inner">
-      <div class="copy">
+      <div v-gsap.stagger.from="{ opacity: 0, y: 40, duration: 1, ease: 'power3.out', stagger: 0.12 }" class="copy">
         <p class="sg-eyebrow">{{ slotContent.eyebrow }}</p>
         <h1 class="title sg-display">
           <span v-for="line in slotContent.titleLines" :key="line" class="line">{{ line }}</span>
@@ -24,7 +24,7 @@ defineProps<{ slotContent: HeroSlot }>()
 
       <div class="terminal sg-mono" role="img" :aria-label="`Terminal: ${slotContent.terminal.map((t) => t.command).join(', ')}`">
         <div class="chrome" aria-hidden="true"><i></i><i></i><i></i></div>
-        <div class="screen" aria-hidden="true">
+        <div v-gsap.stagger.from="{ opacity: 0, x: -14, duration: 0.5, ease: 'power2.out', stagger: 0.35, delay: 0.8 }" class="screen" aria-hidden="true">
           <template v-for="entry in slotContent.terminal" :key="entry.command">
             <p class="cmd"><span class="prompt">$</span> {{ entry.command }}</p>
             <p v-for="out in entry.output" :key="out" class="out">{{ out }}</p>
@@ -91,7 +91,7 @@ defineProps<{ slotContent: HeroSlot }>()
   border-radius: 1rem;
   background: rgb(0 0 0 / 0.72);
   backdrop-filter: blur(12px);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   line-height: 1.7;
 }
 
@@ -149,7 +149,7 @@ defineProps<{ slotContent: HeroSlot }>()
   gap: 0.5rem 1.5rem;
   margin-top: 2.5rem;
   color: var(--sg-muted);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
 }
 
 .summary {
@@ -218,7 +218,7 @@ defineProps<{ slotContent: HeroSlot }>()
   }
 
   .bio {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
   }
 
   .summary {

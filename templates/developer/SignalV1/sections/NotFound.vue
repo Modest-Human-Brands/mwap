@@ -18,12 +18,12 @@ useSignalFonts()
       <ShaderBackdrop variant="swirl" />
       <a class="logo sg-display" :href="homeHref">{{ brandName }}</a>
 
-      <div class="body">
+      <div v-gsap.stagger.from="{ opacity: 0, y: 44, duration: 1, ease: 'power3.out', stagger: 0.15 }" class="body">
         <p class="sg-eyebrow">Error 404</p>
         <h1 class="title sg-display">404.<br />This page wandered off the map.</h1>
       </div>
 
-      <a class="sg-button back" :href="homeHref">Back home <span aria-hidden="true">→</span></a>
+      <a v-gsap.from="{ opacity: 0, y: 24, duration: 0.8, ease: 'power3.out', delay: 0.5 }" class="sg-button back" :href="homeHref">Back home <span aria-hidden="true">→</span></a>
     </main>
   </div>
 </template>
@@ -44,7 +44,7 @@ useSignalFonts()
 
 .logo {
   position: relative;
-  font-size: 1rem;
+  font-size: 1.125rem;
 }
 
 .body {

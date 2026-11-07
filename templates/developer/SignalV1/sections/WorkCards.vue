@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSiteHref } from '~~/templates/_shared/useSiteHref'
 import type { SignalProject, WorkSlot } from '~~/templates/developer/SignalV1/schema'
+import ShaderBackdrop from './ShaderBackdrop.vue'
 import { formatDate } from '~~/templates/developer/SignalV1/format'
 
 defineProps<{ slotContent: WorkSlot; projects: SignalProject[] }>()
@@ -10,11 +11,12 @@ const siteHref = useSiteHref()
 
 <template>
   <section id="work" class="work">
+    <ShaderBackdrop variant="ambient" />
     <p class="sg-eyebrow">{{ slotContent.eyebrow }}</p>
-    <h2 class="title sg-display">{{ slotContent.title }}</h2>
+    <h2 v-gsap.whenVisible.once.from="{ opacity: 0, y: 36, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="title sg-display">{{ slotContent.title }}</h2>
 
     <ul v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 40, duration: 0.8, ease: 'power3.out', stagger: 0.12, start: 'top 85%' }" class="cards">
-      <li v-for="project in projects" :key="project.slug" class="card">
+      <li v-for="project in projects" :key="project.slug" class="card sg-card">
         <a class="media" :href="siteHref(`/work/${project.slug}`)" :aria-label="`${slotContent.openLabel}: ${project.name}`" tabindex="-1">
           <img :src="project.posterUrl" alt="" loading="lazy" width="800" height="472" />
           <video v-if="project.videoUrl" :src="project.videoUrl" :poster="project.posterUrl" autoplay muted loop playsinline preload="none" aria-hidden="true"></video>
@@ -47,7 +49,14 @@ const siteHref = useSiteHref()
 
 <style scoped>
 .work {
+  position: relative;
+  isolation: isolate;
   padding: 4rem var(--sg-pad);
+}
+
+.work > :not(.backdrop) {
+  position: relative;
+  z-index: 1;
 }
 
 .title {
@@ -66,9 +75,6 @@ const siteHref = useSiteHref()
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid var(--sg-line);
-  border-radius: 1rem;
-  background: var(--sg-raised);
 }
 
 .media {
@@ -86,7 +92,7 @@ const siteHref = useSiteHref()
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s ease;
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .media::after {
@@ -98,7 +104,7 @@ const siteHref = useSiteHref()
 
 .card:hover .media img,
 .card:hover .media video {
-  transform: scale(1.04);
+  transform: scale(1.08);
 }
 
 .body {
@@ -121,7 +127,7 @@ const siteHref = useSiteHref()
 .label {
   margin-top: 0.5rem;
   color: var(--sg-accent);
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   letter-spacing: 0.14em;
 }
 
@@ -137,7 +143,7 @@ const siteHref = useSiteHref()
   margin-top: 0.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--sg-line);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
 }
 
 .meta div {

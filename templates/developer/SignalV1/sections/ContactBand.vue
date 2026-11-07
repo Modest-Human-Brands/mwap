@@ -71,7 +71,7 @@ defineProps<{
   flex-wrap: wrap;
   gap: 0.5rem 1.5rem;
   color: var(--sg-muted);
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .links a:hover {
@@ -81,7 +81,7 @@ defineProps<{
 .legal {
   position: relative;
   color: var(--sg-muted);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
 }
 
 @media (min-width: 64rem) {

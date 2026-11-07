@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ShaderBackdrop from './ShaderBackdrop.vue'
 import type { CareerSlot } from '~~/templates/developer/SignalV1/schema'
 
 defineProps<{ slotContent: CareerSlot }>()
@@ -6,10 +7,11 @@ defineProps<{ slotContent: CareerSlot }>()
 
 <template>
   <section id="career" class="career">
+    <ShaderBackdrop variant="ambient" />
     <!-- Experience -->
     <div class="block">
       <p class="sg-eyebrow">{{ slotContent.experience.eyebrow }}</p>
-      <h2 class="title sg-display">{{ slotContent.experience.title }}</h2>
+      <h2 v-gsap.whenVisible.once.from="{ opacity: 0, y: 36, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="title sg-display">{{ slotContent.experience.title }}</h2>
       <p class="intro">{{ slotContent.experience.intro }}</p>
       <ol v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 24, duration: 0.7, ease: 'power2.out', stagger: 0.12, start: 'top 88%' }" class="timeline">
         <li v-for="job in slotContent.experience.items" :key="job.company + job.period" class="job">
@@ -32,15 +34,15 @@ defineProps<{ slotContent: CareerSlot }>()
     <!-- Education -->
     <div class="block">
       <p class="sg-eyebrow">{{ slotContent.education.eyebrow }}</p>
-      <h2 class="title sg-display">{{ slotContent.education.title }}</h2>
-      <div class="pair">
-        <article class="card">
+      <h2 v-gsap.whenVisible.once.from="{ opacity: 0, y: 36, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="title sg-display">{{ slotContent.education.title }}</h2>
+      <div v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 32, duration: 0.8, ease: 'power3.out', stagger: 0.12, start: 'top 88%' }" class="pair">
+        <article class="card sg-card">
           <p class="label sg-mono">{{ slotContent.education.pursuing.label }}</p>
           <h3 class="card-title sg-display">{{ slotContent.education.pursuing.degree }}</h3>
           <p>{{ slotContent.education.pursuing.institute }}</p>
           <p class="muted">{{ slotContent.education.pursuing.details }}</p>
         </article>
-        <ul v-if="slotContent.education.certificates.length" class="card certs">
+        <ul v-if="slotContent.education.certificates.length" class="card sg-card certs">
           <li v-for="cert in slotContent.education.certificates" :key="cert.name" class="cert">
             <div>
               <h3 class="cert-name sg-display">{{ cert.name }}</h3>
@@ -60,9 +62,9 @@ defineProps<{ slotContent: CareerSlot }>()
     <!-- Hackathons -->
     <div v-if="slotContent.hackathons.items.length" class="block">
       <p class="sg-eyebrow">{{ slotContent.hackathons.eyebrow }}</p>
-      <h2 class="title sg-display">{{ slotContent.hackathons.title }}</h2>
-      <ul class="grid">
-        <li v-for="item in slotContent.hackathons.items" :key="item.name" class="card">
+      <h2 v-gsap.whenVisible.once.from="{ opacity: 0, y: 36, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="title sg-display">{{ slotContent.hackathons.title }}</h2>
+      <ul v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 32, duration: 0.8, ease: 'power3.out', stagger: 0.12, start: 'top 88%' }" class="grid">
+        <li v-for="item in slotContent.hackathons.items" :key="item.name" class="card sg-card">
           <p class="label sg-mono">{{ item.label }}</p>
           <h3 class="card-title sg-display">{{ item.name }}</h3>
           <p class="muted">{{ item.description }}</p>
@@ -75,7 +77,7 @@ defineProps<{ slotContent: CareerSlot }>()
     <!-- Open source & writing -->
     <div class="block">
       <p class="sg-eyebrow">{{ slotContent.openSource.eyebrow }}</p>
-      <h2 class="title sg-display">{{ slotContent.openSource.title }}</h2>
+      <h2 v-gsap.whenVisible.once.from="{ opacity: 0, y: 36, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="title sg-display">{{ slotContent.openSource.title }}</h2>
       <div class="pair">
         <ul class="list">
           <li v-for="item in slotContent.openSource.contributions" :key="item.name">
@@ -102,8 +104,15 @@ defineProps<{ slotContent: CareerSlot }>()
 .career {
   display: grid;
   gap: 4rem;
+  position: relative;
+  isolation: isolate;
   padding: 4rem var(--sg-pad);
   border-top: 1px solid var(--sg-line);
+}
+
+.career > :not(.backdrop) {
+  position: relative;
+  z-index: 1;
 }
 
 .title {
@@ -136,7 +145,7 @@ defineProps<{ slotContent: CareerSlot }>()
 
 .when {
   color: var(--sg-muted);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
 }
 
 .company {
@@ -158,7 +167,7 @@ defineProps<{ slotContent: CareerSlot }>()
 .stack {
   margin-top: 0.75rem;
   color: var(--sg-muted);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
 }
 
 .pair,
@@ -173,9 +182,6 @@ defineProps<{ slotContent: CareerSlot }>()
   align-content: start;
   gap: 0.5rem;
   padding: 1.5rem;
-  border: 1px solid var(--sg-line);
-  border-radius: 1rem;
-  background: var(--sg-raised);
 }
 
 .card-title {
@@ -185,7 +191,7 @@ defineProps<{ slotContent: CareerSlot }>()
 
 .label {
   color: var(--sg-accent);
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   letter-spacing: 0.14em;
 }
 
@@ -207,12 +213,12 @@ defineProps<{ slotContent: CareerSlot }>()
 }
 
 .cert-name {
-  font-size: 1.0625rem;
+  font-size: 1.1875rem;
 }
 
 .verify {
   color: var(--sg-accent);
-  font-size: 0.875rem;
+  font-size: 1rem;
   white-space: nowrap;
 }
 
@@ -230,7 +236,7 @@ defineProps<{ slotContent: CareerSlot }>()
 }
 
 .entry-name {
-  font-size: 0.9375rem;
+  font-size: 1.0625rem;
 }
 
 a.entry:hover .entry-name {

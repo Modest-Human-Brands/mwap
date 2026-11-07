@@ -3,7 +3,7 @@ import { ChromaFlow, CursorRipples, FlutedGlass, Shader, Swirl } from 'shaders/v
 
 // Loaded after first paint by ShaderBackdrop; the shaders package never reaches the server render
 defineProps<{
-  variant: 'hero' | 'contact' | 'swirl'
+  variant: 'hero' | 'contact' | 'swirl' | 'ambient'
   colors: { primary: string; accent: string; bg: string; text: string }
 }>()
 defineEmits<{ unavailable: [] }>()
@@ -17,7 +17,8 @@ defineEmits<{ unavailable: [] }>()
     </template>
     <template v-else>
       <Swirl :color-a="colors.bg" :color-b="colors.primary" :speed="0.6" :detail="1.2" :blend="35" />
-      <FlutedGlass :frequency="variant === 'hero' ? 20 : 26" :softness="0.6" />
+      <FlutedGlass :frequency="variant === 'hero' ? 20 : variant === 'ambient' ? 34 : 26" :softness="0.6" />
+      <CursorRipples :intensity="variant === 'ambient' ? 3 : 4" :chromatic-split="0.6" />
     </template>
   </Shader>
 </template>
