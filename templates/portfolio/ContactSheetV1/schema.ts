@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { linkSchema, page, slot } from '../../_shared/schema'
+import { linkSchema, page, slot } from '~~/templates/_shared/schema'
 
 export const coverSlotSchema = slot({
   title: z.string(),
@@ -86,8 +86,6 @@ export const contactSheetDataSchema = z.strictObject({
 })
 
 export type ContactSheetData = z.infer<typeof contactSheetDataSchema>
-export type PageKey = keyof ContactSheetData['pages']
-export type PagePayload = ContactSheetData['pages'][PageKey]
 export type CoverSlot = z.infer<typeof coverSlotSchema>
 export type IndexSlot = z.infer<typeof indexSlotSchema>
 export type SheetSlot = z.infer<typeof sheetSlotSchema>

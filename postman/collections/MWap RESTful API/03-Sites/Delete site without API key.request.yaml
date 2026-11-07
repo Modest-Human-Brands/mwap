@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Delete site without API key'
+description: |-
+  Deleting needs the x-api-key header: without it the answer is 401 and nothing is deleted. This request deliberately sends none.
+order: 9400
+method: DELETE
+url: '{{baseUrl}}/api/site/:slug'
+pathVariables:
+  - key: slug
+    value: '{{editorialSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-org-id
+    value: '{{orgId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 401', () => pm.response.to.have.status(401))
+      pm.test('matches Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'statusMessage'], properties: { statusCode: { type: 'number' }, statusMessage: { type: 'string' } } }))

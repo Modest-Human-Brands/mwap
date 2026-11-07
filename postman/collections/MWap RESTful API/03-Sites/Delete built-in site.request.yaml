@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'Delete built-in site'
+description: |-
+  A site that is not stored through the API (the built-in example, or a row of the Notion database) cannot be deleted here: 409. Change those at their source.
+order: 9300
+method: DELETE
+url: '{{baseUrl}}/api/site/:slug'
+pathVariables:
+  - key: slug
+    value: 'nova-marek'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: 'default'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 409', () => pm.response.to.have.status(409))
+      pm.test('matches Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'statusMessage'], properties: { statusCode: { type: 'number' }, statusMessage: { type: 'string' } } }))

@@ -20,16 +20,16 @@ export async function useSitePage() {
     throw createError({ statusCode: 404, statusMessage: `Site "${siteSlug}" not found.`, fatal: true })
   }
 
-  const page = extraSegment ? undefined : site.value.data.pages[pageKey]
+  const page = extraSegment ? undefined : sitePage(site.value.data, pageKey)
 
   if (!page) {
-    // The error page answers in the look of the site, so it needs its brand and a cover image
+    // The error page answers in the look of the site, so it needs its brand and, for some templates, a picture
     const { brand, data, templateId } = site.value
     throw createError({
       statusCode: 404,
       statusMessage: `Page "${pageKey}" not found.`,
       fatal: true,
-      data: { notFound: { templateId, brand, imageUrl: data.pages.home.cover.imageUrl, homeHref: customDomain.value ? '/' : `/${site.value.slug}` } },
+      data: { notFound: { templateId, brand, imageUrl: templates[templateId]?.notFoundImage?.(data) ?? '', homeHref: customDomain.value ? '/' : `/${site.value.slug}` } },
     })
   }
 

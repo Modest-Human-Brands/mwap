@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IndexSlot } from '../schema'
+import type { IndexSlot } from '~~/templates/portfolio/ContactSheetV1/schema'
 defineProps<{
   slotContent: IndexSlot
 }>()

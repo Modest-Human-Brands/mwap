@@ -1,6 +1,7 @@
 import type { z } from 'zod'
 
-export interface TemplateDefinition {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- the registry holds templates of different payload types
+export interface TemplateDefinition<Data = any> {
   id: string
   label: string
   shortLabel: string
@@ -10,4 +11,6 @@ export interface TemplateDefinition {
   schema: z.ZodType
   /** Complete, valid payload with neutral wording: fills whatever a caller leaves out and is returned to clients to prefill an editor */
   sample: Record<string, unknown>
+  /** Picture the 404 page of a site may show; templates whose 404 has no picture leave it out */
+  notFoundImage?: (data: Data) => string | undefined
 }

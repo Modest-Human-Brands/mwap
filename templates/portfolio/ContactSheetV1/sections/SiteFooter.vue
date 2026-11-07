@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { FooterSlot } from '../schema'
-import { useSiteHref } from '../../_shared/useSiteHref'
+import type { FooterSlot } from '~~/templates/portfolio/ContactSheetV1/schema'
+import { useSiteHref } from '~~/templates/_shared/useSiteHref'
 const props = defineProps<{
   slotContent: FooterSlot
   brandName: string

@@ -1,0 +1,18 @@
+$kind: http-request
+name: 'Sitemap lists editorial pages'
+description: |-
+  The sitemap of the service lists every page of every site: for the editorial site both /<slug> and /<slug>/about.
+order: 4830
+method: GET
+url: '{{baseUrl}}/sitemap.xml'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('lists both pages of the editorial site', () => {
+        const xml = pm.response.text()
+        const slug = pm.collectionVariables.get('editorialSlug')
+        pm.expect(xml).to.include('/' + slug + '</loc>')
+        pm.expect(xml).to.include('/' + slug + '/about</loc>')
+      })

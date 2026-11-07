@@ -54,6 +54,17 @@ export async function saveSite(site: SitePayload): Promise<void> {
   invalidateDomains()
 }
 
+/** True for a site saved through the API; the built-in example and Notion rows are not stored here */
+export async function isStoredSite(slug: string): Promise<boolean> {
+  return (await storage().getItem(key(slug))) != null
+}
+
+/** Removes a stored site and frees its domains; a built-in or Notion site of the same slug becomes visible again */
+export async function deleteSite(slug: string): Promise<void> {
+  await storage().removeItem(key(slug))
+  invalidateDomains()
+}
+
 /**
  * Every site of every source. `tolerant` leaves the Notion sites out instead of failing when that source
  * is unavailable, for callers (routing, sitemap) that must not break because of it.

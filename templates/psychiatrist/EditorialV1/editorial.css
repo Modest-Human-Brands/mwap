@@ -1,0 +1,174 @@
+.ed {
+  /* The five brand colors map onto the design: secondary is the deep surface, primary the warm call to action,
+     accent the teal for labels and bands. Soft tones are derived, so a brand only picks five colors. */
+  --ed-deep: var(--brand-secondary);
+  --ed-warm: var(--brand-primary);
+  --ed-teal: var(--brand-accent);
+  --ed-page: var(--brand-bg);
+  --ed-text: var(--brand-text);
+  --ed-muted: color-mix(in srgb, var(--brand-text) 66%, var(--brand-bg));
+  --ed-line: color-mix(in srgb, var(--brand-text) 14%, var(--brand-bg));
+  --ed-on-deep: rgb(var(--brand-on-secondary-rgb));
+  --ed-on-deep-soft: color-mix(in srgb, var(--ed-on-deep) 80%, var(--ed-deep));
+  --ed-on-deep-faint: color-mix(in srgb, var(--ed-on-deep) 50%, var(--ed-deep));
+  --ed-photo: color-mix(in srgb, var(--ed-teal) 30%, var(--ed-deep));
+  --ed-display: 'Fraunces', Georgia, serif;
+  --ed-body: var(--brand-font, 'Outfit', sans-serif);
+
+  /* Mobile first (390 wide): side padding and type steps; tablet grows fluidly, the desktop design starts at 64rem */
+  --ed-pad: clamp(1.5rem, 0.6rem + 3vw, 3rem);
+  --ed-gap: clamp(4rem, 2rem + 8vw, 7.5rem);
+  --ed-fs-eyebrow: 0.75rem;
+  --ed-fs-body: clamp(0.9375rem, 0.85rem + 0.3vw, 1.125rem);
+  --ed-fs-hero: clamp(3.5rem, 16vw, 8rem);
+  --ed-fs-statement: clamp(2.625rem, 10.8vw, 5.25rem);
+  --ed-fs-section: clamp(3.625rem, 14.9vw, 7rem);
+  --ed-fs-band: clamp(2.5rem, 10.3vw, 5rem);
+  --ed-fs-form: clamp(3rem, 12.3vw, 5.75rem);
+  --ed-fs-stat: clamp(3.25rem, 13.3vw, 5rem);
+  --ed-fs-closing: clamp(9.25rem, 37.9vw, 17.5rem);
+
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--ed-page);
+  color: var(--ed-text);
+  font: 300 var(--ed-fs-body) / 1.6 var(--ed-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (min-width: 64rem) {
+  .ed {
+    --ed-pad: clamp(2rem, 4.45vw, 4rem);
+    --ed-gap: clamp(6rem, 8.4vw, 7.5rem);
+    --ed-fs-eyebrow: 0.875rem;
+    --ed-fs-body: 1.25rem;
+    --ed-fs-hero: clamp(7rem, 13.06vw, 11.75rem);
+    --ed-fs-statement: clamp(3.5rem, 5.83vw, 5.25rem);
+    --ed-fs-section: clamp(5rem, 9.17vw, 8.25rem);
+    --ed-fs-band: clamp(3.5rem, 6.67vw, 6rem);
+    --ed-fs-form: clamp(3.5rem, 6.39vw, 5.75rem);
+    --ed-fs-stat: clamp(3rem, 5.56vw, 5rem);
+    --ed-fs-closing: clamp(10rem, 22.2vw, 20rem);
+  }
+}
+
+.ed *,
+.ed *::before,
+.ed *::after {
+  box-sizing: border-box;
+}
+
+.ed a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ed :focus-visible {
+  outline: 2px solid var(--ed-warm);
+  outline-offset: 3px;
+}
+
+/* :where keeps the specificity at one class, so a section's own size and tracking always win */
+:where(.ed) .ed-display {
+  margin: 0;
+  font-family: var(--ed-display);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-variation-settings:
+    'SOFT' 0,
+    'WONK' 1;
+  letter-spacing: -0.02em;
+}
+
+.ed .ed-eyebrow {
+  margin: 0;
+  font: 500 var(--ed-fs-eyebrow) / 1.2 var(--ed-body);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ed-teal);
+}
+
+.ed .ed-eyebrow--warm {
+  color: var(--ed-warm);
+}
+
+.ed .ed-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.0625rem 1.875rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ed-warm);
+  color: var(--ed-deep);
+  font: 500 0.9375rem / 1 var(--ed-body);
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.ed .ed-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.75rem 1.75rem -0.75rem color-mix(in srgb, var(--ed-warm) 70%, transparent);
+}
+
+.ed .ed-link {
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+/* Photos sit on a teal-tinted deep surface while they load */
+.ed .ed-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--ed-photo);
+}
+
+@media (min-width: 64rem) {
+  .ed .ed-button {
+    padding: 1.25rem 2.25rem;
+    font-size: 1.0625rem;
+  }
+}
+
+/* Entrances are plain CSS so they work in script-free previews; scroll motion is v-gsap. Both stand down for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.ed) {
+    scroll-behavior: smooth;
+  }
+
+  .ed .ed-reveal {
+    animation: ed-reveal 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  @keyframes ed-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+  }
+
+  @keyframes ed-photo-in {
+    from {
+      transform: scale(1.12);
+      opacity: 0.4;
+    }
+  }
+
+  @keyframes ed-float {
+    50% {
+      transform: translateY(-0.5rem);
+    }
+  }
+
+  @keyframes ed-marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}

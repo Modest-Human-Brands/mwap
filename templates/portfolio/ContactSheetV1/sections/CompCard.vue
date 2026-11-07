@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { CompCardSlot } from '../schema'
-import { useSiteHref } from '../../_shared/useSiteHref'
+import type { CompCardSlot } from '~~/templates/portfolio/ContactSheetV1/schema'
+import { useSiteHref } from '~~/templates/_shared/useSiteHref'
 defineProps<{
   slotContent: CompCardSlot
 }>()

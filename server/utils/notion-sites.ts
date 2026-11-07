@@ -88,7 +88,7 @@ async function toSite(page: PageObjectResponse, orgTitles: Map<string, Promise<s
 
   const json = (await pageBlocks(page.id)).map((b) => (b.type === 'code' ? text(b.code.rich_text) : '')).join('')
   const body = bodySchema.parse(JSON.parse(json))
-  const data = template.schema.parse(mergeWithSample(template.sample, body.data)) as ContactSheetData
+  const data = template.schema.parse(mergeWithSample(template.sample, body.data)) as SitePayload['data']
 
   return { slug, orgId, templateId: template.id, brand: body.brand, data, domains, ...(body.googleAnalyticsId && { googleAnalyticsId: body.googleAnalyticsId }), updatedAt: page.last_edited_time }
 }

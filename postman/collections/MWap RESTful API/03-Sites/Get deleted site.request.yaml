@@ -1,0 +1,19 @@
+$kind: http-request
+name: 'Get deleted site'
+description: |-
+  After the delete the site no longer exists: 404.
+order: 9150
+method: GET
+url: '{{baseUrl}}/api/site/:slug'
+pathVariables:
+  - key: slug
+    value: '{{editorialSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('matches Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'statusMessage'], properties: { statusCode: { type: 'number' }, statusMessage: { type: 'string' } } }))

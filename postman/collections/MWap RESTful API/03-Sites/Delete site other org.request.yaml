@@ -1,0 +1,24 @@
+$kind: http-request
+name: 'Delete site other org'
+description: |-
+  Another organization cannot delete the site: it answers 404, exactly like an unknown slug, and the site stays.
+order: 9050
+method: DELETE
+url: '{{baseUrl}}/api/site/:slug'
+pathVariables:
+  - key: slug
+    value: '{{editorialSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{otherOrgId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('matches Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'statusMessage'], properties: { statusCode: { type: 'number' }, statusMessage: { type: 'string' } } }))
+      pm.test('does not reveal the site', () => pm.expect(pm.response.json().statusMessage).to.include('No site found'))

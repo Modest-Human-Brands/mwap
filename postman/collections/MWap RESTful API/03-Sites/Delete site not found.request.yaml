@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'Delete site not found'
+description: |-
+  Deleting twice, or an unknown slug, is 404: the first delete already removed the site.
+order: 9200
+method: DELETE
+url: '{{baseUrl}}/api/site/:slug'
+pathVariables:
+  - key: slug
+    value: '{{editorialSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('matches Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'statusMessage'], properties: { statusCode: { type: 'number' }, statusMessage: { type: 'string' } } }))

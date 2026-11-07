@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useContactSheetFonts } from '../../_shared/useContactSheetFonts'
+import { useContactSheetFonts } from '~~/templates/portfolio/_shared/useContactSheetFonts'
 defineProps<{
   brandName: string
   imageUrl: string

@@ -1,7 +1,8 @@
 import { z } from 'zod'
 
-// The payload of a template lives next to it; only one template exists so far
+// The payload of a template lives next to it
 import { contactSheetDataSchema } from '../../templates/portfolio/ContactSheetV1/schema'
+import { editorialDataSchema } from '../../templates/psychiatrist/EditorialV1/schema'
 
 const hexColor = z.string().regex(/^#[0-9a-fA-F]{3,8}$/, 'Expected a hex color')
 const fontFamily = z.string().regex(/^[A-Za-z0-9 ]{1,60}$/, 'Expected a plain font family name')
@@ -52,8 +53,14 @@ export const siteSchema = z.object({
   orgId: orgIdSchema.default(DEFAULT_ORG_ID),
   templateId: z.string(),
   brand: brandSchema,
-  data: contactSheetDataSchema,
+  data: z.union([contactSheetDataSchema, editorialDataSchema]),
   domains: domainsSchema,
   googleAnalyticsId: googleAnalyticsIdSchema.optional(),
   updatedAt: z.string(),
 })
+
+/** The page `key` of a site payload, or undefined when the template has no such page */
+export function sitePage(data: z.infer<typeof siteSchema>['data'], key: string): { title: string; description: string } | undefined {
+  const pages = data.pages as Record<string, { title: string; description: string }>
+  return Object.hasOwn(pages, key) ? pages[key] : undefined
+}

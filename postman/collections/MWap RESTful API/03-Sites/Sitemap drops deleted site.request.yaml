@@ -1,0 +1,16 @@
+$kind: http-request
+name: 'Sitemap drops deleted site'
+description: |-
+  The sitemap no longer lists any page of the deleted site.
+order: 9160
+method: GET
+url: '{{baseUrl}}/sitemap.xml'
+headers:
+  - key: Accept
+    value: 'application/xml'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('lists no page of the deleted site', () => pm.expect(pm.response.text()).to.not.include(pm.collectionVariables.get('editorialSlug')))

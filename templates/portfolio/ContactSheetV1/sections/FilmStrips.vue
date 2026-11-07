@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SheetSlot } from '../schema'
+import type { SheetSlot } from '~~/templates/portfolio/ContactSheetV1/schema'
 defineProps<{
   slotContent: SheetSlot
   /** Lightbox index of the first frame */

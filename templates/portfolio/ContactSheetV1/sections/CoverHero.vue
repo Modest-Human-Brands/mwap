@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CoverSlot } from '../schema'
+import type { CoverSlot } from '~~/templates/portfolio/ContactSheetV1/schema'
 const props = defineProps<{
   slotContent: CoverSlot
 }>()

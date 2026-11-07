@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'Delete site'
+description: |-
+  Deletes a site completely: 204 with no body. The site is gone from GET /api/site and GET /api/site/:slug, its pages answer 404, its custom domains are free again and it leaves the sitemap. Only a site saved through the API can be deleted.
+order: 9100
+method: DELETE
+url: '{{baseUrl}}/api/site/:slug'
+pathVariables:
+  - key: slug
+    value: '{{editorialSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 204', () => pm.response.to.have.status(204))
+      pm.test('has no body', () => pm.expect(pm.response.text()).to.eql(''))

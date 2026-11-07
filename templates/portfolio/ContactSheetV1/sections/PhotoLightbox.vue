@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LightboxEntry } from '../schema'
+import type { LightboxEntry } from '~~/templates/portfolio/ContactSheetV1/schema'
 const props = defineProps<{
   entries: LightboxEntry[]
   storageKey: string

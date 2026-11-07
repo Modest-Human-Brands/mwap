@@ -1,0 +1,58 @@
+$kind: http-request
+name: 'Get editorial template by ID'
+description: |-
+  The psychiatrist-editorial template (category Psychiatrists): two fixed pages, home and about, built from named slots. home has hero, ticker, statement, care, approach, appointment and closing; about has hero, story, credentials, clinic, testimonial and closing. `data.contact` carries the email, an optional phone and an optional bookingEndpoint (a URL the appointment form POSTs to; without it the form opens a mailto link). Titles are lists of lines (`titleLines`) so the line breaks of the headline are content. Card lists carry minItems/maxItems in the JSON Schema. The sample is a complete payload that prefills an editor.
+order: 2500
+method: GET
+url: '{{baseUrl}}/api/site/template/:id'
+pathVariables:
+  - key: id
+    value: 'psychiatrist-editorial'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      const homeSlots = ['hero', 'ticker', 'statement', 'care', 'approach', 'appointment', 'closing']
+      const aboutSlots = ['hero', 'story', 'credentials', 'clinic', 'testimonial', 'closing']
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Template Detail schema', () => pm.response.to.have.jsonSchema({
+        type: 'object',
+        required: ['id', 'label', 'shortLabel', 'category', 'description', 'schema', 'sample'],
+        properties: { id: { const: 'psychiatrist-editorial' }, category: { const: 'Psychiatrists' }, schema: { type: 'object', required: ['type', 'properties'] }, sample: { type: 'object', required: ['seo', 'navigation', 'contact', 'pages'] } }
+      }))
+      pm.test('brand is not part of the payload schema', () => pm.expect(pm.response.json().schema.properties).to.not.have.property('brand'))
+      pm.test('sample is a complete payload without placeholder tokens', () => {
+        const { sample } = pm.response.json()
+        pm.expect(JSON.stringify(sample)).to.not.include('{{')
+        pm.expect(sample.navigation.length).to.be.within(1, 6)
+        pm.expect(sample.contact.email).to.be.a('string').and.not.empty
+        pm.expect(Object.keys(sample.pages)).to.have.members(['home', 'about'])
+        for (const slot of homeSlots) pm.expect(sample.pages.home[slot].enabled, 'home.' + slot).to.eql(true)
+        for (const slot of aboutSlots) pm.expect(sample.pages.about[slot].enabled, 'about.' + slot).to.eql(true)
+        pm.expect(sample.pages.home.hero.titleLines).to.be.an('array').and.not.empty
+      })
+      pm.test('schema fixes the layout and limits the cards', () => {
+        const pages = pm.response.json().schema.properties.pages
+        pm.expect(pages.additionalProperties).to.eql(false)
+        pm.expect(Object.keys(pages.properties)).to.have.members(['home', 'about'])
+        pm.expect(Object.keys(pages.properties.home.properties)).to.have.members(['title', 'description', ...homeSlots])
+        pm.expect(Object.keys(pages.properties.about.properties)).to.have.members(['title', 'description', ...aboutSlots])
+        const { home, about } = { home: pages.properties.home.properties, about: pages.properties.about.properties }
+        const limits = (list) => [list.minItems, list.maxItems]
+        pm.expect(limits(home.hero.properties.titleLines)).to.eql([1, 3])
+        pm.expect(limits(home.ticker.properties.items)).to.eql([3, 10])
+        pm.expect(limits(home.statement.properties.stats)).to.eql([2, 4])
+        pm.expect(limits(home.care.properties.areas)).to.eql([1, 6])
+        pm.expect(limits(home.appointment.properties.hours)).to.eql([1, 7])
+        pm.expect(limits(about.story.properties.columns)).to.eql([1, 2])
+        pm.expect(limits(about.credentials.properties.items)).to.eql([1, 8])
+        pm.expect(about.testimonial.properties.rating.minimum).to.eql(1)
+        pm.expect(about.testimonial.properties.rating.maximum).to.eql(5)
+      })
+      pm.test('the contact email is required, phone and booking endpoint are optional', () => {
+        const contact = pm.response.json().schema.properties.contact
+        pm.expect(contact.required).to.include('email').and.not.include('bookingEndpoint').and.not.include('phone')
+      })

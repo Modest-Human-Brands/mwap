@@ -1,0 +1,74 @@
+$kind: http-request
+name: 'Create site editorial'
+description: |-
+  Creates a site from the psychiatrist-editorial template. Only the content that differs from the template sample is sent (here the contact data and the title of the about page); everything else is filled from the sample. The site has two pages, home and about, reachable at /<slug> and /<slug>/about. A new slug is generated for every run and kept in the collection variable editorialSlug for the requests that follow.
+order: 4800
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{editorialSlug}}",
+      "templateId": "psychiatrist-editorial",
+      "googleAnalyticsId": "G-ANIKARAO01",
+      "brand": {
+        "name": "Dr. Anika Rao",
+        "logoUrl": "https://api.iconify.design/lucide/heart-pulse.svg?color=%232E7C7B&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/heart-pulse.svg?color=%232E7C7B",
+        "fontFamily": "Outfit",
+        "colors": {
+          "primary": "#E7B66B",
+          "secondary": "#10303A",
+          "accent": "#2E7C7B",
+          "background": "#F4F7F6",
+          "text": "#14262B"
+        }
+      },
+      "data": {
+        "seo": {
+          "canonicalUrl": "https://anikarao.example.com"
+        },
+        "contact": {
+          "email": "hello@anikarao.example.com",
+          "phone": "+91 00000 00000"
+        },
+        "pages": {
+          "about": {
+            "title": "About Dr. Anika Rao | Consultant Psychiatrist"
+          }
+        }
+      }
+    }
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      pm.collectionVariables.set('editorialSlug', 'pm-ed-' + Date.now())
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 201', () => pm.response.to.have.status(201))
+      pm.test('points to the new resource', () => pm.expect(pm.response.headers.get('Location')).to.eql('/api/site/' + pm.collectionVariables.get('editorialSlug')))
+      pm.test('stores the template and the brand', () => {
+        const site = pm.response.json()
+        pm.expect(site.templateId).to.eql('psychiatrist-editorial')
+        pm.expect(site.brand.name).to.eql('Dr. Anika Rao')
+      })
+      pm.test('has the two pages, with the sent content merged into the sample', () => {
+        const { data } = pm.response.json()
+        pm.expect(Object.keys(data.pages)).to.have.members(['home', 'about'])
+        pm.expect(data.pages.about.title).to.eql('About Dr. Anika Rao | Consultant Psychiatrist')
+        pm.expect(data.pages.about.hero.titleLines).to.be.an('array').and.not.empty
+        pm.expect(data.pages.home.care.areas.length).to.be.above(0)
+        pm.expect(data.contact.email).to.eql('hello@anikarao.example.com')
+      })

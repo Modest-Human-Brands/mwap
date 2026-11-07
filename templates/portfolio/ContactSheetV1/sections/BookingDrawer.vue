@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { BookingSlot } from '../schema'
-import type { SitePayload } from '../../../../shared/types/site'
-import { useBooking } from '../../_shared/useBooking'
+import type { BookingSlot } from '~~/templates/portfolio/ContactSheetV1/schema'
+import type { SitePayload } from '~~/shared/types/site'
+import { useBooking } from '~~/templates/_shared/useBooking'
 const props = defineProps<{
   slotContent: BookingSlot
   contact: SitePayload['data']['contact']

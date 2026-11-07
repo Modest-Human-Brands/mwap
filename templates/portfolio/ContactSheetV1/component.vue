@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { LightboxEntry, PageKey } from './schema'
-import type { SitePayload } from '../../../shared/types/site'
-import { useContactSheetFonts } from '../_shared/useContactSheetFonts'
+import type { LightboxEntry } from './schema'
+import type { ContactSheetSite, PageKey } from '~~/shared/types/site'
+import { useContactSheetFonts } from '~~/templates/portfolio/_shared/useContactSheetFonts'
 import BookingForm from './sections/BookingForm.vue'
 import CompCard from './sections/CompCard.vue'
 import CoverHero from './sections/CoverHero.vue'
@@ -12,7 +12,7 @@ import SiteNav from './sections/SiteNav.vue'
 import FilmStrips from './sections/FilmStrips.vue'
 import WorkIndex from './sections/WorkIndex.vue'
 const props = defineProps<{
-  site: SitePayload
+  site: ContactSheetSite
   pageKey: PageKey
 }>()
 
@@ -22,7 +22,8 @@ provide('siteBase', customDomain.value ? '' : `/${props.site.slug}`)
 
 useContactSheetFonts()
 
-const page = computed(() => props.site.data.pages[props.pageKey])
+// The template has a single page
+const page = computed(() => props.site.data.pages.home)
 const brand = computed(() => props.site.brand)
 const contact = computed(() => props.site.data.contact)
 const subject = computed(() => `Booking enquiry for ${brand.value.name}`)

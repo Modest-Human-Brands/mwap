@@ -1,0 +1,25 @@
+$kind: http-request
+name: 'Get editorial unknown page'
+description: |-
+  A page the editorial template does not have answers 404 with the template's own error page: the brand name, the "404" and a link back to the home page of the site.
+order: 4820
+method: GET
+url: '{{baseUrl}}/:slug/journal'
+pathVariables:
+  - key: slug
+    value: '{{editorialSlug}}'
+headers:
+  - key: Accept
+    value: 'text/html'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('is the page of the template, not the plain error', () => {
+        const html = pm.response.text()
+        pm.expect(html).to.include('404')
+        pm.expect(html).to.include('Dr. Anika Rao')
+        pm.expect(html).to.include('Back to home')
+      })
+      pm.test('is not indexed', () => pm.expect(pm.response.text()).to.include('noindex'))

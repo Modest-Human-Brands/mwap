@@ -1,0 +1,47 @@
+$kind: http-request
+name: 'Preview site editorial'
+description: |-
+  Renders the psychiatrist-editorial template with its sample content (no `data`) as standalone HTML without scripts: hero, ticker, statement, care areas, approach band, appointment and closing. Section ids are the anchors of the navigation: about, care, approach, visit and contact.
+order: 4200
+method: POST
+url: '{{baseUrl}}/api/site/template/preview'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {
+      "templateId": "psychiatrist-editorial",
+      "brand": {
+        "name": "Dr. Anika Rao",
+        "logoUrl": "https://api.iconify.design/lucide/heart-pulse.svg?color=%232E7C7B&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/heart-pulse.svg?color=%232E7C7B",
+        "fontFamily": "Outfit",
+        "colors": {
+          "primary": "#E7B66B",
+          "secondary": "#10303A",
+          "accent": "#2E7C7B",
+          "background": "#F4F7F6",
+          "text": "#14262B"
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('renders the headline and every home section', () => {
+        const { html } = pm.response.json()
+        pm.expect(html).to.include('<h1')
+        for (const id of ['about', 'care', 'approach', 'visit', 'contact']) pm.expect(html, id).to.include('id="' + id + '"')
+      })
+      pm.test('previews are free of scripts and placeholder tokens', () => {
+        const { html } = pm.response.json()
+        pm.expect(html).to.not.include('<script')
+        pm.expect(html).to.not.include('{{')
+      })
+      pm.test('the brand name is used', () => pm.expect(pm.response.json().html).to.include('Dr. Anika Rao'))
