@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.0.6
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.5...v0.0.6)
+
+### 🚀 Enhancements
+
+- Add Signal V1 developer template with multiple sections and styles ([fb2e3fd](https://github.com/Modest-Human-Brands/mwap/commit/fb2e3fd))
+- Enhance animations in HeroHome and ProjectPage sections for better user experience ([5553733](https://github.com/Modest-Human-Brands/mwap/commit/5553733))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.5
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.4...v0.0.5)
