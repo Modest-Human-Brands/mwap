@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.0.7
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.6...v0.0.7)
+
+### 🚀 Enhancements
+
+- Update environment variable handling and configuration for Notion integration ([d7594e6](https://github.com/Modest-Human-Brands/mwap/commit/d7594e6))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.6
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.5...v0.0.6)
