@@ -90,13 +90,13 @@ export default defineNuxtConfig({
       buildTime: '',
     },
     public: {
-      siteUrl: '',
+      siteUrl: process.env.NUXT_MWAP_PUBLIC_SITE_URL || '',
       vapidKey: '',
     },
     private: {
-      siteNotionDbId: '',
-      apiKey: '',
-      sitesDir: './data/sites',
+      siteNotionDbId: process.env.NOTION_DB_ID || '',
+      apiKey: process.env.NUXT_MWAP_PRIVATE_API_KEY || '',
+      sitesDir: process.env.NUXT_MWAP_PRIVATE_SITES_DIR || './data/sites',
       vapidKey: '',
       vapidSubject: '',
     },
@@ -137,7 +137,7 @@ export default defineNuxtConfig({
   },
   site: {
     name: 'MWap',
-    url: process.env.NUXT_PUBLIC_SITE_URL,
+    url: process.env.NUXT_MWAP_PUBLIC_SITE_URL,
   },
   sitemap: {
     autoLastmod: true,

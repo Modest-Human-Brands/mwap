@@ -1,7 +1,7 @@
 import { Client } from '@notionhq/client'
 
 const notionClientSingleton = () => {
-  return new Client({ auth: import.meta.env.NOTION_API_KEY })
+  return new Client({ auth: process.env.NOTION_API_KEY })
 }
 
 // eslint-disable-next-line no-shadow-restricted-names

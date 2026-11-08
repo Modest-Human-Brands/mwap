@@ -18,7 +18,7 @@ let inflight: Promise<SitePayload[]> | undefined
 let dataSourceId: string | undefined
 
 export function notionEnabled(): boolean {
-  return Boolean(import.meta.env.NOTION_API_KEY && useRuntimeConfig().private.siteNotionDbId)
+  return Boolean(process.env.NOTION_API_KEY && useRuntimeConfig().private.siteNotionDbId)
 }
 
 /** The configured id may be a database (resolved to its first data source) or already a data source */
