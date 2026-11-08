@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Preview site editorial'
 description: |-
-  Renders the psychiatrist-editorial template with its sample content (no `data`) as standalone HTML without scripts: hero, ticker, statement, care areas, approach band, appointment and closing. Section ids are the anchors of the navigation: about, care, approach, visit and contact.
+  Renders the portfolio-psychiatrist-editorial template with its sample content (no `data`) as standalone HTML without scripts: hero, ticker, statement, care areas, approach band, appointment and closing. Section ids are the anchors of the navigation: about, care, approach, visit and contact.
 order: 4200
 method: POST
 url: '{{baseUrl}}/api/site/template/preview'
@@ -14,7 +14,7 @@ body:
   type: json
   content: |-
     {
-      "templateId": "psychiatrist-editorial",
+      "templateId": "portfolio-psychiatrist-editorial",
       "brand": {
         "name": "Dr. Anika Rao",
         "logoUrl": "https://api.iconify.design/lucide/heart-pulse.svg?color=%232E7C7B&width=64&height=64",

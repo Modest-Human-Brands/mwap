@@ -1,0 +1,32 @@
+$kind: http-request
+name: 'Get template by legacy ID'
+description: |-
+  The ids used before the templates were grouped as portfolios (contact-sheet, psychiatrist-editorial, developer-signal) still resolve, so sites and clients that stored them keep working. The answer carries the new id; the old id is never returned.
+order: 2620
+method: GET
+url: '{{baseUrl}}/api/site/template/:id'
+pathVariables:
+  - key: id
+    value: 'developer-signal'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('answers as the portfolio template', () => {
+        const body = pm.response.json()
+        pm.expect(body.id).to.eql('portfolio-developer-signal')
+        pm.expect(body.category).to.eql('Portfolios')
+        pm.expect(body.label).to.eql('Developer · Signal')
+      })
+      pm.test('every other legacy id maps to its new id', async () => {
+        const base = pm.variables.replaceIn('{{baseUrl}}')
+        const pairs = { 'contact-sheet': 'portfolio-model-contact-sheet', 'psychiatrist-editorial': 'portfolio-psychiatrist-editorial' }
+        for (const [legacy, current] of Object.entries(pairs)) {
+          const res = await pm.sendRequest({ url: base + '/api/site/template/' + legacy, method: 'GET' })
+          pm.expect(res.json().id, legacy).to.eql(current)
+        }
+      })

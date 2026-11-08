@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Preview site signal'
 description: |-
-  Renders the developer-signal home page with its sample content (no `data`) as standalone HTML without scripts: the hero shader is replaced by its static glow and videos by their poster images. Section ids are the anchors of the navigation: work, systems, career, stack and contact.
+  Renders the portfolio-developer-signal home page with its sample content (no `data`) as standalone HTML without scripts: the hero shader is replaced by its static glow and videos by their poster images. Section ids are the anchors of the navigation: work, systems, career, stack and contact.
 order: 4300
 method: POST
 url: '{{baseUrl}}/api/site/template/preview'
@@ -14,7 +14,7 @@ body:
   type: json
   content: |-
     {
-      "templateId": "developer-signal",
+      "templateId": "portfolio-developer-signal",
       "brand": {
         "name": "Nova Dev",
         "logoUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF&width=64&height=64",

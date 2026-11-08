@@ -18,7 +18,7 @@ response:
       {
         "slug": "sample-model",
         "orgId": "default",
-        "templateId": "contact-sheet",
+        "templateId": "portfolio-model-contact-sheet",
         "brand": {
           "name": "Sample Model",
           "logoUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F&width=64&height=64",

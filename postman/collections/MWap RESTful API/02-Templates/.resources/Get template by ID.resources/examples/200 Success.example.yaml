@@ -2,7 +2,7 @@ $kind: http-example
 name: '200 Success'
 order: 1000
 request:
-  url: '{{baseUrl}}/api/site/template/contact-sheet'
+  url: '{{baseUrl}}/api/site/template/portfolio-model-contact-sheet'
   method: GET
 response:
   statusCode: 200
@@ -14,7 +14,7 @@ response:
     type: json
     content: |-
       {
-        "id": "contact-sheet",
+        "id": "portfolio-model-contact-sheet",
         "label": "Contact Sheet",
         "shortLabel": "Contact Sheet",
         "category": "Portfolios",

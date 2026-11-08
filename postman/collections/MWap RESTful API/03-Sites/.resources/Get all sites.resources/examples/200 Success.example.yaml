@@ -18,7 +18,7 @@ response:
           {
             "slug": "sample-model",
             "orgId": "default",
-            "templateId": "contact-sheet",
+            "templateId": "portfolio-model-contact-sheet",
             "name": "Sample Model",
             "updatedAt": "2026-01-01T00:00:00.000Z"
           }

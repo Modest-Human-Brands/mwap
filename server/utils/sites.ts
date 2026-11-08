@@ -4,7 +4,7 @@ const SEED_UPDATED_AT = '2026-01-01T00:00:00.000Z'
 const seeds: Record<string, SitePayload> = {
   'sample-model': siteSchema.parse({
     slug: 'sample-model',
-    templateId: 'contact-sheet',
+    templateId: 'portfolio-model-contact-sheet',
     brand: {
       name: 'Sample Model',
       logoUrl: 'https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F&width=64&height=64',
@@ -18,7 +18,7 @@ const seeds: Record<string, SitePayload> = {
         text: '#F2EFE6',
       },
     },
-    data: mergeWithSample(templates['contact-sheet']!.sample, { seo: { canonicalUrl: 'https://samplemodel.example.com' }, contact: { email: 'booking@samplemodel.example.com' } }),
+    data: mergeWithSample(templates['portfolio-model-contact-sheet']!.sample, { seo: { canonicalUrl: 'https://samplemodel.example.com' }, contact: { email: 'booking@samplemodel.example.com' } }),
     updatedAt: SEED_UPDATED_AT,
   }),
 }
@@ -26,9 +26,9 @@ const seeds: Record<string, SitePayload> = {
 const storage = () => useStorage('sites')
 const key = (slug: string) => `${slug}.json`
 
-// Sites stored before custom domains and organizations existed have no `domains` or `orgId`
+// Sites stored before custom domains and organizations existed have no `domains` or `orgId`; sites stored under an earlier template id get the current one
 function withDomains(site: SitePayload): SitePayload {
-  return { ...site, domains: site.domains ?? [], orgId: site.orgId ?? DEFAULT_ORG_ID }
+  return { ...site, templateId: canonicalTemplateId(site.templateId), domains: site.domains ?? [], orgId: site.orgId ?? DEFAULT_ORG_ID }
 }
 
 // Precedence: saved through the API, then a published Notion row, then the built-in example

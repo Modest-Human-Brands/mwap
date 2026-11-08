@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get all templates'
 description: |-
-  Template catalog for the picker. `category` groups templates; ids are what `templateId` accepts when previewing or creating a site.
+  Template catalog for the picker. Every template is a portfolio: the category is Portfolios and the label names the profession (Model, Psychiatrist, Developer). Ids are what `templateId` accepts when previewing or creating a site; the earlier ids (contact-sheet, psychiatrist-editorial, developer-signal) are still accepted and answer as the new id.
 order: 1000
 method: GET
 url: '{{baseUrl}}/api/site/template'
@@ -22,11 +22,17 @@ scripts:
           properties: { id: { type: 'string' }, label: { type: 'string' }, shortLabel: { type: 'string' }, category: { type: ['string', 'null'] }, description: { type: 'string' } }
         }
       }))
-      pm.test('lists all templates', () => pm.expect(pm.response.json().map((t) => t.id)).to.have.members(['contact-sheet', 'psychiatrist-editorial', 'developer-signal']))
+      pm.test('lists all templates', () => pm.expect(pm.response.json().map((t) => t.id)).to.have.members(['portfolio-model-contact-sheet', 'portfolio-psychiatrist-editorial', 'portfolio-developer-signal']))
+      pm.test('labels name the profession', () => {
+        const byId = Object.fromEntries(pm.response.json().map((t) => [t.id, t.label]))
+        pm.expect(byId['portfolio-model-contact-sheet']).to.eql('Model · Contact Sheet')
+        pm.expect(byId['portfolio-psychiatrist-editorial']).to.eql('Psychiatrist · Editorial')
+        pm.expect(byId['portfolio-developer-signal']).to.eql('Developer · Signal')
+      })
       pm.test('groups them by category', () => {
         const byId = Object.fromEntries(pm.response.json().map((t) => [t.id, t.category]))
-        pm.expect(byId['contact-sheet']).to.eql('Portfolios')
-        pm.expect(byId['psychiatrist-editorial']).to.eql('Psychiatrists')
-        pm.expect(byId['developer-signal']).to.eql('Developers')
+        pm.expect(byId['portfolio-model-contact-sheet']).to.eql('Portfolios')
+        pm.expect(byId['portfolio-psychiatrist-editorial']).to.eql('Portfolios')
+        pm.expect(byId['portfolio-developer-signal']).to.eql('Portfolios')
       })
 examples: './.resources/Get all templates.resources/examples/'

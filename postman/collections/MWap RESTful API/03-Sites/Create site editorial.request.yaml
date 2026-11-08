@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Create site editorial'
 description: |-
-  Creates a site from the psychiatrist-editorial template. Only the content that differs from the template sample is sent (here the contact data and the title of the about page); everything else is filled from the sample. The site has two pages, home and about, reachable at /<slug> and /<slug>/about. A new slug is generated for every run and kept in the collection variable editorialSlug for the requests that follow.
+  Creates a site from the portfolio-psychiatrist-editorial template. Only the content that differs from the template sample is sent (here the contact data and the title of the about page); everything else is filled from the sample. The site has two pages, home and about, reachable at /<slug> and /<slug>/about. A new slug is generated for every run and kept in the collection variable editorialSlug for the requests that follow.
 order: 4800
 method: POST
 url: '{{baseUrl}}/api/site'
@@ -19,7 +19,7 @@ body:
   content: |-
     {
       "slug": "{{editorialSlug}}",
-      "templateId": "psychiatrist-editorial",
+      "templateId": "portfolio-psychiatrist-editorial",
       "googleAnalyticsId": "G-ANIKARAO01",
       "brand": {
         "name": "Dr. Anika Rao",
@@ -61,7 +61,7 @@ scripts:
       pm.test('points to the new resource', () => pm.expect(pm.response.headers.get('Location')).to.eql('/api/site/' + pm.collectionVariables.get('editorialSlug')))
       pm.test('stores the template and the brand', () => {
         const site = pm.response.json()
-        pm.expect(site.templateId).to.eql('psychiatrist-editorial')
+        pm.expect(site.templateId).to.eql('portfolio-psychiatrist-editorial')
         pm.expect(site.brand.name).to.eql('Dr. Anika Rao')
       })
       pm.test('has the two pages, with the sent content merged into the sample', () => {

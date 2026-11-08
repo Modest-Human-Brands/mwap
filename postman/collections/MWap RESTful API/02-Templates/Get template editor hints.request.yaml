@@ -1,0 +1,76 @@
+$kind: http-request
+name: 'Get template editor hints'
+description: |-
+  The JSON Schema of every template carries what an editor needs to build its form without knowing the template. This request reads the schema of each listed template and checks the hints:
+
+  - `title` on the schema of a page and of every slot (a node with an `enabled` flag) is the label of its panel; `description` is optional help text.
+  - `widget` marks how a string is edited. `image` and `video` are URL fields whose value is a media file (the editor shows a preview); `textarea` is long text. A string without `widget` is a single line, and a `format: uri` string is a link.
+  - Every key that holds an image (`imageUrl`, `portraitUrl`, `posterUrl`, `ogImage`) is `image`; `videoUrl` is `video`; the long-text keys (`bio`, `body`, `summary`, `overview`, `intro`, `note`, `tagline`) are `textarea`.
+  - `widget` takes only those three values and is set on strings only.
+
+  Media is edited by URL: the service stores no files.
+order: 2610
+method: GET
+url: '{{baseUrl}}/api/site/template'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      const WIDGETS = ['textarea', 'image', 'video']
+      const IMAGE_KEYS = ['imageUrl', 'portraitUrl', 'posterUrl', 'ogImage']
+      const TEXT_KEYS = ['bio', 'body', 'summary', 'overview', 'intro', 'note', 'tagline']
+
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      const ids = pm.response.json().map((t) => t.id)
+
+      // Every node of a schema with the key it sits under (array items are named after their list)
+      const walk = (node, key, path, visit) => {
+        if (!node || typeof node !== 'object') return
+        visit(node, key, path)
+        for (const [k, child] of Object.entries(node.properties || {})) walk(child, k, path + '.' + k, visit)
+        if (node.items) walk(node.items, key, path + '[]', visit)
+        for (const option of node.anyOf || []) walk(option, key, path, visit)
+      }
+
+      const templates = []
+      for (const id of ids) {
+        const res = await pm.sendRequest({ url: pm.variables.replaceIn('{{baseUrl}}') + '/api/site/template/' + id, method: 'GET' })
+        templates.push({ id, schema: res.json().schema })
+      }
+
+      pm.test('the service lists the three templates', () => pm.expect(ids).to.include.members(['portfolio-model-contact-sheet', 'portfolio-psychiatrist-editorial', 'portfolio-developer-signal']))
+
+      for (const { id, schema } of templates) {
+        const nodes = []
+        walk(schema, '', id, (node, key, path) => nodes.push({ node, key, path }))
+        const strings = nodes.filter(({ node }) => node.type === 'string')
+
+        pm.test(id + ': widget is one of ' + WIDGETS.join(', ') + ' and sits on strings only', () => {
+          for (const { node, path } of nodes.filter(({ node }) => 'widget' in node)) {
+            pm.expect(WIDGETS, path).to.include(node.widget)
+            pm.expect(node.type, path).to.eql('string')
+          }
+        })
+        pm.test(id + ': image and video fields are marked', () => {
+          const images = strings.filter(({ key }) => IMAGE_KEYS.includes(key))
+          pm.expect(images.length, 'image fields').to.be.above(0)
+          for (const { node, path } of images) pm.expect(node.widget, path).to.eql('image')
+          for (const { node, path } of strings.filter(({ key }) => key === 'videoUrl')) pm.expect(node.widget, path).to.eql('video')
+        })
+        pm.test(id + ': long-text fields are textareas', () => {
+          for (const { node, path } of strings.filter(({ key }) => TEXT_KEYS.includes(key))) pm.expect(node.widget, path).to.eql('textarea')
+        })
+        pm.test(id + ': every page and slot has a title', () => {
+          const pages = schema.properties.pages.properties
+          pm.expect(Object.keys(pages).length).to.be.above(0)
+          for (const [name, page] of Object.entries(pages)) {
+            pm.expect(page.title, 'page ' + name).to.be.a('string').and.not.empty
+            for (const [slotName, slot] of Object.entries(page.properties)) {
+              if (slot.properties && slot.properties.enabled) pm.expect(slot.title, name + '.' + slotName).to.be.a('string').and.not.empty
+            }
+          }
+        })
+      }

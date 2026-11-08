@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Create site signal'
 description: |-
-  Creates a site from the developer-signal template. Only the content that differs from the template sample is sent (here the contact data and the list of projects, which replaces the sample list as a whole); everything else is filled from the sample. The site has the home page at /<slug> and one page per project at /<slug>/work/<project.slug>. A new slug is generated for every run and kept in the collection variable signalSlug for the requests that follow.
+  Creates a site from the portfolio-developer-signal template. Only the content that differs from the template sample is sent (here the contact data and the list of projects, which replaces the sample list as a whole); everything else is filled from the sample. The site has the home page at /<slug> and one page per project at /<slug>/work/<project.slug>. A new slug is generated for every run and kept in the collection variable signalSlug for the requests that follow.
 order: 4790
 method: POST
 url: '{{baseUrl}}/api/site'
@@ -19,7 +19,7 @@ body:
   content: |-
     {
       "slug": "{{signalSlug}}",
-      "templateId": "developer-signal",
+      "templateId": "portfolio-developer-signal",
       "googleAnalyticsId": "G-NOVADEV001",
       "brand": {
         "name": "Nova Dev",
@@ -72,7 +72,7 @@ scripts:
       pm.test('points to the new resource', () => pm.expect(pm.response.headers.get('Location')).to.eql('/api/site/' + pm.collectionVariables.get('signalSlug')))
       pm.test('stores the template and the brand', () => {
         const site = pm.response.json()
-        pm.expect(site.templateId).to.eql('developer-signal')
+        pm.expect(site.templateId).to.eql('portfolio-developer-signal')
         pm.expect(site.brand.name).to.eql('Nova Dev')
       })
       pm.test('has the home page and the sent project, the rest filled from the sample', () => {

@@ -18,7 +18,7 @@ response:
       {
         "slug": "iris-vale-cards",
         "orgId": "pm-org",
-        "templateId": "contact-sheet",
+        "templateId": "portfolio-model-contact-sheet",
         "brand": {
           "name": "Iris Vale",
           "logoUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F&width=64&height=64",

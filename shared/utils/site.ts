@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
 // The payload of a template lives next to it
-import { contactSheetDataSchema } from '../../templates/portfolio/ContactSheetV1/schema'
-import { signalDataSchema } from '../../templates/developer/SignalV1/schema'
-import { editorialDataSchema } from '../../templates/psychiatrist/EditorialV1/schema'
+import { contactSheetDataSchema } from '../../templates/portfolio/model/ContactSheetV1/schema'
+import { signalDataSchema } from '../../templates/portfolio/developer/SignalV1/schema'
+import { editorialDataSchema } from '../../templates/portfolio/psychiatrist/EditorialV1/schema'
 
 const hexColor = z.string().regex(/^#[0-9a-fA-F]{3,8}$/, 'Expected a hex color')
 const fontFamily = z.string().regex(/^[A-Za-z0-9 ]{1,60}$/, 'Expected a plain font family name')

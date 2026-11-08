@@ -1,13 +1,13 @@
 $kind: http-request
 name: 'Get editorial template by ID'
 description: |-
-  The psychiatrist-editorial template (category Psychiatrists): two fixed pages, home and about, built from named slots. home has hero, ticker, statement, care, approach, appointment and closing; about has hero, story, credentials, clinic, testimonial and closing. `data.contact` carries the email, an optional phone and an optional bookingEndpoint (a URL the appointment form POSTs to; without it the form opens a mailto link). Titles are lists of lines (`titleLines`) so the line breaks of the headline are content. Card lists carry minItems/maxItems in the JSON Schema. The sample is a complete payload that prefills an editor.
+  The portfolio-psychiatrist-editorial template (category Portfolios): two fixed pages, home and about, built from named slots. home has hero, ticker, statement, care, approach, appointment and closing; about has hero, story, credentials, clinic, testimonial and closing. `data.contact` carries the email, an optional phone and an optional bookingEndpoint (a URL the appointment form POSTs to; without it the form opens a mailto link). Titles are lists of lines (`titleLines`) so the line breaks of the headline are content. Card lists carry minItems/maxItems in the JSON Schema. The sample is a complete payload that prefills an editor.
 order: 2500
 method: GET
 url: '{{baseUrl}}/api/site/template/:id'
 pathVariables:
   - key: id
-    value: 'psychiatrist-editorial'
+    value: 'portfolio-psychiatrist-editorial'
 headers:
   - key: Accept
     value: 'application/json'
@@ -21,7 +21,7 @@ scripts:
       pm.test('matches Template Detail schema', () => pm.response.to.have.jsonSchema({
         type: 'object',
         required: ['id', 'label', 'shortLabel', 'category', 'description', 'schema', 'sample'],
-        properties: { id: { const: 'psychiatrist-editorial' }, category: { const: 'Psychiatrists' }, schema: { type: 'object', required: ['type', 'properties'] }, sample: { type: 'object', required: ['seo', 'navigation', 'contact', 'pages'] } }
+        properties: { id: { const: 'portfolio-psychiatrist-editorial' }, category: { const: 'Portfolios' }, schema: { type: 'object', required: ['type', 'properties'] }, sample: { type: 'object', required: ['seo', 'navigation', 'contact', 'pages'] } }
       }))
       pm.test('brand is not part of the payload schema', () => pm.expect(pm.response.json().schema.properties).to.not.have.property('brand'))
       pm.test('sample is a complete payload without placeholder tokens', () => {

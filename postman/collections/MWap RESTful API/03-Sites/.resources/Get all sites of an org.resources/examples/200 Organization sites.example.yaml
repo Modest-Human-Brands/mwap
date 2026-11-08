@@ -18,14 +18,14 @@ response:
           {
             "slug": "iris-vale",
             "orgId": "pm-org",
-            "templateId": "contact-sheet",
+            "templateId": "portfolio-model-contact-sheet",
             "name": "Iris Vale Studio",
             "updatedAt": "2026-10-25T20:35:03.521Z"
           },
           {
             "slug": "iris-vale-sample",
             "orgId": "pm-org",
-            "templateId": "contact-sheet",
+            "templateId": "portfolio-model-contact-sheet",
             "name": "Iris Vale",
             "updatedAt": "2026-10-25T20:35:03.486Z"
           }

@@ -9,7 +9,7 @@ export function validationError(issues: Issue[]) {
 const toIssues = (issues: z.core.$ZodIssue[], prefix = ''): Issue[] => issues.map(({ path, message, code }) => ({ field: [...(prefix ? [prefix] : []), ...path].join('.'), message, code }))
 
 export function getTemplate(templateId: unknown): TemplateDefinition {
-  const template = typeof templateId === 'string' ? templates[templateId] : undefined
+  const template = typeof templateId === 'string' ? templates[canonicalTemplateId(templateId)] : undefined
   if (!template) throw createError({ statusCode: 404, statusMessage: 'Template not found' })
   return template
 }
@@ -35,5 +35,5 @@ export function parseSiteInput<Extra extends z.ZodRawShape>(body: unknown, extra
   const issues = [...(parsed.success ? [] : toIssues(parsed.error.issues)), ...(dataResult.success ? [] : toIssues(dataResult.error.issues, 'data'))]
   if (issues.length || !parsed.success || !dataResult.success) throw validationError(issues)
 
-  return { ...parsed.data, template, data: dataResult.data as SitePayload['data'] }
+  return { ...parsed.data, templateId: template.id, template, data: dataResult.data as SitePayload['data'] }
 }

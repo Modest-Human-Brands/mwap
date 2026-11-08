@@ -1,13 +1,13 @@
 $kind: http-request
 name: 'Get signal template by ID'
 description: |-
-  The developer-signal template (category Developers): a dark developer portfolio with shader backgrounds. `data.pages.home` is the one fixed page, built from named slots: hero, intro (stats), work (the selected projects), systems, career (experience, education, hackathons, open source and writing), stack and contact. `data.projects` is a list of 1 to 6 projects; every project gets its own page at /<slug>/work/<project.slug> (overview, capabilities, releases) and the work slot of the home page links to them. `data.contact` carries the email, up to six links and an optional bookingEndpoint. Lists carry minItems/maxItems in the JSON Schema. The sample is a complete payload with generic content that prefills an editor.
+  The portfolio-developer-signal template (category Portfolios): a dark developer portfolio with shader backgrounds. `data.pages.home` is the one fixed page, built from named slots: hero, intro (stats), work (the selected projects), systems, career (experience, education, hackathons, open source and writing), stack and contact. `data.projects` is a list of 1 to 6 projects; every project gets its own page at /<slug>/work/<project.slug> (overview, capabilities, releases) and the work slot of the home page links to them. `data.contact` carries the email, up to six links and an optional bookingEndpoint. Lists carry minItems/maxItems in the JSON Schema. The sample is a complete payload with generic content that prefills an editor.
 order: 2600
 method: GET
 url: '{{baseUrl}}/api/site/template/:id'
 pathVariables:
   - key: id
-    value: 'developer-signal'
+    value: 'portfolio-developer-signal'
 headers:
   - key: Accept
     value: 'application/json'
@@ -20,7 +20,7 @@ scripts:
       pm.test('matches Template Detail schema', () => pm.response.to.have.jsonSchema({
         type: 'object',
         required: ['id', 'label', 'shortLabel', 'category', 'description', 'schema', 'sample'],
-        properties: { id: { const: 'developer-signal' }, category: { const: 'Developers' }, schema: { type: 'object', required: ['type', 'properties'] }, sample: { type: 'object', required: ['seo', 'navigation', 'contact', 'projects', 'pages'] } }
+        properties: { id: { const: 'portfolio-developer-signal' }, category: { const: 'Portfolios' }, schema: { type: 'object', required: ['type', 'properties'] }, sample: { type: 'object', required: ['seo', 'navigation', 'contact', 'projects', 'pages'] } }
       }))
       pm.test('brand is not part of the payload schema', () => pm.expect(pm.response.json().schema.properties).to.not.have.property('brand'))
       pm.test('sample is a complete payload with generic content', () => {
