@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.0.8
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.7...v0.0.8)
+
+### 🩹 Fixes
+
+- Update environment variable names for consistency in configuration and API key handling ([859de59](https://github.com/Modest-Human-Brands/mwap/commit/859de59))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.7
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.6...v0.0.7)
