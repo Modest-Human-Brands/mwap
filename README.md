@@ -14,7 +14,7 @@ A stateless, template-driven site builder. Pick a template, send a brand and a p
 
 In order of precedence:
 
-1. Sites saved through the API (`POST`/`PUT`), stored as JSON files in `NUXT_PRIVATE_SITES_DIR`.
+1. Sites saved through the API (`POST`/`PUT`), stored as JSON files in `NUXT_MWAP_PRIVATE_SITES_DIR`.
 2. Published rows of a Notion database (read-only, cached for 60 seconds).
 3. The built-in example site `northlight-studio`.
 
@@ -61,8 +61,8 @@ Validation failures answer 400 with `data.errors[{ field, message, code }]`; a m
 | Variable                                           | Purpose                                                                  |
 | -------------------------------------------------- | ------------------------------------------------------------------------ |
 | `NUXT_PUBLIC_SITE_URL`                             | public URL of the service (canonical URLs, sitemap)                      |
-| `NUXT_PRIVATE_API_KEY`                             | key for write endpoints; unset means every write is 401                  |
-| `NUXT_PRIVATE_SITES_DIR`                           | where saved sites are stored, default `./data/sites`                     |
+| `NUXT_MWAP_PRIVATE_API_KEY`                        | key for write endpoints; unset means every write is 401                  |
+| `NUXT_MWAP_PRIVATE_SITES_DIR`                      | where saved sites are stored, default `./data/sites`                     |
 | `NOTION_API_KEY`, `NUXT_PRIVATE_SITE_NOTION_DB_ID` | enable the Notion source (integration token, and the id of the database) |
 
 See `.env.example`.
@@ -85,7 +85,7 @@ Docker (the sites volume must be kept between runs):
 
 ```bash
 docker build -t mwap .
-docker run -p 3000:3000 -v mwap-data:/app/data -e NUXT_PRIVATE_API_KEY=changeme -e NUXT_PUBLIC_SITE_URL=http://localhost:3000 mwap
+docker run -p 3000:3000 -v mwap-data:/app/data -e NUXT_MWAP_PRIVATE_API_KEY=changeme -e NUXT_PUBLIC_SITE_URL=http://localhost:3000 mwap
 ```
 
 ## Test the API
@@ -97,7 +97,7 @@ postman collection lint "postman/collections/MWap RESTful API"
 postman collection run "postman/collections/MWap RESTful API" -e postman/environments/Local.environment.yaml --env-var apiKey=changeme
 ```
 
-Each run creates one test site (there is no delete endpoint), so use a throwaway `NUXT_PRIVATE_SITES_DIR`.
+Each run creates one test site (there is no delete endpoint), so use a throwaway `NUXT_MWAP_PRIVATE_SITES_DIR`.
 
 ## License
 
