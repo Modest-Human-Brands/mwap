@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.0.10
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.9...v0.0.10)
+
+### 🚀 Enhancements
+
+- Enhance developer portfolio with detailed education and career sections ([3446aa1](https://github.com/Modest-Human-Brands/mwap/commit/3446aa1))
+- Implement share preview functionality for site creation and retrieval ([63c8074](https://github.com/Modest-Human-Brands/mwap/commit/63c8074))
+- Add static thumbnails for templates and implement font search functionality ([08dc406](https://github.com/Modest-Human-Brands/mwap/commit/08dc406))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.9
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.8...v0.0.9)
