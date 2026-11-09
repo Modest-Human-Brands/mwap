@@ -1,0 +1,48 @@
+$kind: http-request
+name: 'Get share preview'
+description: |-
+  The head of the home page of the site created by "Create site share preview defaults": what chat apps and search engines read for a link preview. Title, description and image come from the site (brand name, text built from it, brand logo), never from the template sample, and the card is the large-image Twitter card.
+order: 4796
+method: GET
+url: '{{baseUrl}}/:slug'
+pathVariables:
+  - key: slug
+    value: '{{shareSlug}}'
+headers:
+  - key: Accept
+    value: 'text/html'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      const meta = (html, attr, name) => {
+        const tag = html.match(new RegExp('<meta[^>]*' + attr + '="' + name + '"[^>]*>', 'i'))
+        const content = tag && tag[0].match(/content="([^"]*)"/i)
+        return content ? content[1] : undefined
+      }
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('title and og:title are the brand name', () => {
+        const html = pm.response.text()
+        pm.expect(html).to.include('<title>Nova Dev</title>')
+        pm.expect(meta(html, 'property', 'og:title')).to.eql('Nova Dev')
+        pm.expect(meta(html, 'property', 'og:site_name')).to.eql('Nova Dev')
+      })
+      pm.test('the description is built from the brand', () => {
+        const html = pm.response.text()
+        pm.expect(meta(html, 'name', 'description')).to.include('Nova Dev')
+        pm.expect(meta(html, 'property', 'og:description')).to.eql(meta(html, 'name', 'description'))
+      })
+      pm.test('og:image is the brand logo', () => pm.expect(meta(pm.response.text(), 'property', 'og:image')).to.include('terminal.svg'))
+      pm.test('og:type, og:url and the Twitter card are set', () => {
+        const html = pm.response.text()
+        pm.expect(meta(html, 'property', 'og:type')).to.eql('website')
+        pm.expect(meta(html, 'property', 'og:url')).to.match(new RegExp('/' + pm.collectionVariables.get('shareSlug') + '$'))
+        pm.expect(meta(html, 'name', 'twitter:card')).to.eql('summary_large_image')
+        pm.expect(meta(html, 'name', 'twitter:title')).to.eql('Nova Dev')
+      })
+      pm.test('nothing of the template sample leaks into the page head', () => {
+        const head = pm.response.text().split('</head>')[0]
+        pm.expect(head).to.not.include('Alex Sample')
+        pm.expect(head).to.not.include('images.unsplash.com')
+        pm.expect(head).to.not.include('example.com')
+      })

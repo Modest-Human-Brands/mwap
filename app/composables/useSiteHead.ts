@@ -50,6 +50,8 @@ export function useSiteHead(site: MaybeRefOrGetter<SitePayload>, page: PagePaylo
   const buildTime = useRuntimeConfig().meta?.buildTime
 
   useBrandHead(() => toValue(site).brand)
+  const url = useRequestURL()
+  const route = useRoute()
 
   useSeoMeta({
     title: page.title,
@@ -58,6 +60,12 @@ export function useSiteHead(site: MaybeRefOrGetter<SitePayload>, page: PagePaylo
     ogDescription: page.description,
     ogImage: () => toValue(site).data.seo.ogImage,
     ogSiteName: () => toValue(site).brand.name,
+    ogType: 'website',
+    ogUrl: () => `${url.origin}${route.path === '/' ? '' : route.path}`,
+    twitterCard: 'summary_large_image',
+    twitterTitle: page.title,
+    twitterDescription: page.description,
+    twitterImage: () => toValue(site).data.seo.ogImage,
   })
 
   useSchemaOrg([

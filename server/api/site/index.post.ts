@@ -2,7 +2,7 @@ export default defineEventHandler(async (event) => {
   requireApiKey(event)
   const orgId = requireOrgId(event)
 
-  const { slug, templateId, brand, data, domains, googleAnalyticsId } = parseSiteInput(await readBody(event), { slug: slugSchema })
+  const { slug, templateId, brand, data, domains, googleAnalyticsId } = parseSiteInput(await readBody(event), { slug: slugSchema }, { event })
 
   if (await getSite(slug)) throw createError({ statusCode: 409, statusMessage: `Site "${slug}" already exists` })
   await assertDomainsFree(domains, slug)

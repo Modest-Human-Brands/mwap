@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   // Another organization's site answers like a missing one, so its slug is not revealed
   if (!existing || existing.orgId !== orgId) throw createError({ statusCode: 404, statusMessage: `No site found for slug: "${slug}"` })
 
-  const { templateId, brand, data, domains, googleAnalyticsId } = parseSiteInput(await readBody(event), {})
+  const { templateId, brand, data, domains, googleAnalyticsId } = parseSiteInput(await readBody(event), {}, { event, slug })
   await assertDomainsFree(domains, slug)
 
   const site: SitePayload = { slug, orgId, templateId, brand, data, domains, ...(googleAnalyticsId && { googleAnalyticsId }), updatedAt: new Date().toISOString() }

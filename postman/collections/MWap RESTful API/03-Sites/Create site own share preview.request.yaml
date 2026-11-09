@@ -1,0 +1,60 @@
+$kind: http-request
+name: 'Create site own share preview'
+description: |-
+  Creates a site that sends its own share-preview content: the home page title and description and seo.ogImage. What is sent is stored as is; the defaults of "Create site share preview defaults" only apply to what is missing.
+order: 4797
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "pm-share-own-{{$timestamp}}",
+      "templateId": "portfolio-developer-signal",
+      "brand": {
+        "name": "Nova Dev",
+        "logoUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF",
+        "fontFamily": "Exo 2",
+        "colors": {
+          "primary": "#0593FA",
+          "secondary": "#262626",
+          "accent": "#5BBBFF",
+          "background": "#171717",
+          "text": "#F8FAFC"
+        }
+      },
+      "data": {
+        "seo": {
+          "ogImage": "https://novadev.example.com/share.png",
+          "canonicalUrl": "https://novadev.example.com"
+        },
+        "pages": {
+          "home": {
+            "title": "Nova Dev | Rust and TypeScript engineer",
+            "description": "Fast tools and the systems behind them."
+          }
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 201', () => pm.response.to.have.status(201))
+      pm.test('keeps the title, description, image and canonical URL that were sent', () => {
+        const { data } = pm.response.json()
+        pm.expect(data.pages.home.title).to.eql('Nova Dev | Rust and TypeScript engineer')
+        pm.expect(data.pages.home.description).to.eql('Fast tools and the systems behind them.')
+        pm.expect(data.seo.ogImage).to.eql('https://novadev.example.com/share.png')
+        pm.expect(data.seo.canonicalUrl).to.eql('https://novadev.example.com')
+      })

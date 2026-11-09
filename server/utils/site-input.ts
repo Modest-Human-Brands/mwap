@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { H3Event } from 'h3'
 
 type Issue = { field: string; message: string; code: string }
 
@@ -26,10 +27,14 @@ const envelopeSchema = z.object({
  * Validates a template + brand + payload body. Missing payload fields are filled from the template
  * sample; every problem is reported at once as 400 with `data.errors`.
  */
-export function parseSiteInput<Extra extends z.ZodRawShape>(body: unknown, extra: Extra) {
+export function parseSiteInput<Extra extends z.ZodRawShape>(body: unknown, extra: Extra, context: { event: H3Event; slug?: string }) {
   const template = getTemplate((body as { templateId?: unknown } | null)?.templateId)
   const parsed = envelopeSchema.extend(extra).safeParse(body)
-  const data = mergeWithSample(template.sample, (body as { data?: unknown } | null)?.data)
+  // Share-preview content that is not sent comes from the brand, not from the sample
+  const slug = context.slug ?? (parsed.success ? (parsed.data as { slug?: string }).slug : undefined) ?? ''
+  const siteUrl = useRuntimeConfig().public.siteUrl || getRequestURL(context.event).origin
+  const defaults = parsed.success ? shareDefaults(template.sample, parsed.data.brand, slug, siteUrl) : {}
+  const data = mergeWithSample(mergeWithSample(template.sample, defaults), (body as { data?: unknown } | null)?.data)
   const dataResult = template.schema.safeParse(data)
 
   const issues = [...(parsed.success ? [] : toIssues(parsed.error.issues)), ...(dataResult.success ? [] : toIssues(dataResult.error.issues, 'data'))]

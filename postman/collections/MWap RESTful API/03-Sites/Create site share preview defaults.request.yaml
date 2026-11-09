@@ -1,0 +1,65 @@
+$kind: http-request
+name: 'Create site share preview defaults'
+description: |-
+  Creates a site that sends no share-preview content: no page titles or descriptions, no seo.ogImage and no seo.canonicalUrl. These are never filled from the template sample (which would show another person's name in link previews). The home page title is the brand name, its description is built from the brand name, seo.ogImage is the brand logo and seo.canonicalUrl is the public URL of the site (<site url>/<slug>). The slug is kept in the collection variable shareSlug.
+order: 4795
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Content-Type
+    value: 'application/json'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{shareSlug}}",
+      "templateId": "portfolio-developer-signal",
+      "brand": {
+        "name": "Nova Dev",
+        "logoUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF",
+        "fontFamily": "Exo 2",
+        "colors": {
+          "primary": "#0593FA",
+          "secondary": "#262626",
+          "accent": "#5BBBFF",
+          "background": "#171717",
+          "text": "#F8FAFC"
+        }
+      },
+      "data": {
+        "contact": {
+          "email": "hello@novadev.example.com"
+        }
+      }
+    }
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      pm.collectionVariables.set('shareSlug', 'pm-share-' + Date.now())
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 201', () => pm.response.to.have.status(201))
+      pm.test('the home page is named after the brand, not the sample', () => {
+        const { data } = pm.response.json()
+        pm.expect(data.pages.home.title).to.eql('Nova Dev')
+        pm.expect(data.pages.home.description).to.include('Nova Dev')
+        pm.expect(data.pages.home.description).to.not.include('Alex Sample')
+      })
+      pm.test('the share image is the brand logo', () => {
+        const { data, brand } = pm.response.json()
+        pm.expect(data.seo.ogImage).to.eql(brand.logoUrl)
+      })
+      pm.test('the canonical URL is the site, not the sample domain', () => {
+        const { data } = pm.response.json()
+        pm.expect(data.seo.canonicalUrl).to.match(new RegExp('^https?://.+/' + pm.collectionVariables.get('shareSlug') + '$'))
+        pm.expect(data.seo.canonicalUrl).to.not.include('example.com')
+      })
