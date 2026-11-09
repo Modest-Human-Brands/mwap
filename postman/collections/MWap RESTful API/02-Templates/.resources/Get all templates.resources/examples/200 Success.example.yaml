@@ -19,6 +19,7 @@ response:
           "label": "Contact Sheet",
           "shortLabel": "Contact Sheet",
           "category": "Portfolios",
-          "description": "Single-page portfolio for fashion and editorial models: cover, work index with preview, contact sheet, comp card and booking, built from cover, index, sheet, comp card, booking and footer sections."
+          "description": "Single-page portfolio for fashion and editorial models: cover, work index with preview, contact sheet, comp card and booking, built from cover, index, sheet, comp card, booking and footer sections.",
+          "thumbnail": "https://wap.example.com/templates/portfolio-model-contact-sheet.png"
         }
       ]

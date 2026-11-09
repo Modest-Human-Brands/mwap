@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get all templates'
 description: |-
-  Template catalog for the picker. Every template is a portfolio: the category is Portfolios and the label names the profession (Model, Psychiatrist, Developer). Ids are what `templateId` accepts when previewing or creating a site; the earlier ids (contact-sheet, psychiatrist-editorial, developer-signal) are still accepted and answer as the new id.
+  Template catalog for the picker. Every template is a portfolio: the category is Portfolios and the label names the profession (Model, Psychiatrist, Developer). Each template carries the URL of its static thumbnail (`thumbnail`, a pre-rendered PNG of the sample content, served from /templates/<id>.png), which the picker shows instead of a live preview. Ids are what `templateId` accepts when previewing or creating a site; the earlier ids (contact-sheet, psychiatrist-editorial, developer-signal) are still accepted and answer as the new id.
 order: 1000
 method: GET
 url: '{{baseUrl}}/api/site/template'
@@ -18,8 +18,8 @@ scripts:
         minItems: 1,
         items: {
           type: 'object',
-          required: ['id', 'label', 'shortLabel', 'category', 'description'],
-          properties: { id: { type: 'string' }, label: { type: 'string' }, shortLabel: { type: 'string' }, category: { type: ['string', 'null'] }, description: { type: 'string' } }
+          required: ['id', 'label', 'shortLabel', 'category', 'description', 'thumbnail'],
+          properties: { id: { type: 'string' }, label: { type: 'string' }, shortLabel: { type: 'string' }, category: { type: ['string', 'null'] }, description: { type: 'string' }, thumbnail: { type: 'string' } }
         }
       }))
       pm.test('lists all templates', () => pm.expect(pm.response.json().map((t) => t.id)).to.have.members(['portfolio-model-contact-sheet', 'portfolio-psychiatrist-editorial', 'portfolio-developer-signal']))
@@ -29,6 +29,7 @@ scripts:
         pm.expect(byId['portfolio-psychiatrist-editorial']).to.eql('Psychiatrist · Editorial')
         pm.expect(byId['portfolio-developer-signal']).to.eql('Developer · Signal')
       })
+      pm.test('each has a static thumbnail image at /templates/<id>.png', () => pm.response.json().forEach((t) => pm.expect(t.thumbnail).to.match(new RegExp('^https?://.+/templates/' + t.id + '\\.png$'))))
       pm.test('groups them by category', () => {
         const byId = Object.fromEntries(pm.response.json().map((t) => [t.id, t.category]))
         pm.expect(byId['portfolio-model-contact-sheet']).to.eql('Portfolios')

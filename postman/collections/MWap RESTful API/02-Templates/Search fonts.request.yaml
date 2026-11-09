@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Search fonts'
+description: |-
+  Font families a brand can use (Google Fonts). Without `q` it returns the featured families; with `q` it returns families whose name contains it, up to `limit` (1-50, default 20). `family` is what `brand.fontFamily` accepts. Public, no API key.
+order: 1100
+method: GET
+url: '{{baseUrl}}/api/fonts?q=geist&limit=5'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Font List schema', () => pm.response.to.have.jsonSchema({
+        type: 'array',
+        items: { type: 'object', required: ['family', 'name'], properties: { family: { type: 'string' }, name: { type: 'string' } } }
+      }))
+      pm.test('finds Geist', () => pm.expect(pm.response.json().map((f) => f.family)).to.include('Geist'))
