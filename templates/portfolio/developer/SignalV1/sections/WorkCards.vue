@@ -16,7 +16,7 @@ const siteHref = useSiteHref()
     <h2 v-gsap.whenVisible.once.from="{ opacity: 0, y: 36, duration: 0.9, ease: 'power3.out', start: 'top 88%' }" class="title sg-display">{{ slotContent.title }}</h2>
 
     <ul v-gsap.whenVisible.once.stagger.from="{ opacity: 0, y: 40, duration: 0.8, ease: 'power3.out', stagger: 0.12, start: 'top 85%' }" class="cards">
-      <li v-for="project in projects" :key="project.slug" class="card sg-card">
+      <li v-for="(project, index) in projects" :key="project.slug" class="card sg-card" :class="{ featured: index === 0 }">
         <a class="media" :href="siteHref(`/work/${project.slug}`)" :aria-label="`${slotContent.openLabel}: ${project.name}`" tabindex="-1">
           <img :src="project.posterUrl" alt="" loading="lazy" width="800" height="472" />
           <video v-if="project.videoUrl" :src="project.videoUrl" :poster="project.posterUrl" autoplay muted loop playsinline preload="none" aria-hidden="true"></video>
@@ -180,9 +180,48 @@ const siteHref = useSiteHref()
     font-size: 3rem;
   }
 
+  /* The first project is the large card; the rest stack beside it */
   .cards {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
     gap: 2rem;
+  }
+
+  .featured {
+    grid-row: span 2;
+  }
+
+  .featured .media {
+    aspect-ratio: 800 / 450;
+  }
+
+  .featured .body {
+    gap: 1rem;
+    padding: 2rem;
+  }
+
+  .featured .name {
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+
+  .card:not(.featured) .name {
+    font-size: 1.5rem;
+  }
+
+  .card:not(.featured) .summary,
+  .card:not(.featured) .meta,
+  .card:not(.featured) .label {
+    display: none;
+  }
+
+  .card:not(.featured) .body {
+    gap: 0.5rem;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .card:not(.featured) .open {
+    width: auto;
+    align-self: flex-start;
   }
 }
 </style>

@@ -167,7 +167,14 @@ export const sample: Record<string, unknown> = {
             label: 'CURRENTLY PURSUING',
             degree: 'B.Sc. in Computer Science',
             institute: 'Example University',
-            details: 'Distributed systems · Compilers · Machine learning',
+            stages: [
+              { label: 'Foundations', state: 'done' },
+              { label: 'Core CS', state: 'current' },
+              { label: 'Specialisation', state: 'next' },
+            ],
+            currentLevel: 'Second year of three',
+            coursework: ['Distributed systems', 'Compilers', 'Machine learning', 'Databases'],
+            relevance: 'The coursework feeds directly into the sync engine and inference tooling I build at work.',
           },
           certificates: [
             { name: 'Cloud Fundamentals', issuer: 'Example Academy', year: '2025', credentialId: 'EX-0001', url: 'https://example.com/credentials/ex-0001' },
@@ -178,20 +185,36 @@ export const sample: Record<string, unknown> = {
           eyebrow: 'HACKATHONS & RECOGNITION',
           title: 'Built under a deadline',
           items: [
-            { label: 'FINALIST · 2025', name: 'Sample Hack', description: 'An offline-first field notes app built in 36 hours.', stack: 'TypeScript · SQLite' },
-            { label: 'WINNER · 2024', name: 'Example Jam', description: 'A browser-based model playground running on WebAssembly.', stack: 'Rust · WASM' },
+            {
+              year: '2025',
+              result: 'finalist',
+              name: 'Sample Hack',
+              description: 'An offline-first field notes app built in 36 hours.',
+              stack: ['TypeScript', 'SQLite'],
+              url: 'https://example.com/projects/sample-hack',
+            },
+            { year: '2024', result: 'winner', name: 'Example Jam', description: 'A browser-based model playground running on WebAssembly.', stack: ['Rust', 'WASM'] },
           ],
         },
         openSource: {
           eyebrow: 'OPEN SOURCE & WRITING',
           title: 'Giving back',
+          maintainer: {
+            title: 'Maintainer · example/runtime and 3 more',
+            url: 'https://github.com/example',
+            stats: [
+              { value: '40', label: 'Repositories' },
+              { value: '120', label: 'Merged PRs' },
+              { value: '300', label: 'Stars' },
+            ],
+          },
           contributions: [
-            { name: 'example/runtime', description: 'Fixed a memory-mapping bug on Windows.' },
-            { name: 'example/ui-kit', description: 'Added keyboard support to the combobox.' },
+            { name: 'example/runtime', description: 'Fixed a memory-mapping bug on Windows.', action: 'PR →', url: 'https://example.com/pr/1' },
+            { name: 'example/ui-kit', description: 'Added keyboard support to the combobox.', action: 'PR →' },
           ],
           writing: [
-            { title: 'Starting a model in under a second', meta: 'Article · 2026' },
-            { title: 'Local-first without the buzzwords', meta: 'Talk · 2025' },
+            { title: 'Starting a model in under a second', meta: 'Article · 2026', action: 'Read →' },
+            { title: 'Local-first without the buzzwords', meta: 'Talk · 2025', action: 'Slides →' },
           ],
         },
       },

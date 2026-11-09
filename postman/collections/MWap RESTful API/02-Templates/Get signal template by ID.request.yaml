@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get signal template by ID'
 description: |-
-  The portfolio-developer-signal template (category Portfolios): a dark developer portfolio with shader backgrounds. `data.pages.home` is the one fixed page, built from named slots: hero, intro (stats), work (the selected projects), systems, career (experience, education, hackathons, open source and writing), stack and contact. `data.projects` is a list of 1 to 6 projects; every project gets its own page at /<slug>/work/<project.slug> (overview, capabilities, releases) and the work slot of the home page links to them. `data.contact` carries the email, up to six links and an optional bookingEndpoint. Lists carry minItems/maxItems in the JSON Schema. The sample is a complete payload with generic content that prefills an editor.
+  The portfolio-developer-signal template (category Portfolios): a dark developer portfolio with shader backgrounds. `data.pages.home` is the one fixed page, built from named slots: hero, intro (stats), work (the selected projects), systems, career (experience, education, hackathons, open source and writing), stack and contact. `data.projects` is a list of 1 to 6 projects; every project gets its own page at /<slug>/work/<project.slug> (overview, capabilities, releases) and the work slot of the home page links to them. `data.contact` carries the email, up to six links and an optional bookingEndpoint. The career slot is four blocks: experience, education (a degree in progress with its stages and coursework, plus a numbered list of certificates), hackathons (one row per event: year, result, name, description, tech chips and a link) and open source (a maintainer banner with three figures, contributions and writing, each with the label of its link button). The first project is shown as the large card of the work slot. Lists carry minItems/maxItems in the JSON Schema. The sample is a complete payload with generic content that prefills an editor.
 order: 2600
 method: GET
 url: '{{baseUrl}}/api/site/template/:id'
@@ -48,6 +48,36 @@ scripts:
         pm.expect(properties.contact.properties.links.maxItems).to.eql(6)
         pm.expect(limits(home.hero.properties.terminal)).to.eql([1, 8])
         pm.expect(limits(home.intro.properties.stats)).to.eql([2, 4])
+      })
+      pm.test('education shows the degree in progress with its stages and coursework', () => {
+        const education = pm.response.json().schema.properties.pages.properties.home.properties.career.properties.education.properties
+        const pursuing = education.pursuing.properties
+        pm.expect(Object.keys(pursuing)).to.have.members(['label', 'degree', 'institute', 'stages', 'currentLevel', 'coursework', 'relevance'])
+        pm.expect([pursuing.stages.minItems, pursuing.stages.maxItems]).to.eql([2, 5])
+        pm.expect(Object.keys(pursuing.stages.items.properties)).to.have.members(['label', 'state'])
+        pm.expect(pursuing.stages.items.properties.state.enum).to.eql(['done', 'current', 'next'])
+        pm.expect(pursuing.coursework.maxItems).to.eql(8)
+        pm.expect(Object.keys(education.certificates.items.properties)).to.have.members(['name', 'issuer', 'year', 'credentialId', 'url'])
+      })
+      pm.test('a hackathon is a row with a year, a result and tech chips', () => {
+        const items = pm.response.json().schema.properties.pages.properties.home.properties.career.properties.hackathons.properties.items
+        pm.expect(Object.keys(items.items.properties)).to.have.members(['year', 'result', 'name', 'description', 'stack', 'url'])
+        pm.expect(items.items.properties.result.enum).to.eql(['finalist', 'winner', 'participant'])
+        pm.expect(items.items.properties.stack.type).to.eql('array')
+        pm.expect([items.items.properties.stack.minItems, items.items.properties.stack.maxItems]).to.eql([1, 6])
+        pm.expect(items.maxItems).to.eql(6)
+      })
+      pm.test('open source has a maintainer banner and link labels', () => {
+        const oss = pm.response.json().schema.properties.pages.properties.home.properties.career.properties.openSource.properties
+        pm.expect(Object.keys(oss.maintainer.properties)).to.have.members(['title', 'url', 'stats'])
+        pm.expect([oss.maintainer.properties.stats.minItems, oss.maintainer.properties.stats.maxItems]).to.eql([1, 3])
+        pm.expect(Object.keys(oss.contributions.items.properties)).to.have.members(['name', 'description', 'action', 'url'])
+        pm.expect(Object.keys(oss.writing.items.properties)).to.have.members(['title', 'meta', 'action', 'url'])
+      })
+      pm.test('the sample marks exactly one stage as current and gives every hackathon a result', () => {
+        const { education, hackathons } = pm.response.json().sample.pages.home.career
+        pm.expect(education.pursuing.stages.filter((stage) => stage.state === 'current')).to.have.length(1)
+        hackathons.items.forEach((item) => pm.expect(item.result).to.be.oneOf(['finalist', 'winner', 'participant']))
       })
       pm.test('the contact email is required, links and booking endpoint are optional', () => {
         const contact = pm.response.json().schema.properties.contact

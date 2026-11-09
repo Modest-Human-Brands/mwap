@@ -61,15 +61,48 @@ export const careerSlotSchema = slot({
       .max(6),
   }),
   education: labelled({
-    pursuing: z.strictObject({ label: z.string(), degree: z.string(), institute: z.string(), details: z.string() }),
+    pursuing: z.strictObject({
+      label: z.string(),
+      degree: z.string(),
+      institute: z.string(),
+      // Progress of the degree: one stage is "current"
+      stages: z
+        .array(z.strictObject({ label: z.string(), state: z.enum(['done', 'current', 'next']) }))
+        .min(2)
+        .max(5),
+      currentLevel: z.string(),
+      coursework: z.array(z.string()).max(8),
+      relevance: longText(),
+    }),
     certificates: z.array(z.strictObject({ name: z.string(), issuer: z.string(), year: z.string(), credentialId: z.string().optional(), url: z.url().optional() })).max(6),
   }),
   hackathons: labelled({
-    items: z.array(z.strictObject({ label: z.string(), name: z.string(), description: z.string(), stack: z.string(), url: z.url().optional() })).max(6),
+    items: z
+      .array(
+        z.strictObject({
+          year: z.string(),
+          result: z.enum(['finalist', 'winner', 'participant']),
+          name: z.string(),
+          description: z.string(),
+          stack: z.array(z.string()).min(1).max(6),
+          url: z.url().optional(),
+        })
+      )
+      .max(6),
   }),
   openSource: labelled({
-    contributions: z.array(z.strictObject({ name: z.string(), description: z.string(), url: z.url().optional() })).max(6),
-    writing: z.array(z.strictObject({ title: z.string(), meta: z.string(), url: z.url().optional() })).max(6),
+    // The banner above the lists: a title, a profile link and up to three figures
+    maintainer: z.strictObject({
+      title: z.string(),
+      url: z.url().optional(),
+      stats: z
+        .array(z.strictObject({ value: z.string(), label: z.string() }))
+        .min(1)
+        .max(3),
+    }),
+    // "action" is the label of the link button, such as "PR →"
+    contributions: z.array(z.strictObject({ name: z.string(), description: z.string(), action: z.string(), url: z.url().optional() })).max(6),
+    writing: z.array(z.strictObject({ title: z.string(), meta: z.string(), action: z.string(), url: z.url().optional() })).max(6),
   }),
 })
 
