@@ -40,6 +40,11 @@ defineProps<{ slotContent: SystemsSlot }>()
   border-bottom: 1px solid var(--sg-line);
 }
 
+/* The next section draws its own top line */
+.row:last-child {
+  border-bottom: 0;
+}
+
 .link {
   transition: padding-left 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   display: grid;
@@ -58,8 +63,12 @@ defineProps<{ slotContent: SystemsSlot }>()
 }
 
 .tags {
+  overflow: hidden;
   color: var(--sg-accent);
   font-size: 0.9375rem;
+  /* A list such as "TypeScript · CLI · npm" never breaks in the middle, which would leave a dangling dot */
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 a.link:hover {
@@ -76,7 +85,7 @@ a.link:hover .name {
   }
 
   .link {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 12rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
     align-items: center;
     gap: 2rem;
     padding: 2rem 0;
@@ -88,6 +97,7 @@ a.link:hover .name {
   }
 
   .tags {
+    overflow: visible;
     text-align: right;
   }
 }

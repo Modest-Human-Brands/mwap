@@ -21,6 +21,12 @@
   font-family: var(--brand-font, sans-serif);
 }
 
+.cs *,
+.cs *::before,
+.cs *::after {
+  box-sizing: border-box;
+}
+
 .cs a {
   color: inherit;
   text-decoration: none;

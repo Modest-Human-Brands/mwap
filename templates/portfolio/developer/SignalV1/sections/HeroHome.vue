@@ -2,7 +2,13 @@
 import type { HeroSlot } from '~~/templates/portfolio/developer/SignalV1/schema'
 import ShaderBackdrop from './ShaderBackdrop.vue'
 
-defineProps<{ slotContent: HeroSlot }>()
+const props = defineProps<{ slotContent: HeroSlot }>()
+
+// One flat list so every line of the terminal can be staggered in CSS
+const lines = computed(() => [
+  ...props.slotContent.terminal.flatMap((entry) => [{ kind: 'cmd' as const, text: entry.command }, ...entry.output.map((text) => ({ kind: 'out' as const, text }))]),
+  { kind: 'prompt' as const, text: '' },
+])
 </script>
 
 <template>
@@ -10,7 +16,7 @@ defineProps<{ slotContent: HeroSlot }>()
     <ShaderBackdrop variant="hero" />
 
     <div class="inner">
-      <div v-gsap.stagger.from="{ opacity: 0, y: 40, duration: 1, ease: 'power3.out', stagger: 0.12 }" class="copy">
+      <div class="copy">
         <p class="sg-eyebrow">{{ slotContent.eyebrow }}</p>
         <h1 class="title sg-display">
           <span v-for="line in slotContent.titleLines" :key="line" class="line">{{ line }}</span>
@@ -24,12 +30,12 @@ defineProps<{ slotContent: HeroSlot }>()
 
       <div class="terminal sg-mono" role="img" :aria-label="`Terminal: ${slotContent.terminal.map((t) => t.command).join(', ')}`">
         <div class="chrome" aria-hidden="true"><i></i><i></i><i></i></div>
-        <div v-gsap.stagger.from="{ opacity: 0, x: -14, duration: 0.5, ease: 'power2.out', stagger: 0.35, delay: 0.8 }" class="screen" aria-hidden="true">
-          <template v-for="entry in slotContent.terminal" :key="entry.command">
-            <p class="cmd"><span class="prompt">$</span> {{ entry.command }}</p>
-            <p v-for="out in entry.output" :key="out" class="out">{{ out }}</p>
+        <div class="screen" aria-hidden="true">
+          <template v-for="(line, index) in lines" :key="index">
+            <p v-if="line.kind === 'cmd'" class="cmd line-in" :style="{ '--i': index }"><span class="prompt">$</span> {{ line.text }}</p>
+            <p v-else-if="line.kind === 'out'" class="out line-in" :style="{ '--i': index }">{{ line.text }}</p>
+            <p v-else class="cmd line-in" :style="{ '--i': index }"><span class="prompt">$</span> <span class="cursor"></span></p>
           </template>
-          <p class="cmd"><span class="prompt">$</span> <span class="cursor"></span></p>
         </div>
       </div>
     </div>
@@ -180,6 +186,19 @@ defineProps<{ slotContent: HeroSlot }>()
 
   .terminal {
     animation-delay: 0.3s;
+  }
+
+  /* CSS, not GSAP: it keeps its timing while the shader is busy on the main thread, so the text is never stuck half-faded */
+  .line-in {
+    animation: type-in 0.5s ease-out both;
+    animation-delay: calc(0.8s + var(--i) * 0.2s);
+  }
+}
+
+@keyframes type-in {
+  from {
+    opacity: 0;
+    transform: translateX(-0.875rem);
   }
 }
 
