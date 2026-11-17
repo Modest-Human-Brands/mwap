@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Preflight verify access'
+description: |-
+  CORS preflight of the dashboard calling the check from its own origin with the three headers: answered with 204 and the CORS headers, no API key needed.
+order: 3000
+method: OPTIONS
+url: '{{baseUrl}}/api/access'
+headers:
+  - key: Origin
+    value: 'https://mwap.example.com'
+  - key: Access-Control-Request-Method
+    value: 'GET'
+  - key: Access-Control-Request-Headers
+    value: 'x-api-key,x-org-id,x-user-id'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 204', () => pm.response.to.have.status(204))
+      pm.test('allows the headers', () => pm.expect(pm.response.headers.get('Access-Control-Allow-Headers')).to.match(/\*|x-api-key/i))
+      pm.test('has no body', () => pm.expect(pm.response.text()).to.eql(''))

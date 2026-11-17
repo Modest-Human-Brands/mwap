@@ -6,6 +6,8 @@ order: 4700
 method: POST
 url: '{{baseUrl}}/api/site'
 headers:
+  - key: x-user-id
+    value: '{{userId}}'
   - key: Content-Type
     value: 'application/json'
   - key: Accept

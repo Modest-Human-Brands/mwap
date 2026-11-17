@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Get all sites scoped with wrong API key'
+description: |-
+  Sending a key makes the check apply: a wrong key is 401, it never falls back to the public list.
+order: 5620
+method: GET
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: 'not-the-key'
+  - key: x-org-id
+    value: '{{orgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 401', () => pm.response.to.have.status(401))

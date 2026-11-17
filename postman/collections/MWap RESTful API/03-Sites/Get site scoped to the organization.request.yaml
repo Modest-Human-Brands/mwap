@@ -1,0 +1,25 @@
+$kind: http-request
+name: 'Get site scoped to the organization'
+description: |-
+  The site of the caller's organization reads as usual with the three headers.
+order: 5640
+method: GET
+url: '{{baseUrl}}/api/site/:slug'
+pathVariables:
+  - key: slug
+    value: '{{newSiteSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is the site', () => pm.expect(pm.response.json().slug).to.eql(pm.collectionVariables.get('newSiteSlug')))

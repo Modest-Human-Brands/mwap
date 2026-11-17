@@ -9,6 +9,8 @@ pathVariables:
   - key: slug
     value: '{{newSiteSlug}}'
 headers:
+  - key: x-user-id
+    value: '{{userId}}'
   - key: Content-Type
     value: 'application/json'
   - key: Accept

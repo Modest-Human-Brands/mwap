@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'Verify access wrong API key'
+description: |-
+  A key the service does not accept answers 401 and nothing else: the answer never says whether the organization exists.
+order: 2000
+method: GET
+url: '{{baseUrl}}/api/access'
+headers:
+  - key: x-user-id
+    value: '{{userId}}'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: 'not-the-key'
+  - key: x-org-id
+    value: '{{orgId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 401', () => pm.response.to.have.status(401))
+      pm.test('matches Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'statusMessage'], properties: { statusCode: { type: 'number' }, statusMessage: { type: 'string' } } }))
+      pm.test('does not reveal the organization', () => pm.expect(pm.response.text()).to.not.include(pm.collectionVariables.get('orgId')))

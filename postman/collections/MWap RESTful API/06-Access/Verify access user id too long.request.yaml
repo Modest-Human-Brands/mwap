@@ -1,0 +1,24 @@
+$kind: http-request
+name: 'Verify access user id too long'
+description: |-
+  An x-user-id of more than 120 characters is 400 with the field named.
+order: 2500
+method: GET
+url: '{{baseUrl}}/api/access'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      pm.request.headers.add({ key: 'x-user-id', value: 'u'.repeat(121) })
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('names the x-user-id field', () => pm.expect(pm.response.json().data.errors.map((e) => e.field)).to.include('x-user-id'))

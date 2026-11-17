@@ -9,7 +9,14 @@ const querySchema = z.object({
 export default defineEventHandler(async (event) => {
   const parsed = querySchema.safeParse(getQuery(event))
   if (!parsed.success) throw validationError(parsed.error.issues.map(({ path, message, code }) => ({ field: path.join('.'), message, code })))
-  const { limit, offset, org } = parsed.data
+  const { limit, offset } = parsed.data
+
+  // With the access headers the list is the caller's own; without them it stays public
+  const access = optionalAccess(event)
+  if (access && parsed.data.org && parsed.data.org !== access.orgId)
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden', message: 'A list can only be read for the organization of x-org-id' })
+  if (access) setHeader(event, 'Cache-Control', 'no-store')
+  const org = access?.orgId ?? parsed.data.org
 
   const sites = (await listSites()).filter((site) => !org || site.orgId === org)
 

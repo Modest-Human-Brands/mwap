@@ -1,6 +1,5 @@
 export default defineEventHandler(async (event) => {
-  requireApiKey(event)
-  const orgId = requireOrgId(event)
+  const { orgId } = requireAccess(event)
 
   const slug = getRouterParam(event, 'slug') ?? ''
   const existing = await getSite(slug)

@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'Get all sites scoped to another organization'
+description: |-
+  Another organization's list never contains the site of orgId.
+order: 5610
+method: GET
+url: '{{baseUrl}}/api/site?limit=100&offset=0'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{otherOrgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('does not list the site of the other organization', () => pm.expect(pm.response.json().results.map((s) => s.slug)).to.not.include(pm.collectionVariables.get('newSiteSlug')))
+      pm.test('total counts only its own sites', () => pm.expect(pm.response.json().pagination.total).to.eql(pm.response.json().results.length))

@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Verify access checks the key before the organization'
+description: |-
+  Both wrong: the key is checked first, so the answer is 401, not 400. The screen shows one message at a time and the key is the one to fix first.
+order: 2400
+method: GET
+url: '{{baseUrl}}/api/access'
+headers:
+  - key: x-user-id
+    value: '{{userId}}'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: 'not-the-key'
+  - key: x-org-id
+    value: 'Not_A_Slug'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 401', () => pm.response.to.have.status(401))

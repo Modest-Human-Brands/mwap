@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Connect probe accepted details'
+description: |-
+  The check the dashboard used before GET /api/access existed: DELETE of a slug the service can never hold (a tilde is not allowed in one). Accepted details answer 404, a wrong key 401, an invalid organization 400, and nothing is ever deleted. It keeps working for dashboards that have not switched.
+order: 4000
+method: DELETE
+url: '{{baseUrl}}/api/site/~connect-check'
+headers:
+  - key: x-user-id
+    value: '{{userId}}'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))

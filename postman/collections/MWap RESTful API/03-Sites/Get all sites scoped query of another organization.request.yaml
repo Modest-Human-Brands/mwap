@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Get all sites scoped query of another organization'
+description: |-
+  Asking a scoped list for a different organization with ?org is 403: the list is the caller's own.
+order: 5630
+method: GET
+url: '{{baseUrl}}/api/site?org={{otherOrgId}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 403', () => pm.response.to.have.status(403))

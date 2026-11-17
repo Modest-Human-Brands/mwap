@@ -1,0 +1,81 @@
+$kind: http-request
+name: 'Create site domain taken by another organization'
+description: |-
+  A domain used by a site of another organization is 409 too, but the answer names only the domain, never the site or its organization: an organization cannot learn what others own.
+order: 5660
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{otherOrgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "pm-intruder-site",
+      "templateId": "{{templateId}}",
+      "brand": {
+        "name": "Iris Vale",
+        "logoUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FF3B1F",
+        "fontFamily": "Geist",
+        "colors": {
+          "primary": "#FF3B1F",
+          "secondary": "#EEEAE0",
+          "accent": "#E8A33D",
+          "background": "#0E0E0C",
+          "text": "#F2EFE6"
+        }
+      },
+      "domains": [
+        "{{customDomain}}"
+      ],
+      "data": {
+        "seo": {
+          "ogImage": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1200&fit=crop&q=80",
+          "canonicalUrl": "https://irisvale.example.com"
+        },
+        "navigation": [
+          {
+            "label": "Index",
+            "href": "#index"
+          }
+        ],
+        "contact": {
+          "email": "booking@irisvale.example.com"
+        },
+        "pages": {
+          "home": {
+            "title": "Iris Vale",
+            "description": "Portfolio of Iris Vale, a fashion and editorial model.",
+            "cover": {
+              "enabled": true,
+              "title": "Iris Vale",
+              "tagline": "Fashion and editorial model, based in Berlin.",
+              "label": "Frame 00 / Cover",
+              "imageUrl": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1920&fit=crop&q=80",
+              "portraitUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&fit=crop&q=80"
+            }
+          }
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 409', () => pm.response.to.have.status(409))
+      pm.test('names the domain', () => pm.expect(pm.response.json().statusMessage).to.include(pm.collectionVariables.get('customDomain')))
+      pm.test('does not reveal the site of the other organization', () => {
+        const text = pm.response.text()
+        pm.expect(text).to.not.include('used by site')
+        pm.expect(text).to.not.include('"' + pm.collectionVariables.get('newSiteSlug') + '"')
+      })

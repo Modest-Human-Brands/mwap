@@ -1,6 +1,5 @@
 export default defineEventHandler(async (event) => {
-  requireApiKey(event)
-  const orgId = requireOrgId(event)
+  const { orgId } = requireAccess(event)
 
   const slug = getRouterParam(event, 'slug') ?? ''
   const existing = await getSite(slug)
@@ -8,7 +7,7 @@ export default defineEventHandler(async (event) => {
   if (!existing || existing.orgId !== orgId) throw createError({ statusCode: 404, statusMessage: `No site found for slug: "${slug}"` })
 
   const { templateId, brand, data, domains, googleAnalyticsId } = parseSiteInput(await readBody(event), {}, { event, slug })
-  await assertDomainsFree(domains, slug)
+  await assertDomainsFree(domains, slug, orgId)
 
   const site: SitePayload = { slug, orgId, templateId, brand, data, domains, ...(googleAnalyticsId && { googleAnalyticsId }), updatedAt: new Date().toISOString() }
   await saveSite(site)

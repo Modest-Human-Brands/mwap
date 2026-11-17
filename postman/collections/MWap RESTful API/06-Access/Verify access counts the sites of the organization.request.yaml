@@ -1,0 +1,22 @@
+$kind: http-request
+name: 'Verify access counts the sites of the organization'
+description: |-
+  The number of sites counts only the organization that was sent: an organization without sites answers 0, and one site of another organization never adds to it.
+order: 1200
+method: GET
+url: '{{baseUrl}}/api/access'
+headers:
+  - key: x-user-id
+    value: '{{userId}}'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{emptyOrgId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('an organization without sites has 0', () => pm.expect(pm.response.json().sites).to.eql(0))

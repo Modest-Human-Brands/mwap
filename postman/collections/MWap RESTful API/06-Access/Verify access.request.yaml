@@ -1,0 +1,25 @@
+$kind: http-request
+name: 'Verify access'
+description: |-
+  Checks the details of the "Connect to MWap" screen before the dashboard saves them: the API key (x-api-key) and the organization (x-org-id). Accepted details answer 200 with the organization, the user and how many sites the organization owns; nothing is created, changed or deleted. It takes the same three headers as the writes (x-api-key, x-org-id, x-user-id).
+order: 1000
+method: GET
+url: '{{baseUrl}}/api/access'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Access schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['organizationId', 'userId', 'sites'], additionalProperties: false, properties: { organizationId: { type: 'string' }, sites: { type: 'integer', minimum: 0 }, userId: { type: 'string' } } }))
+      pm.test('names the organization that was sent', () => pm.expect(pm.response.json().organizationId).to.eql(pm.collectionVariables.get('orgId')))
+      pm.test('names the user that was sent', () => pm.expect(pm.response.json().userId).to.eql(pm.collectionVariables.get('userId')))
+      pm.test('has no cache headers that would keep a stale key check', () => pm.expect(pm.response.headers.get('Cache-Control')).to.match(/no-store/))

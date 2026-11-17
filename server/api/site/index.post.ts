@@ -1,11 +1,10 @@
 export default defineEventHandler(async (event) => {
-  requireApiKey(event)
-  const orgId = requireOrgId(event)
+  const { orgId } = requireAccess(event)
 
   const { slug, templateId, brand, data, domains, googleAnalyticsId } = parseSiteInput(await readBody(event), { slug: slugSchema }, { event })
 
   if (await getSite(slug)) throw createError({ statusCode: 409, statusMessage: `Site "${slug}" already exists` })
-  await assertDomainsFree(domains, slug)
+  await assertDomainsFree(domains, slug, orgId)
 
   const site: SitePayload = { slug, orgId, templateId, brand, data, domains, ...(googleAnalyticsId && { googleAnalyticsId }), updatedAt: new Date().toISOString() }
   await saveSite(site)

@@ -1,0 +1,26 @@
+$kind: http-request
+name: 'Create site without user id'
+description: |-
+  Creating needs the x-user-id header next to the key and the organization: without it the answer is 400 and nothing is created. This request deliberately sends none.
+order: 3705
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+body:
+  type: json
+  content: |-
+    {}
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('names the x-user-id field', () => pm.expect(pm.response.json().data.errors.map((e) => e.field)).to.include('x-user-id'))

@@ -9,6 +9,8 @@ pathVariables:
   - key: slug
     value: '{{editorialSlug}}'
 headers:
+  - key: x-user-id
+    value: '{{userId}}'
   - key: Accept
     value: 'application/json'
   - key: x-api-key

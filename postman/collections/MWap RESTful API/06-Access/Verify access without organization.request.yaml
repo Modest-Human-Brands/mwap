@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Verify access without organization'
+description: |-
+  A missing x-org-id is 400, like an invalid one.
+order: 2300
+method: GET
+url: '{{baseUrl}}/api/access'
+headers:
+  - key: x-user-id
+    value: '{{userId}}'
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('names the x-org-id field', () => pm.expect(pm.response.json().data.errors.map((e) => e.field)).to.include('x-org-id'))

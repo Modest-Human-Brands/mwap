@@ -1,0 +1,24 @@
+$kind: http-request
+name: 'Get site of another organization'
+description: |-
+  With the headers of another organization the site answers 404, exactly like an unknown slug. Without headers it stays public: the page of a site is open to everyone.
+order: 5650
+method: GET
+url: '{{baseUrl}}/api/site/:slug'
+pathVariables:
+  - key: slug
+    value: '{{newSiteSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{otherOrgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))

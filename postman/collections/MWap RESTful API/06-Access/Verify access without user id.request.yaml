@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Verify access without user id'
+description: |-
+  A missing x-user-id is 400 with the field named, after the key and the organization were accepted.
+order: 2350
+method: GET
+url: '{{baseUrl}}/api/access'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('names the x-user-id field', () => pm.expect(pm.response.json().data.errors.map((e) => e.field)).to.include('x-user-id'))

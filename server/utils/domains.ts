@@ -23,10 +23,11 @@ export async function getSlugByDomain(domain: string): Promise<string | undefine
 }
 
 /** A domain belongs to one site; a site may keep the domains it already has */
-export async function assertDomainsFree(domains: string[], slug: string): Promise<void> {
+export async function assertDomainsFree(domains: string[], slug: string, orgId: string): Promise<void> {
   for (const site of await listSites()) {
     if (site.slug === slug) continue
     const taken = domains.find((domain) => site.domains.includes(domain))
-    if (taken) throw createError({ statusCode: 409, statusMessage: `Domain "${taken}" is already used by site "${site.slug}"` })
+    // The site is named only to its own organization: nobody learns what another organization owns
+    if (taken) throw createError({ statusCode: 409, statusMessage: site.orgId === orgId ? `Domain "${taken}" is already used by site "${site.slug}"` : `Domain "${taken}" is already in use` })
   }
 }

@@ -11,7 +11,7 @@ headers:
   - key: Access-Control-Request-Method
     value: 'POST'
   - key: Access-Control-Request-Headers
-    value: 'content-type,x-api-key,x-org-id'
+    value: 'content-type,x-api-key,x-org-id,x-user-id'
 scripts:
   - type: afterResponse
     language: text/javascript
