@@ -1,0 +1,22 @@
+$kind: http-request
+name: 'Get projects'
+description: |-
+  The projects of the site as cards: slug, name, summary, poster, stack, version, last update, status and the project URL. Same order as in the site. The full project (overview, capabilities, releases) is read from "Get project".
+order: 1000
+method: GET
+url: '{{baseUrl}}/api/site/:slug/projects'
+pathVariables:
+  - key: slug
+    value: '{{shareSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is cacheable like the site', () => pm.expect(pm.response.headers.get('Cache-Control')).to.match(/s-maxage/))
+      pm.test('does not expose who owns the site', () => pm.expect(pm.response.text()).to.not.include('createdBy'))
+      pm.test('matches Project cards schema', () => pm.response.to.have.jsonSchema({ type: 'array', minItems: 1, items: { type: 'object', required: ['slug', 'name', 'summary', 'posterUrl', 'stack', 'version', 'updated', 'status', 'url'], properties: { slug: { type: 'string' }, name: { type: 'string' }, summary: { type: 'string' }, posterUrl: { type: 'string' }, stack: { type: 'array' }, version: { type: 'string' }, updated: { type: 'string' }, status: { type: 'string' }, url: { type: 'string' } } } }))
+      pm.test('has no detail fields', () => pm.response.json().forEach((p) => { pm.expect(p).to.not.have.property('overview'); pm.expect(p).to.not.have.property('releases') }))

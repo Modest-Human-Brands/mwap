@@ -1,0 +1,19 @@
+$kind: http-request
+name: 'Get open source'
+description: |-
+  The open source block: the maintainer banner (title, optional URL, one to three figures), the contributions and the writing.
+order: 1500
+method: GET
+url: '{{baseUrl}}/api/site/:slug/open-source'
+pathVariables:
+  - key: slug
+    value: '{{shareSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches OpenSource schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['maintainer', 'contributions', 'writing'], properties: { maintainer: { type: 'object', required: ['title', 'stats'], properties: { stats: { type: 'array', minItems: 1, maxItems: 3 } } }, contributions: { type: 'array' }, writing: { type: 'array' } } }))

@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get all sites scoped with wrong API key'
 description: |-
-  Sending a key makes the check apply: a wrong key is 401, it never falls back to the public list.
+  A wrong key is 401.
 order: 5620
 method: GET
 url: '{{baseUrl}}/api/site'

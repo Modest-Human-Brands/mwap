@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get all sites of an org'
 description: |-
-  The `org` query parameter keeps only the sites of one organization: here the organization of the site created above. Public, like the unfiltered list.
+  The `org` query parameter is optional and, when sent, must be the organization of x-org-id (another one is 403): here the organization of the site created above.
 order: 8500
 method: GET
 url: '{{baseUrl}}/api/site?limit=50&offset=0&org={{orgId}}'
@@ -15,6 +15,12 @@ queryParams:
 headers:
   - key: Accept
     value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
 scripts:
   - type: afterResponse
     language: text/javascript

@@ -1,0 +1,29 @@
+$kind: http-request
+name: 'Send contact message without endpoint'
+description: |-
+  A site that has no bookingEndpoint cannot receive messages: 422, nothing is relayed. The site of "Create site share preview defaults" has none.
+order: 2120
+method: POST
+url: '{{baseUrl}}/api/site/:slug/contact'
+pathVariables:
+  - key: slug
+    value: '{{shareSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {
+      "name": "Sam Example",
+      "email": "sam@example.com",
+      "message": "Hello, I would like to talk about a Rust project."
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 422', () => pm.response.to.have.status(422))
+      pm.test('has the error shape', () => { pm.expect(pm.response.json()).to.have.property('statusCode') })

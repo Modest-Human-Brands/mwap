@@ -81,6 +81,11 @@ scripts:
     code: |-
       pm.test('status is 201', () => pm.response.to.have.status(201))
       pm.test('belongs to the organization of x-org-id', () => pm.expect(pm.response.json().orgId).to.eql(pm.collectionVariables.get('orgId')))
+      pm.test('records who created it', () => {
+        const site = pm.response.json()
+        pm.expect(site.createdBy).to.eql(pm.collectionVariables.get('userId'))
+        pm.expect(site.updatedBy).to.eql(pm.collectionVariables.get('userId'))
+      })
       pm.test('stores the analytics id of the site', () => pm.expect(pm.response.json().googleAnalyticsId).to.eql('G-IRISVALE01'))
       pm.test('points to the new resource', () => pm.expect(pm.response.headers.get('Location')).to.eql('/api/site/' + pm.collectionVariables.get('newSiteSlug')))
       pm.test('matches Site schema', () => pm.response.to.have.jsonSchema({
@@ -90,6 +95,8 @@ scripts:
           slug: { type: 'string', pattern: '^[a-z0-9-]+$' },
           orgId: { type: 'string', pattern: '^[a-z0-9-]{1,60}$' },
           templateId: { type: 'string' },
+          createdBy: { type: 'string' },
+          updatedBy: { type: 'string' },
           domains: { type: 'array', items: { type: 'string', pattern: '^[a-z0-9.-]+$' } },
           googleAnalyticsId: { type: 'string', pattern: '^G-[A-Z0-9]{6,12}$' },
           brand: {

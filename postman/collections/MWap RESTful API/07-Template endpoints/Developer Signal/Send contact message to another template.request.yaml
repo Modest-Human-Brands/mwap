@@ -1,0 +1,28 @@
+$kind: http-request
+name: 'Send contact message to another template'
+description: |-
+  The route belongs to the Signal template: a site with another template answers 404.
+order: 2130
+method: POST
+url: '{{baseUrl}}/api/site/:slug/contact'
+pathVariables:
+  - key: slug
+    value: '{{siteSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {
+      "name": "Sam Example",
+      "email": "sam@example.com",
+      "message": "Hello, I would like to talk about a Rust project."
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))

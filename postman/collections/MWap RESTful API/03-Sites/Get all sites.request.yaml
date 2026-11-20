@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get all sites'
 description: |-
-  Public, paginated list of sites from every source (API-saved, published Notion rows and the built-in example; the API-saved one wins on a slug clash). 503 when the Notion source is unreachable and has no cached copy. `pagination.total` is the full count. Optional `org` query parameter keeps only the sites of one organization.
+  Paginated list of the sites of the caller's organization (x-api-key, x-org-id and x-user-id are required: the list is not public). Sites come from every source (API-saved, published Notion rows and the built-in example; the API-saved one wins on a slug clash). 503 when the Notion source is unreachable and has no cached copy. `pagination.total` is the full count of the organization's sites.
 order: 1000
 method: GET
 url: '{{baseUrl}}/api/site?limit=50&offset=0'
@@ -13,6 +13,12 @@ queryParams:
 headers:
   - key: Accept
     value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
 scripts:
   - type: afterResponse
     language: text/javascript
@@ -26,5 +32,5 @@ scripts:
           pagination: { type: 'object', required: ['total', 'limit', 'offset'], properties: { total: { type: 'number' }, limit: { type: 'number' }, offset: { type: 'number' } } }
         }
       }))
-      pm.test('includes the seeded site', () => pm.expect(pm.response.json().results.map((s) => s.slug)).to.include(pm.collectionVariables.get('siteSlug')))
+      pm.test('lists only sites of the organization', () => pm.expect(pm.response.json().results.every((s) => s.orgId === pm.collectionVariables.get('orgId'))).to.eql(true))
 examples: './.resources/Get all sites.resources/examples/'

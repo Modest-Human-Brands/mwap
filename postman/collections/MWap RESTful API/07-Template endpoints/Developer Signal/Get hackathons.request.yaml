@@ -1,0 +1,19 @@
+$kind: http-request
+name: 'Get hackathons'
+description: |-
+  The hackathons of the career section: year, result (finalist, winner or participant), name, description, stack and an optional URL. An empty list is a valid answer (200 with []), so this request only checks the shape of what is there.
+order: 1300
+method: GET
+url: '{{baseUrl}}/api/site/:slug/hackathons'
+pathVariables:
+  - key: slug
+    value: '{{shareSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Hackathons schema', () => pm.response.to.have.jsonSchema({ type: 'array', items: { type: 'object', required: ['year', 'result', 'name', 'description', 'stack'], properties: { result: { enum: ['finalist', 'winner', 'participant'] }, stack: { type: 'array', minItems: 1 } } } }))

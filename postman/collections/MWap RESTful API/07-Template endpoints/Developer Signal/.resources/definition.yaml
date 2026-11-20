@@ -1,0 +1,5 @@
+$kind: collection
+name: 'Developer Signal'
+description: |-
+  Endpoints of the portfolio-developer-signal template. Reads are public like the site page and are typed views of the content of the site (nothing is stored apart from the site). The two write endpoints (contact and newsletter) never store anything either: they check the body and relay it to a URL the site owner configured in data.contact (bookingEndpoint for messages, newsletterEndpoint for subscriptions); a site without that URL answers 422.
+order: 1000

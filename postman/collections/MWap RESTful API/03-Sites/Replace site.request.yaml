@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Replace site'
 description: |-
-  Replaces brand, domains and payload of the site created by "Create site" (the whole record, not a merge: omitted domains are removed). Same validation as create. Needs the x-api-key and x-org-id headers; the site keeps its organization. Another organization's site answers 404, like an unknown slug, so slugs of other organizations are not revealed. A site that only exists in Notion can be replaced too: the saved copy then wins over the Notion row from that moment on.
+  Replaces brand, domains and payload of the site created by "Create site" (the whole record, not a merge: omitted domains are removed). Same validation as create. Needs the x-api-key, x-org-id and x-user-id headers; the site keeps its organization and its creator (createdBy), and updatedBy becomes the user who replaced it. Only the user who created the site can replace it: another user of the organization gets 403 (sites saved before owners were recorded have no creator and stay open to the organization). Another organization's site answers 404, like an unknown slug, so slugs of other organizations are not revealed. A site that only exists in Notion can be replaced too: the saved copy then wins over the Notion row from that moment on.
 order: 8000
 method: PUT
 url: '{{baseUrl}}/api/site/:slug'
@@ -82,6 +82,8 @@ scripts:
           slug: { type: 'string', pattern: '^[a-z0-9-]+$' },
           orgId: { type: 'string', pattern: '^[a-z0-9-]{1,60}$' },
           templateId: { type: 'string' },
+          createdBy: { type: 'string' },
+          updatedBy: { type: 'string' },
           domains: { type: 'array', items: { type: 'string', pattern: '^[a-z0-9.-]+$' } },
           brand: {
             type: 'object',
@@ -108,5 +110,10 @@ scripts:
         }
       }))
       pm.test('stays in its organization', () => pm.expect(pm.response.json().orgId).to.eql(pm.collectionVariables.get('orgId')))
+      pm.test('keeps the creator and records the editor', () => {
+        const site = pm.response.json()
+        pm.expect(site.createdBy).to.eql(pm.collectionVariables.get('userId'))
+        pm.expect(site.updatedBy).to.eql(pm.collectionVariables.get('userId'))
+      })
       pm.test('brand was replaced', () => pm.expect(pm.response.json().brand.name).to.eql('Iris Vale Studio'))
 examples: './.resources/Replace site.resources/examples/'

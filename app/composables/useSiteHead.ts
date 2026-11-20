@@ -32,7 +32,7 @@ export function useBrandHead(brand: MaybeRefOrGetter<BrandPayload>) {
         { name: 'theme-color', content: colors.background },
       ],
       link: [
-        { rel: 'icon', href: faviconUrl },
+        { key: 'favicon', rel: 'icon', href: faviconUrl },
         { rel: 'stylesheet', href: `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@400;500;600;700&display=swap` },
       ],
       style: [

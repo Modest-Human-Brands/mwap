@@ -24,6 +24,8 @@ scripts:
           slug: { type: 'string', pattern: '^[a-z0-9-]+$' },
           orgId: { type: 'string', pattern: '^[a-z0-9-]{1,60}$' },
           templateId: { type: 'string' },
+          createdBy: { type: 'string' },
+          updatedBy: { type: 'string' },
           domains: { type: 'array', items: { type: 'string', pattern: '^[a-z0-9.-]+$' } },
           googleAnalyticsId: { type: 'string', pattern: '^G-[A-Z0-9]{6,12}$' },
           brand: {
@@ -51,5 +53,10 @@ scripts:
         }
       }))
       pm.test('seeded site belongs to the default organization', () => pm.expect(pm.response.json().orgId).to.eql('default'))
+      pm.test('does not expose who owns it', () => {
+        const site = pm.response.json()
+        pm.expect(site).to.not.have.property('createdBy')
+        pm.expect(site).to.not.have.property('updatedBy')
+      })
       pm.test('slug matches the request', () => pm.expect(pm.response.json().slug).to.eql(pm.collectionVariables.get('siteSlug')))
 examples: './.resources/Get site.resources/examples/'

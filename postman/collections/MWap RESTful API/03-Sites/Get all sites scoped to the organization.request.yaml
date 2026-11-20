@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get all sites scoped to the organization'
 description: |-
-  With the key, organization and user headers the list is the organization's own: only its sites, nothing of other organizations. Without the headers the list stays public (see "Get all sites").
+  With the key, organization and user headers the list is the organization's own: only its sites, nothing of other organizations. The list needs the headers: it is never public.
 order: 5600
 method: GET
 url: '{{baseUrl}}/api/site?limit=100&offset=0'

@@ -1,0 +1,25 @@
+$kind: http-request
+name: 'Subscribe to newsletter invalid email'
+description: |-
+  An invalid email answers 400 with data.errors.
+order: 2210
+method: POST
+url: '{{baseUrl}}/api/site/:slug/newsletter'
+pathVariables:
+  - key: slug
+    value: '{{formsSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    { "email": "not-an-email" }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('names the field', () => pm.expect(pm.response.json().data.errors.map((e) => e.field)).to.include('email'))

@@ -31,3 +31,16 @@ export function requireAccess(event: H3Event): { orgId: string; userId: string }
 export function optionalAccess(event: H3Event): { orgId: string; userId: string } | undefined {
   return getHeader(event, 'x-api-key') === undefined ? undefined : requireAccess(event)
 }
+
+/** Only the user who created a site can change or delete it; a site saved before owners were recorded has none and stays open to its organization */
+export function assertOwner(site: SitePayload, userId: string): void {
+  if (site.createdBy && site.createdBy !== userId) {
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden', message: 'This site was created by another user of your organization' })
+  }
+}
+
+/** A site as the public sees it: without who owns it */
+export function withoutOwner(site: SitePayload): SitePayload {
+  const { createdBy: _createdBy, updatedBy: _updatedBy, ...rest } = site
+  return rest
+}

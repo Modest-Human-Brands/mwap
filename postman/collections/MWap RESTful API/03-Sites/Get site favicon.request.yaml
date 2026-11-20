@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Get site favicon'
+description: |-
+  The page of a site carries the favicon of the site (brand.faviconUrl) and no other: the default icon of the MWap service never appears in a site's head, so the browser tab shows the site's own icon.
+order: 4798
+method: GET
+url: '{{baseUrl}}/:slug'
+pathVariables:
+  - key: slug
+    value: '{{shareSlug}}'
+headers:
+  - key: Accept
+    value: 'text/html'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('has exactly one icon link', () => pm.expect((pm.response.text().match(/<link[^>]*rel="icon"[^>]*>/g) || []).length).to.eql(1))
+      pm.test('the icon is the favicon of the brand', () => pm.expect(pm.response.text().match(/<link[^>]*rel="icon"[^>]*>/)[0]).to.include('terminal.svg?color=%235BBBFF'))
+      pm.test('the default MWap icon is not in the head', () => pm.expect(pm.response.text().split('</head>')[0]).to.not.include('/favicon.ico'))

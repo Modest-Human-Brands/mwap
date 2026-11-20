@@ -1,0 +1,5 @@
+$kind: collection
+name: 'Template endpoints'
+description: |-
+  Endpoints that belong to one template (or one profession's templates) and not to the service: they live in the folder of the template (templates/<category>/<profession>/<Template>/api, shared ones in templates/<category>/<profession>/_shared/api) and are served under /api/site/:slug/. A request for a site whose template does not own the route answers 404, exactly like an unknown slug, so the routes of one template are never visible on another.
+order: 7000

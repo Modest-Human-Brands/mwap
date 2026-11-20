@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Get experience'
+description: |-
+  The jobs of the career section, newest first as the site lists them: period, location, company, role, highlights and stack.
+order: 1200
+method: GET
+url: '{{baseUrl}}/api/site/:slug/experience'
+pathVariables:
+  - key: slug
+    value: '{{shareSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is cacheable like the site', () => pm.expect(pm.response.headers.get('Cache-Control')).to.match(/s-maxage/))
+      pm.test('does not expose who owns the site', () => pm.expect(pm.response.text()).to.not.include('createdBy'))
+      pm.test('matches Experience schema', () => pm.response.to.have.jsonSchema({ type: 'array', minItems: 1, items: { type: 'object', required: ['period', 'location', 'company', 'role', 'highlights', 'stack'], properties: { period: { type: 'string' }, location: { type: 'string' }, company: { type: 'string' }, role: { type: 'string' }, highlights: { type: 'array', minItems: 1 }, stack: { type: 'string' } } } }))

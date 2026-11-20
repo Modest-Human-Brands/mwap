@@ -1,0 +1,25 @@
+$kind: http-request
+name: 'Send contact message invalid body'
+description: |-
+  A missing name, an invalid email or an empty message answers 400 with data.errors[{ field, message, code }]; an unknown key is 400 too. Nothing is relayed.
+order: 2110
+method: POST
+url: '{{baseUrl}}/api/site/:slug/contact'
+pathVariables:
+  - key: slug
+    value: '{{formsSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    { "name": "", "email": "not-an-email", "message": "" }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('lists every problem', () => pm.expect(pm.response.json().data.errors.map((e) => e.field)).to.have.members(['name', 'email', 'message']))

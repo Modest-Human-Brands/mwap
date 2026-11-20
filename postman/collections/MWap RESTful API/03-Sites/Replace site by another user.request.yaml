@@ -1,0 +1,31 @@
+$kind: http-request
+name: 'Replace site by another user'
+description: |-
+  Another user of the same organization cannot replace a site: only its creator can. The answer is 403 (the site is the caller's organization's, so it is not hidden as 404) and the site is unchanged.
+order: 8710
+method: PUT
+url: '{{baseUrl}}/api/site/:slug'
+pathVariables:
+  - key: slug
+    value: '{{newSiteSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+  - key: x-user-id
+    value: '{{otherUserId}}'
+body:
+  type: json
+  content: |-
+    {}
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 403', () => pm.response.to.have.status(403))
+      pm.test('matches Error schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['statusCode', 'statusMessage'], properties: { statusCode: { type: 'number' }, statusMessage: { type: 'string' } } }))

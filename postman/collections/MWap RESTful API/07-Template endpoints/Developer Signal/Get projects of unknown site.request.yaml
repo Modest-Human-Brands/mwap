@@ -1,0 +1,18 @@
+$kind: http-request
+name: 'Get projects of unknown site'
+description: |-
+  An unknown site answers 404 like the rest of the API.
+order: 1610
+method: GET
+url: '{{baseUrl}}/api/site/:slug/projects'
+pathVariables:
+  - key: slug
+    value: 'pm-no-such-site'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))

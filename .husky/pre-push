@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Husky owns the hooks path, so the Git LFS pre-push hook has to be called from here:
+# without it the template thumbnails (public/templates/*.png) would be pushed as pointers without their files
+command -v git-lfs >/dev/null 2>&1 || { echo >&2 "git-lfs not found: install it (https://git-lfs.com) before pushing"; exit 2; }
+git lfs pre-push "$@"

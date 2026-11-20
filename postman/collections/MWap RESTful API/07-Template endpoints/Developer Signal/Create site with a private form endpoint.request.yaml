@@ -1,0 +1,45 @@
+$kind: http-request
+name: 'Create site with a private form endpoint'
+description: |-
+  A form endpoint that points at localhost or a private address is rejected when the site is saved (400, field data.contact.newsletterEndpoint), so the service can never be used to reach an internal host.
+order: 2010
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "pm-forms-private-{{$timestamp}}",
+      "templateId": "portfolio-developer-signal",
+      "brand": {
+        "name": "Nova Dev",
+        "logoUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF",
+        "fontFamily": "Exo 2",
+        "colors": { "primary": "#0593FA", "secondary": "#262626", "accent": "#5BBBFF", "background": "#171717", "text": "#F8FAFC" }
+      },
+      "data": {
+        "contact": {
+          "email": "hello@novadev.example.com",
+          "bookingEndpoint": "https://postman-echo.com/post",
+          "newsletterEndpoint": "http://127.0.0.1:8080/hook"
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('names the field', () => pm.expect(pm.response.json().data.errors.map((e) => e.field)).to.include('data.contact.newsletterEndpoint'))

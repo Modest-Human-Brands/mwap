@@ -8,5 +8,6 @@ export default defineEventHandler(async (event) => {
 
   // A scoped answer depends on the key in the request, so it is never shared through a cache
   setHeader(event, 'Cache-Control', access ? 'no-store' : 's-maxage=60, stale-while-revalidate=300')
-  return site
+  // Who owns a site is shown only to its own organization
+  return access ? site : withoutOwner(site)
 })

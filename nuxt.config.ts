@@ -93,8 +93,6 @@ export default defineNuxtConfig({
       siteUrl: process.env.NUXT_MWAP_PUBLIC_SITE_URL || '',
       vapidKey: '',
     },
-    // Read when the server starts, not when the image is built: Nitro fills these from NUXT_MWAP_PRIVATE_API_KEY and
-    // NUXT_MWAP_PRIVATE_SITES_DIR. Reading process.env here would freeze whatever the build machine had (nothing, in CI).
     mwap: {
       private: {
         apiKey: '',
@@ -112,6 +110,7 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: 'en',
       },
+      link: [{ key: 'favicon', rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     },
   },
   icon: {

@@ -1,0 +1,24 @@
+$kind: http-request
+name: 'Subscribe to newsletter without endpoint'
+description: |-
+  A site without newsletterEndpoint cannot take subscriptions: 422.
+order: 2220
+method: POST
+url: '{{baseUrl}}/api/site/:slug/newsletter'
+pathVariables:
+  - key: slug
+    value: '{{shareSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    { "email": "sam@example.com" }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 422', () => pm.response.to.have.status(422))

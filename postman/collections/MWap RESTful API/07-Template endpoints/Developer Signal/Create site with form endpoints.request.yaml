@@ -1,0 +1,49 @@
+$kind: http-request
+name: 'Create site with form endpoints'
+description: |-
+  Creates a Signal site whose data.contact names the two URLs the forms are relayed to: bookingEndpoint (messages) and newsletterEndpoint (subscriptions, a new optional field of data.contact). Both must be https URLs of a public host (never localhost or a private address). The slug is kept in the collection variable formsSlug. The forms requests below use postman-echo.com as the receiver, so they need network access.
+order: 2000
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{formsSlug}}",
+      "templateId": "portfolio-developer-signal",
+      "brand": {
+        "name": "Nova Dev",
+        "logoUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/terminal.svg?color=%235BBBFF",
+        "fontFamily": "Exo 2",
+        "colors": { "primary": "#0593FA", "secondary": "#262626", "accent": "#5BBBFF", "background": "#171717", "text": "#F8FAFC" }
+      },
+      "data": {
+        "contact": {
+          "email": "hello@novadev.example.com",
+          "bookingEndpoint": "https://postman-echo.com/post",
+          "newsletterEndpoint": "https://postman-echo.com/post"
+        }
+      }
+    }
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      pm.collectionVariables.set('formsSlug', 'pm-forms-' + Date.now())
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 201', () => pm.response.to.have.status(201))
+      pm.test('stores both endpoints', () => { const { data } = pm.response.json(); pm.expect(data.contact.bookingEndpoint).to.eql('https://postman-echo.com/post'); pm.expect(data.contact.newsletterEndpoint).to.eql('https://postman-echo.com/post') })

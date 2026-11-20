@@ -57,6 +57,9 @@ export const siteSchema = z.object({
   data: z.union([contactSheetDataSchema, editorialDataSchema, signalDataSchema]),
   domains: domainsSchema,
   googleAnalyticsId: googleAnalyticsIdSchema.optional(),
+  /** The user (x-user-id) who created the site and who changed it last; sites saved before owners were recorded have neither */
+  createdBy: z.string().optional(),
+  updatedBy: z.string().optional(),
   updatedAt: z.string(),
 })
 

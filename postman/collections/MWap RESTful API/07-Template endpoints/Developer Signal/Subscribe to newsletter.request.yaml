@@ -1,0 +1,26 @@
+$kind: http-request
+name: 'Subscribe to newsletter'
+description: |-
+  Public. Checks the email and relays the subscription to the newsletterEndpoint of the site. 202 means the receiver accepted it; MWap stores nothing. Body: email.
+order: 2200
+method: POST
+url: '{{baseUrl}}/api/site/:slug/newsletter'
+pathVariables:
+  - key: slug
+    value: '{{formsSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    { "email": "sam@example.com" }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 202', () => pm.response.to.have.status(202))
+      pm.test('says it was delivered', () => pm.expect(pm.response.json()).to.eql({ delivered: true }))
+      pm.test('is never cached', () => pm.expect(pm.response.headers.get('Cache-Control')).to.match(/no-store/))

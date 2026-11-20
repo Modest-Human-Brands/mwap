@@ -23,3 +23,4 @@ scripts:
     code: |-
       pm.test('status is 200', () => pm.response.to.have.status(200))
       pm.test('is the site', () => pm.expect(pm.response.json().slug).to.eql(pm.collectionVariables.get('newSiteSlug')))
+      pm.test('shows who owns it', () => pm.expect(pm.response.json().createdBy).to.eql(pm.collectionVariables.get('userId')))
