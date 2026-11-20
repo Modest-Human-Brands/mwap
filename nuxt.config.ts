@@ -1,4 +1,19 @@
+import { existsSync, readdirSync } from 'node:fs'
+import { join } from 'node:path'
 import vue from '@vitejs/plugin-vue'
+
+// Every template folder with an `api/` directory (a template's own, or the _shared one of its profession) is scanned like server/api:
+// templates/<category>/<profession>/<Template>/api/site/[slug]/projects.get.ts is served at /api/site/:slug/projects
+const templatesDir = join(import.meta.dirname, 'templates')
+const templateApiDirs = (dir: string, depth = 0): string[] =>
+  depth > 3
+    ? []
+    : readdirSync(dir, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory() && entry.name !== 'api' && entry.name !== 'sections')
+        .flatMap((entry) => {
+          const path = join(dir, entry.name)
+          return [...(existsSync(join(path, 'api')) ? [path] : []), ...templateApiDirs(path, depth + 1)]
+        })
 
 const host = process.env.TAURI_DEV_HOST || 'localhost'
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000
@@ -56,6 +71,7 @@ export default defineNuxtConfig({
     'v-gsap-nuxt',
   ],
   nitro: {
+    scanDirs: templateApiDirs(templatesDir),
     compressPublicAssets: true,
     rollupConfig: {
       plugins: [vue()],

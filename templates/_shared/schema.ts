@@ -7,6 +7,27 @@ export const linkSchema = z.strictObject({
   href,
 })
 
+const PRIVATE_HOST = /^(localhost|.*\.(localhost|local|internal|lan|home|corp))$/i
+const PRIVATE_V4 = /^(0\.|10\.|127\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.)/
+
+/** An https URL of a public host: the service relays form submissions to it, so it must never reach localhost, a private network or a link-local address */
+export const publicHttpsUrl = () =>
+  z.url().refine(
+    (value) => {
+      try {
+        const url = new URL(value)
+        const host = url.hostname.replace(/^\[|\]$/g, '')
+        if (url.protocol !== 'https:' || url.username || url.password) return false
+        if (PRIVATE_HOST.test(host) || PRIVATE_V4.test(host)) return false
+        // IPv6 literals (loopback, unique local, link-local, mapped addresses) and bare numbers are never public hosts here
+        return !host.includes(':') && !/^\d+$/.test(host)
+      } catch {
+        return false
+      }
+    },
+    { message: 'Use an https URL of a public host (no localhost, private network or credentials)' }
+  )
+
 /**
  * Hints for an editor. They travel in the JSON Schema of the template: `title` labels a page or a slot, `widget` says how a
  * string is edited. A string without a widget is a single line; a URL is a link. Media is edited by URL: the service stores no files.

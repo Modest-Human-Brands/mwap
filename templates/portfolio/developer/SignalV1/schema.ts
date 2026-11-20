@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { linkSchema, page, slot, image, longText, video } from '~~/templates/_shared/schema'
+import { linkSchema, page, slot, image, longText, video, publicHttpsUrl } from '~~/templates/_shared/schema'
 
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected a date such as 2026-03-02')
 const labelled = <T extends z.ZodRawShape>(shape: T) => z.strictObject({ eyebrow: z.string(), title: z.string(), ...shape })
@@ -158,7 +158,9 @@ export const signalDataSchema = z.strictObject({
       .array(z.strictObject({ label: z.string(), url: z.url() }))
       .max(6)
       .optional(),
-    bookingEndpoint: z.url().optional(),
+    // Where the contact form (messages) and the newsletter form (subscriptions) are relayed to by the service; without them the forms answer 422
+    bookingEndpoint: publicHttpsUrl().optional(),
+    newsletterEndpoint: publicHttpsUrl().optional(),
   }),
   // Each project also has its own page at `work/<slug>`
   projects: z.array(projectSchema).min(1).max(6),
