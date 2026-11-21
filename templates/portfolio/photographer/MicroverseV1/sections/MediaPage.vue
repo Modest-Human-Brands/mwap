@@ -85,16 +85,47 @@ function fullscreen() {
   else stage.value?.requestFullscreen?.().catch(() => undefined)
 }
 
+// Moving between media replaces the history entry: Back (or the phone's back gesture) leaves the viewer for the page the visitor came from,
+// instead of walking back through every photo or video they browsed.
+const show = (slug: string) => navigateTo(pageOf(slug), { replace: true })
+
 function onKey(event: KeyboardEvent) {
   const target = event.target as HTMLElement
   if (target.closest('input, textarea, dialog')) return
-  if (event.key === 'ArrowLeft') navigateTo(pageOf(previous.value.slug))
-  else if (event.key === 'ArrowRight') navigateTo(pageOf(next.value.slug))
+  if (event.key === 'ArrowLeft') show(previous.value.slug)
+  else if (event.key === 'ArrowRight') show(next.value.slug)
   else if (event.key.toLowerCase() === 'i') details.value = !details.value
   else if (event.key === 'Escape') {
     if (details.value) details.value = false
     else navigateTo(homeHref.value)
   }
+}
+
+// A horizontal swipe on the picture browses: left for the next, right for the previous. Swipes that start at a screen edge are left to the
+// system's back gesture, and on a video the controls (the bottom of the player) keep their own drags.
+const swiped = useState('mv-media-swiped', () => false)
+let swipe: { x: number; y: number } | undefined
+const onSwipeStart = (event: TouchEvent) => {
+  swipe = undefined
+  const touch = event.touches[0]
+  if (!touch || event.touches.length > 1) return
+  const target = event.target as HTMLElement
+  if (target.closest('.sidebar, .handle, .strip, .info-top, .logo, a, button')) return
+  if (touch.clientX < 28 || touch.clientX > window.innerWidth - 28) return
+  const box = stage.value?.getBoundingClientRect()
+  if (video.value && box && touch.clientY > box.bottom - 96) return
+  swipe = { x: touch.clientX, y: touch.clientY }
+}
+const onSwipeEnd = (event: TouchEvent) => {
+  const touch = event.changedTouches[0]
+  const from = swipe
+  swipe = undefined
+  if (!from || !touch || details.value) return
+  const dx = touch.clientX - from.x
+  const dy = touch.clientY - from.y
+  if (Math.abs(dx) < 56 || Math.abs(dx) < Math.abs(dy) * 1.5) return
+  swiped.value = true
+  show((dx < 0 ? next : previous).value.slug)
 }
 
 // A swipe up on the handle opens the phone sheet, a swipe down on the sheet closes it
@@ -112,27 +143,28 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 </script>
 
 <template>
-  <main class="media" :class="{ 'is-open': details, 'is-video': !!video }">
+  <main class="media" :class="{ 'is-open': details, 'is-video': !!video }" @touchstart.passive="onSwipeStart" @touchend.passive="onSwipeEnd" @touchcancel.passive="swipe = undefined">
     <CausticsCanvas position="full" :strength="0.7" />
     <div class="tint" aria-hidden="true"></div>
 
     <a class="logo" :href="siteHref('/')" :aria-label="brandName"><img :src="logoUrl" :alt="brandName" width="96" height="96" @error="useDefaultLogo" /></a>
 
     <nav class="strip" aria-label="Media strip">
-      <a class="step mv-icon-button" :href="pageOf(previous.slug)" aria-label="Previous">
+      <a class="step mv-icon-button" data-replace :href="pageOf(previous.slug)" aria-label="Previous">
         <svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4.5 11.5L9 7l4.5 4.5" /></svg>
       </a>
       <a
         v-for="entry in strip"
         :key="entry.slug"
         class="thumb"
+        data-replace
         :class="{ 'is-current': entry.slug === item.slug }"
         :href="pageOf(entry.slug)"
         :aria-label="entry.title"
         :aria-current="entry.slug === item.slug ? 'page' : undefined">
         <img :src="'imageUrl' in entry ? entry.imageUrl : entry.posterUrl" alt="" loading="lazy" />
       </a>
-      <a class="step mv-icon-button" :href="pageOf(next.slug)" aria-label="Next">
+      <a class="step mv-icon-button" data-replace :href="pageOf(next.slug)" aria-label="Next">
         <svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4.5 6.5L9 11l4.5-4.5" /></svg>
       </a>
       <p class="position">{{ kind === 'video' ? `VIDEO ${pad(index + 1)}` : `${pad(index + 1)} / ${pad(total)}` }}</p>
@@ -146,10 +178,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
         </div>
       </template>
 
-      <a class="nav prev mv-icon-button" :href="pageOf(previous.slug)" aria-label="Previous">
+      <a class="nav prev mv-icon-button" data-replace :href="pageOf(previous.slug)" aria-label="Previous">
         <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.67" aria-hidden="true"><path d="M12.5 5l-5 5 5 5" /></svg>
       </a>
-      <a class="nav next mv-icon-button" :href="pageOf(next.slug)" aria-label="Next">
+      <a class="nav next mv-icon-button" data-replace :href="pageOf(next.slug)" aria-label="Next">
         <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.67" aria-hidden="true"><path d="M7.5 5l5 5-5 5" /></svg>
       </a>
 
@@ -187,6 +219,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
         <svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4.5 11.5L9 7l4.5 4.5" /></svg>
       </button>
     </div>
+
+    <p v-if="total > 1" class="swipe" :class="{ done: swiped }" aria-hidden="true">← SWIPE →</p>
 
     <div class="scrim" aria-hidden="true" @click="details = false"></div>
 
@@ -244,6 +278,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   place-items: center;
   isolation: isolate;
   background: var(--mv-bg);
+  touch-action: pan-y;
 }
 
 .tint {
@@ -330,17 +365,19 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 /* Only the media itself is full colour: no scrim, text over it gets a shadow */
 .stage {
   --bar: 0rem; /* the player carries its own controls over the picture */
+  --w: min(19.625rem, calc(100vw - 6.5rem)); /* room left of the neighbour strip */
 
   position: relative;
   display: flex;
   flex-direction: column;
+  width: var(--w);
   margin: 0;
-  transform: translateX(1.5rem);
+  transform: translateX(1.75rem);
 }
 
 .photo {
   display: block;
-  width: min(19.625rem, calc(100vw - 6rem));
+  width: 100%;
   max-height: calc(100svh - 18rem);
   aspect-ratio: var(--ratio);
   object-fit: cover;
@@ -348,7 +385,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
 .clip {
   position: relative;
-  width: min(18.75rem, calc(100vw - 7rem));
+  width: 100%;
   aspect-ratio: var(--ratio);
   max-height: calc(100svh - 21rem);
   background: #000;
@@ -376,14 +413,37 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 }
 
 .name {
+  overflow-wrap: anywhere;
   font-size: 1.25rem;
   font-weight: 600;
   line-height: 1.2;
 }
 
 .rail,
-.handle {
+.handle,
+.swipe {
   position: absolute;
+}
+
+/* Phone only: a hint above the handle that the picture swipes; it fades once the visitor has done it */
+.swipe {
+  right: 0;
+  bottom: 5.25rem;
+  left: 0;
+  z-index: 3;
+  margin: 0;
+  color: var(--mv-hot);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 0.85);
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.swipe.done {
+  opacity: 0;
 }
 
 .rail {
@@ -640,6 +700,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   }
 
   .stage {
+    width: auto;
     height: 100svh;
     transform: none;
   }
@@ -734,6 +795,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
   .info-top,
   .handle,
+  .swipe,
   .scrim {
     display: none;
   }

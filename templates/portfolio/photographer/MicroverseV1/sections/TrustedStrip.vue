@@ -85,38 +85,44 @@ defineProps<{ label: string; clients: { name: string; logoUrl: string }[] }>()
   }
 }
 
+/* The cap hides the logos behind a slanted edge. The slashes lean at the same angle (tan 25deg x the strip height = --lean),
+   so a thin black gap runs along each of them and the logos slide out from behind the first one. */
 .cap {
+  --lean: 2.565rem;
+  --w: 0.625rem;
+
   position: absolute;
   inset: 0 0 0 auto;
-  width: 12rem;
+  width: 14rem;
   background: #000;
+  clip-path: polygon(var(--lean) 0, 100% 0, 100% 100%, 0 100%);
 }
 
 .slash {
   position: absolute;
-  top: -0.625rem;
-  left: 0.75rem;
-  width: 1.375rem;
-  height: 6.875rem;
+  top: 0;
+  left: 0.5rem;
+  width: calc(var(--lean) + var(--w));
+  height: 100%;
   background: var(--mv-red);
-  transform: rotate(25deg);
+  clip-path: polygon(var(--lean) 0, 100% 0, var(--w) 100%, 0 100%);
 }
 
 .slash:nth-of-type(2) {
-  left: 2.5rem;
+  left: 1.75rem;
 }
 
 .slash.hot {
-  left: 4.25rem;
+  left: 3rem;
   background: var(--mv-hot);
 }
 
 .label {
   position: absolute;
   top: 50%;
-  left: 7rem;
+  left: 7.25rem;
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   line-height: 1;
@@ -127,23 +133,11 @@ defineProps<{ label: string; clients: { name: string; logoUrl: string }[] }>()
 
 @media (min-width: 880px) {
   .cap {
-    width: 21.875rem;
-  }
-
-  .slash {
-    left: 1.25rem;
-  }
-
-  .slash:nth-of-type(2) {
-    left: 3.5rem;
-  }
-
-  .slash.hot {
-    left: 5.75rem;
+    width: 20rem;
   }
 
   .label {
-    left: 9.5rem;
+    left: 8.5rem;
     font-size: 1.375rem;
   }
 }

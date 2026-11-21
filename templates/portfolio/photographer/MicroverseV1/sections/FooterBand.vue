@@ -103,6 +103,11 @@ const siteHref = useSiteHref()
     border-color 0.25s ease;
 }
 
+.social a :deep(.social-icon) {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
 .social a:hover {
   border-color: var(--mv-hot);
   background: var(--mv-red);

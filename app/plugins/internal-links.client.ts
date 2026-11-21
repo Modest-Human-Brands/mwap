@@ -15,6 +15,7 @@ export default defineNuxtPlugin(() => {
     if (hash && pathname === location.pathname && search === location.search) return
 
     event.preventDefault()
-    navigateTo(pathname + search + hash)
+    // data-replace: moving between sibling items (the media viewer) must not pile up history entries
+    navigateTo(pathname + search + hash, { replace: anchor.hasAttribute('data-replace') })
   })
 })

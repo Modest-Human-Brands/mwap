@@ -23,7 +23,6 @@ const timecode = computed(() => `${pad(seconds.value / 3600)}:${clock(seconds.va
     <p class="rec" aria-hidden="true"><i class="dot"></i>REC&nbsp; {{ timecode }} &nbsp;·&nbsp; 4K &nbsp;·&nbsp; 24 FPS</p>
 
     <div class="body">
-      <p class="eyebrow">{{ slotContent.eyebrow }}</p>
       <h1 class="headline">
         <span v-for="(line, index) in slotContent.titleLines" :key="line" :class="{ band: index === 1 }">{{ line }}</span>
       </h1>
@@ -70,15 +69,6 @@ const timecode = computed(() => `${pad(seconds.value / 3600)}:${clock(seconds.va
     opacity: 0;
     transform: translateY(2rem);
   }
-}
-
-.eyebrow {
-  max-width: 22rem;
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.24em;
-  line-height: 1.4;
-  text-transform: uppercase;
 }
 
 .headline {
@@ -135,12 +125,6 @@ const timecode = computed(() => `${pad(seconds.value / 3600)}:${clock(seconds.va
   .body {
     gap: 1.25rem;
     padding: 0 4rem;
-  }
-
-  .eyebrow {
-    max-width: none;
-    font-size: 0.75rem;
-    letter-spacing: 0.24em;
   }
 
   .headline .band::before {

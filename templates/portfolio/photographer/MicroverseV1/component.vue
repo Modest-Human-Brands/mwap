@@ -85,7 +85,8 @@ const featuredPhotos = computed(() => data.value.photos.filter((photo) => photo.
       <FooterBand v-if="home.footer.enabled" :slot-content="home.footer" :contact="data.contact" />
     </template>
 
-    <BookSession ref="book" :label="bookLabel" :slug="site.slug" :email="data.contact.email" />
+    <!-- The media viewer has its own controls along the bottom and right edges, so the sticky button stays off it -->
+    <BookSession v-if="!media?.item" ref="book" :label="bookLabel" :slug="site.slug" :email="data.contact.email" />
   </div>
 </template>
 

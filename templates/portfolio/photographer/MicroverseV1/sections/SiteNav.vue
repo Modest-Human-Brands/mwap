@@ -219,6 +219,11 @@ onBeforeUnmount(() => {
   border-radius: 999px;
 }
 
+.social-link :deep(.social-icon) {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 .socials {
   display: flex;
   flex-wrap: wrap;
