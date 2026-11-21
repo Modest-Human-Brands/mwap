@@ -73,25 +73,40 @@ onMounted(async () => {
   // The stage takes its physics size first, so the walls and the floor are measured on the final layout
   physics.value = true
   await nextTick()
-  const { Engine, Bodies, Body, Composite, Mouse, MouseConstraint, Runner, Events } = Matter
-  const engine = Engine.create({ gravity: { x: 0, y: 1.2, scale: 0.001 } })
+  const { Engine, Bodies, Body, Composite, Mouse, MouseConstraint, Events } = Matter
+  // A fixed small step (120 Hz) with more solver iterations and sleeping bodies: the tags land and settle without jitter or popping apart
+  const engine = Engine.create({ gravity: { x: 0, y: 1.2, scale: 0.001 }, positionIterations: 12, velocityIterations: 10, constraintIterations: 4, enableSleeping: true })
   const width = () => host.clientWidth
   const height = () => host.clientHeight
-  const floor = Bodies.rectangle(width() / 2, height() + 30, width() * 3, 60, { isStatic: true })
-  const left = Bodies.rectangle(-30, height() / 2, 60, height() * 4, { isStatic: true })
-  const right = Bodies.rectangle(width() + 30, height() / 2, 60, height() * 4, { isStatic: true })
-  // The category tags and the frame count are all bodies; only the tags filter
+  const wall = { isStatic: true, friction: 0.3, restitution: 0.1 }
+  const floor = Bodies.rectangle(width() / 2, height() + 60, width() * 3, 120, wall)
+  const left = Bodies.rectangle(-60, height() / 2, 120, height() * 6, wall)
+  const right = Bodies.rectangle(width() + 60, height() / 2, 120, height() * 6, wall)
+  // The category tags and the frame count are all bodies; only the tags filter. They start above the stage, one over the other with a
+  // clear gap, so they never begin inside each other and arrive one after another
+  let dropY = -40
   const bodies = tagEls.value.map((el, index) => {
-    const body = Bodies.rectangle(80 + index * 150, -60 - index * 70, el.offsetWidth, el.offsetHeight, { restitution: 0.4, friction: 0.1, chamfer: { radius: 0 } })
-    Body.setAngle(body, (index % 2 ? 1 : -1) * 0.12)
+    const w = el.offsetWidth
+    const h = el.offsetHeight
+    const x = Math.min(Math.max(w / 2 + 16 + ((index * 173) % Math.max(width() - w - 32, 1)), w / 2 + 8), width() - w / 2 - 8)
+    dropY -= h + 24
+    const body = Bodies.rectangle(x, dropY, w, h, { restitution: 0.2, friction: 0.35, frictionAir: 0.015, slop: 0.02, sleepThreshold: 40, density: 0.002 })
+    Body.setAngle(body, (index % 2 ? 1 : -1) * 0.1)
     return body
   })
   Composite.add(engine.world, [floor, left, right, ...bodies])
+  // No body ever moves faster than a tag can be followed by the eye (and the solver)
+  Events.on(engine, 'beforeUpdate', () => {
+    for (const body of bodies) {
+      const speed = Math.hypot(body.velocity.x, body.velocity.y)
+      if (speed > 22) Body.setVelocity(body, { x: (body.velocity.x / speed) * 22, y: (body.velocity.y / speed) * 22 })
+    }
+  })
 
   const mouse = Mouse.create(host)
   // matter-js swallows the wheel: the page must keep scrolling
   mouse.element.removeEventListener('wheel', (mouse as unknown as { mousewheel: EventListener }).mousewheel)
-  const constraint = MouseConstraint.create(engine, { mouse, constraint: { stiffness: 0.2, render: { visible: false } } })
+  const constraint = MouseConstraint.create(engine, { mouse, constraint: { stiffness: 0.12, damping: 0.2, render: { visible: false } } })
   Composite.add(engine.world, constraint)
 
   let dragged = 0
@@ -103,30 +118,44 @@ onMounted(async () => {
   })
   Events.on(constraint, 'mousemove', () => dragged++)
 
-  const runner = Runner.create()
+  // Our own loop: fixed sub-steps from the frame time, the transforms written once per frame
+  const STEP = 1000 / 120
+  let frame = 0
+  let last = 0
+  let spare = 0
   let started = false
+  const draw = () => {
+    bodies.forEach((body, index) => {
+      const el = tagEls.value[index]
+      if (el) el.style.transform = `translate3d(${(body.position.x - el.offsetWidth / 2).toFixed(2)}px, ${(body.position.y - el.offsetHeight / 2).toFixed(2)}px, 0) rotate(${body.angle.toFixed(4)}rad)`
+    })
+  }
+  const tick = (now: number) => {
+    spare += Math.min(now - (last || now), 50)
+    last = now
+    for (let steps = 0; spare >= STEP && steps < 6; steps++) {
+      Engine.update(engine, STEP)
+      spare -= STEP
+    }
+    draw()
+    frame = requestAnimationFrame(tick)
+  }
   // The tags drop when the stage enters view
   const observer = new IntersectionObserver(
     ([entry]) => {
       if (!entry?.isIntersecting || started) return
       started = true
-      Runner.run(runner, engine)
+      frame = requestAnimationFrame(tick)
       observer.disconnect()
     },
     { threshold: 0.3 }
   )
   observer.observe(host)
-  Events.on(engine, 'afterUpdate', () => {
-    bodies.forEach((body, index) => {
-      const el = tagEls.value[index]
-      if (el) el.style.transform = `translate(${body.position.x - el.offsetWidth / 2}px, ${body.position.y - el.offsetHeight / 2}px) rotate(${body.angle}rad)`
-    })
-  })
   // The layout changed under the pinned content above: positions of every trigger are measured again
   ScrollTrigger.refresh()
   stopPhysics = () => {
     observer.disconnect()
-    if (started) Runner.stop(runner)
+    cancelAnimationFrame(frame)
     Engine.clear(engine)
   }
 })

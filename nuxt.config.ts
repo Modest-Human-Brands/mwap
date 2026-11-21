@@ -55,6 +55,14 @@ const nativeConfig =
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  // Video.js 10 players are custom elements: Vue leaves them alone instead of resolving them as components
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => ['video-player', 'video-skin', 'live-video-player', 'live-video-skin', 'hls-video', 'background-video', 'hls-background-video'].includes(tag),
+    },
+  },
+  // Pages cross-fade (View Transitions API) when the visitor moves between pages of a site
+  experimental: { viewTransition: true },
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',

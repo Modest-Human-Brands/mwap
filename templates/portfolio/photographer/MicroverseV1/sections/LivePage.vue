@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MediaPlayer from '~~/templates/_shared/MediaPlayer.vue'
 import type { MicroverseLive, MicroversePages } from '~~/templates/portfolio/photographer/MicroverseV1/schema'
 
 // The state comes from the data: "live" shows the player, the schedule and the replays; "offline" the poster, "off air" and a countdown to the next stream
@@ -44,7 +45,7 @@ const left = computed(() => {
         <h1 class="mv-title">{{ header.title }}</h1>
       </header>
       <div class="player">
-        <video v-if="live.streamUrl" :src="live.streamUrl" :poster="live.posterUrl" controls muted playsinline preload="none" />
+        <MediaPlayer v-if="live.streamUrl" :src="live.streamUrl" :poster="live.posterUrl" live autoplay muted />
         <img v-else :src="live.posterUrl" :alt="live.title" />
         <span class="onair"><i aria-hidden="true" />{{ header.liveLabel }}</span>
         <p class="now">{{ live.title }}</p>
@@ -122,7 +123,6 @@ const left = computed(() => {
   background: #000;
 }
 
-.player video,
 .player img {
   width: 100%;
   height: 100%;

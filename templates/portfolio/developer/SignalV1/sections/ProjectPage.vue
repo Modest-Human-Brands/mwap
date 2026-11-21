@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LoopVideo from '~~/templates/_shared/LoopVideo.vue'
 import { useSiteHref } from '~~/templates/_shared/useSiteHref'
 import type { ContactSlot, SignalProject } from '~~/templates/portfolio/developer/SignalV1/schema'
 import { formatDate } from '~~/templates/portfolio/developer/SignalV1/format'
@@ -18,7 +19,7 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
   <main>
     <section class="hero">
       <img v-gsap.from="{ scale: 1.18, duration: 1.8, ease: 'power3.out' }" :src="project.posterUrl" :alt="`${project.name} preview`" fetchpriority="high" />
-      <video v-if="project.videoUrl" :src="project.videoUrl" :poster="project.posterUrl" autoplay muted loop playsinline aria-hidden="true"></video>
+      <LoopVideo v-if="project.videoUrl" class="video" :src="project.videoUrl" />
       <div class="veil"></div>
     </section>
 
@@ -100,7 +101,7 @@ const showNext = computed(() => props.next.slug !== props.project.slug)
 }
 
 .hero img,
-.hero video {
+.hero .video {
   position: absolute;
   inset: 0;
   width: 100%;

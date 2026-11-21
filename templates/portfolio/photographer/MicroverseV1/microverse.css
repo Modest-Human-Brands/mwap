@@ -163,6 +163,71 @@
   opacity: 0.35;
 }
 
+/* Scroll reveal (useScrollReveal): hidden until the client has taken over, then each element rises when it is on screen. The list is the
+   REVEAL list of useMicroverse.ts. The animation at the end shows everything anyway if the scripts never run. */
+:where(.mv).is-prep
+  :is(
+    .head,
+    .mv-pagehead,
+    .manifesto .body,
+    .manifesto .bullets,
+    .gallery .frame,
+    .packages .card,
+    .projects .tags,
+    .projects .tile,
+    .list .card,
+    .live .card,
+    .members > li,
+    .story .block,
+    .legal .sections > li,
+    .article .text,
+    .footer .wordmark,
+    .footer .reach,
+    .footer .legal
+  ) {
+  opacity: 0;
+  translate: 0 1.75rem;
+  animation: mv-unhide 0.01s 4s forwards;
+}
+
+:where(.mv) [data-reveal]:not(.is-in) {
+  opacity: 0;
+  translate: 0 1.75rem;
+  animation: mv-unhide 0.01s 4s forwards;
+}
+
+:where(.mv) [data-reveal] {
+  transition:
+    opacity 0.9s var(--mv-ease) calc(var(--i, 0) * 70ms),
+    translate 1s var(--mv-ease) calc(var(--i, 0) * 70ms);
+}
+
+@keyframes mv-unhide {
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Hover and press feel, on every link and control of the template */
+:where(.mv) a,
+:where(.mv) button {
+  transition-property: color, background-color, border-color, opacity, transform, translate;
+  transition-duration: 0.3s;
+  transition-timing-function: var(--mv-ease);
+}
+
+:where(.mv) .mv-icon-button:active {
+  transform: scale(0.92);
+}
+
+/* The grain and the vignette are one layer of their own: the page scrolls without repainting it */
+:where(.mv)::after {
+  will-change: transform;
+  transform: translateZ(0);
+  contain: strict;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :where(.mv) * {
     animation-duration: 0.01ms !important;

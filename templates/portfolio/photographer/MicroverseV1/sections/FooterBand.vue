@@ -60,7 +60,9 @@ const siteHref = useSiteHref()
 
 .wordmark {
   margin-bottom: 3.5rem;
+  padding-right: 0.04em; /* the negative tracking also trims the last letter: the box is as wide as the ink */
   font-size: 17vw;
+  text-align: center;
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -137,7 +139,7 @@ const siteHref = useSiteHref()
 
   .wordmark {
     grid-column: 1 / -1;
-    margin: 0 0 0 -1.5rem;
+    margin: 0 -2.5rem 0 -4rem; /* across the whole footer, so the word sits on the middle of the page */
     font-size: 10.4vw;
     white-space: nowrap;
   }

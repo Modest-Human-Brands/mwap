@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MicroversePhoto, MicroverseVideo } from '~~/templates/portfolio/photographer/MicroverseV1/schema'
 import { useSiteHref } from '~~/templates/_shared/useSiteHref'
+import MediaPlayer from '~~/templates/_shared/MediaPlayer.vue'
 import CausticsCanvas from './CausticsCanvas.vue'
 import { aspectLabel, clock, shortDate, useDefaultLogo } from '../useMicroverse'
 
@@ -17,11 +18,6 @@ const props = defineProps<{
 const siteHref = useSiteHref()
 const details = ref(false)
 const stage = ref<HTMLElement>()
-const player = ref<HTMLVideoElement>()
-const playing = ref(false)
-const muted = ref(false)
-const time = ref(0)
-const length = ref(0)
 const copied = ref(false)
 
 const index = computed(() => props.items.findIndex((entry) => entry.slug === props.item.slug))
@@ -65,21 +61,6 @@ const rows = computed(() => {
   return list
 })
 
-function play() {
-  const el = player.value
-  if (!el) return
-  if (el.paused) el.play().catch(() => undefined)
-  else el.pause()
-}
-
-function seek(event: MouseEvent) {
-  const el = player.value
-  const bar = event.currentTarget as HTMLElement
-  if (!el || !length.value) return
-  const box = bar.getBoundingClientRect()
-  el.currentTime = ((event.clientX - box.left) / box.width) * length.value
-}
-
 async function share() {
   try {
     if (navigator.share) await navigator.share({ title: props.item.title, url: location.href })
@@ -107,12 +88,12 @@ function fullscreen() {
 function onKey(event: KeyboardEvent) {
   const target = event.target as HTMLElement
   if (target.closest('input, textarea, dialog')) return
-  if (event.key === 'ArrowLeft') window.location.href = pageOf(previous.value.slug)
-  else if (event.key === 'ArrowRight') window.location.href = pageOf(next.value.slug)
+  if (event.key === 'ArrowLeft') navigateTo(pageOf(previous.value.slug))
+  else if (event.key === 'ArrowRight') navigateTo(pageOf(next.value.slug))
   else if (event.key.toLowerCase() === 'i') details.value = !details.value
   else if (event.key === 'Escape') {
     if (details.value) details.value = false
-    else window.location.href = homeHref.value
+    else navigateTo(homeHref.value)
   }
 }
 
@@ -161,36 +142,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
       <img v-if="photo" class="photo" :src="photo.imageUrl" :alt="photo.title" :width="photo.width" :height="photo.height" />
       <template v-else-if="video">
         <div class="clip">
-          <video
-            ref="player"
-            :src="video.videoUrl"
-            :poster="video.posterUrl"
-            :muted="muted"
-            preload="metadata"
-            playsinline
-            @click="play"
-            @play="playing = true"
-            @pause="playing = false"
-            @ended="playing = false"
-            @timeupdate="time = ($event.target as HTMLVideoElement).currentTime"
-            @loadedmetadata="length = ($event.target as HTMLVideoElement).duration"></video>
-          <button v-if="!playing" type="button" class="play" aria-label="Play video" @click="play">
-            <svg viewBox="0 0 26 26" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M7 4l15 9-15 9z" /></svg>
-          </button>
-        </div>
-        <div class="bar">
-          <span class="now">{{ clock(time) }}</span>
-          <div class="scrub" role="slider" aria-label="Seek" :aria-valuenow="length ? Math.round((time / length) * 100) : 0" aria-valuemin="0" aria-valuemax="100" @click="seek">
-            <i :style="{ width: length ? `${(time / length) * 100}%` : '0%' }"></i>
-          </div>
-          <span class="end">{{ clock(length || video.durationSeconds) }}</span>
-          <button type="button" class="mute mv-icon-button" :aria-pressed="muted" :aria-label="muted ? 'Unmute' : 'Mute'" @click="muted = !muted">
-            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-              <path d="M2.7 6h2.2L8.7 3v10L4.9 10H2.7z" fill="currentColor" />
-              <path v-if="muted" d="M11.5 6.2l3 3.6M14.5 6.2l-3 3.6" />
-              <path v-else d="M11.3 6a3 3 0 0 1 0 4" />
-            </svg>
-          </button>
+          <MediaPlayer :src="video.videoUrl" :poster="video.posterUrl" fit="cover" />
         </div>
       </template>
 
@@ -304,7 +256,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
 .logo {
   position: absolute;
-  top: 1rem;
+  top: 0.875rem;
   left: 1rem;
   z-index: 3;
   width: 3.5rem;
@@ -377,17 +329,13 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
 /* Only the media itself is full colour: no scrim, text over it gets a shadow */
 .stage {
-  --bar: 0rem;
+  --bar: 0rem; /* the player carries its own controls over the picture */
 
   position: relative;
   display: flex;
   flex-direction: column;
   margin: 0;
   transform: translateX(1.5rem);
-}
-
-.is-video .stage {
-  --bar: 3rem;
 }
 
 .photo {
@@ -404,76 +352,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   aspect-ratio: var(--ratio);
   max-height: calc(100svh - 21rem);
   background: #000;
-}
-
-.clip video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-.play {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: grid;
-  place-items: center;
-  width: 4rem;
-  height: 4rem;
-  padding: 0 0 0 0.25rem;
-  border: 1px solid color-mix(in srgb, #fff 50%, transparent);
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.14);
-  color: #fff;
-  cursor: pointer;
-  transform: translate(-50%, -50%);
-  backdrop-filter: blur(6px);
-}
-
-.bar {
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: 0.875rem;
-  height: var(--bar);
-  padding: 0 0.75rem;
-  background: #000;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.end {
-  color: #cbd5e1;
-}
-
-.scrub {
-  position: relative;
-  flex: 1;
-  height: 3px;
-  background: color-mix(in srgb, #fff 25%, transparent);
-  cursor: pointer;
-}
-
-.scrub::before {
-  content: '';
-  position: absolute;
-  inset: -0.75rem 0;
-}
-
-.scrub i {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: var(--mv-hot);
-}
-
-.mute {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-color: transparent;
-  background: #fff;
-  color: #000;
-  backdrop-filter: none;
 }
 
 .nav {
@@ -725,9 +603,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
   .logo {
     top: 1rem;
-    left: 4rem;
-    width: 6rem;
-    height: 6rem;
+    left: 3rem;
+    width: 5rem;
+    height: 5rem;
   }
 
   .strip {
@@ -777,16 +655,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   .clip {
     width: auto;
     max-width: calc(100vw - 20rem);
-    height: calc(100svh - 3.5rem);
+    height: 100svh;
     max-height: none;
-  }
-
-  .is-video .stage {
-    --bar: 3.5rem;
-  }
-
-  .bar {
-    padding: 0 1rem;
   }
 
   .nav {
@@ -818,7 +688,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   }
 
   .is-video .caption {
-    bottom: calc(var(--bar) + 2rem);
+    bottom: 6.25rem /* above the player controls */;
   }
 
   .rail {

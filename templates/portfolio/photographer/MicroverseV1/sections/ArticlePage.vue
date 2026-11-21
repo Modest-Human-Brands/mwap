@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MediaPlayer from '~~/templates/_shared/MediaPlayer.vue'
 import type { MicroverseBlog, MicroverseEpisode, MicroversePages } from '~~/templates/portfolio/photographer/MicroverseV1/schema'
 import { useSiteHref } from '~~/templates/_shared/useSiteHref'
 
@@ -31,7 +32,7 @@ const author = computed(() => ('author' in props.item ? props.item.author : unde
       <h1 class="title">{{ item.title }}</h1>
     </header>
 
-    <video v-if="video" class="cover" :src="video" :poster="item.thumbnailUrl" controls playsinline preload="none" />
+    <div v-if="video" class="cover"><MediaPlayer :src="video" :poster="item.thumbnailUrl" /></div>
     <img v-else class="cover" :src="item.thumbnailUrl" :alt="item.title" width="636" height="556" />
 
     <div class="text">

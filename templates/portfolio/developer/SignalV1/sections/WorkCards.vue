@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LoopVideo from '~~/templates/_shared/LoopVideo.vue'
 import { useSiteHref } from '~~/templates/_shared/useSiteHref'
 import type { SignalProject, WorkSlot } from '~~/templates/portfolio/developer/SignalV1/schema'
 import ShaderBackdrop from './ShaderBackdrop.vue'
@@ -19,7 +20,7 @@ const siteHref = useSiteHref()
       <li v-for="(project, index) in projects" :key="project.slug" class="card sg-card" :class="{ featured: index === 0 }">
         <a class="media" :href="siteHref(`/work/${project.slug}`)" :aria-label="`${slotContent.openLabel}: ${project.name}`" tabindex="-1">
           <img :src="project.posterUrl" alt="" loading="lazy" width="800" height="472" />
-          <video v-if="project.videoUrl" :src="project.videoUrl" :poster="project.posterUrl" autoplay muted loop playsinline preload="none" aria-hidden="true"></video>
+          <LoopVideo v-if="project.videoUrl" class="video" :src="project.videoUrl" />
         </a>
         <div class="body">
           <h3 class="name sg-display">{{ project.name }}</h3>
@@ -86,7 +87,7 @@ const siteHref = useSiteHref()
 }
 
 .media img,
-.media video {
+.media .video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -103,7 +104,7 @@ const siteHref = useSiteHref()
 }
 
 .card:hover .media img,
-.card:hover .media video {
+.card:hover .media .video {
   transform: scale(1.08);
 }
 

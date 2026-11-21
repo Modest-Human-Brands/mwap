@@ -16,7 +16,7 @@ import PhotoGallery from './sections/PhotoGallery.vue'
 import ProjectsPage from './sections/ProjectsPage.vue'
 import SiteNav from './sections/SiteNav.vue'
 import VideoGallery from './sections/VideoGallery.vue'
-import { provideMicroverseMotion } from './useMicroverse'
+import { provideMicroverseMotion, useScrollReveal } from './useMicroverse'
 
 const props = defineProps<{
   site: MicroverseSite
@@ -27,6 +27,8 @@ const props = defineProps<{
 const customDomain = useState<{ slug: string } | null>('customDomain', () => null)
 provide('siteBase', customDomain.value ? '' : `/${props.site.slug}`)
 provideMicroverseMotion()
+const root = ref<HTMLElement>()
+const { prep } = useScrollReveal(root)
 
 const book = ref<InstanceType<typeof BookSession>>()
 provide('openBooking', (message?: string) => book.value?.open(message))
@@ -57,7 +59,7 @@ const featuredPhotos = computed(() => data.value.photos.filter((photo) => photo.
 </script>
 
 <template>
-  <div class="mv">
+  <div ref="root" class="mv" :class="{ 'is-prep': prep }">
     <SiteNav v-if="!media?.item" :brand-name="site.brand.name" :logo-url="site.brand.logoUrl" :links="data.navigation" :page-key="pageKey" :phone="data.contact.phone" :social="data.contact.links" />
 
     <MediaPage v-if="media?.item" :kind="media.kind" :item="media.item" :items="media.items" :brand-name="site.brand.name" :logo-url="site.brand.logoUrl" />

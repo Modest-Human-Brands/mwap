@@ -1,3 +1,4 @@
+import { useIntersectionObserver } from '@vueuse/core'
 import { inject, onBeforeUnmount, onMounted, provide, ref, type InjectionKey, type Ref } from 'vue'
 
 /** What the scenes read every frame: the scroll velocity (px per frame, signed) and whether they may run at all */
@@ -33,7 +34,7 @@ export function provideMicroverseMotion() {
 
     const [{ default: Lenis }, { gsap }, { ScrollTrigger }] = await Promise.all([import('lenis'), import('gsap'), import('gsap/ScrollTrigger')])
     gsap.registerPlugin(ScrollTrigger)
-    const lenis = new Lenis({ lerp: 0.1, smoothWheel: true })
+    const lenis = new Lenis({ lerp: 0.1, smoothWheel: true, anchors: true })
     lenis.on('scroll', (event: { velocity: number }) => {
       motion.velocity.value = event.velocity
       ScrollTrigger.update()
@@ -153,4 +154,63 @@ export function useCharReveal(el: Ref<HTMLElement | undefined>) {
 export function useDefaultLogo(event: Event) {
   const img = event.target as HTMLImageElement
   if (!img.src.endsWith('/logo.svg')) img.src = '/logo.svg'
+}
+
+/** What rises into place as it scrolls into view (the same list is hidden before hydration in microverse.css) */
+const REVEAL = [
+  '.head',
+  '.mv-pagehead',
+  '.manifesto .body',
+  '.manifesto .bullets',
+  '.gallery .frame',
+  '.packages .card',
+  '.projects .tags',
+  '.projects .tile',
+  '.list .card',
+  '.live .card',
+  '.members > li',
+  '.story .block',
+  '.legal .sections > li',
+  '.article .text',
+  '.footer .wordmark',
+  '.footer .reach',
+  '.footer .legal',
+].join(', ')
+
+/**
+ * Scroll reveal for the whole template: the elements above rise and fade in once, one after the other within their row. It uses the
+ * `translate` property (not `transform`), so it never fights a hover or a tilt. Until the client has mounted the root carries
+ * `is-prep` (which hides them in CSS), so there is no flash; reduced motion shows everything at once.
+ */
+export function useScrollReveal(root: Ref<HTMLElement | undefined>) {
+  const prep = ref(true)
+  const targets = ref<HTMLElement[]>([])
+
+  onMounted(() => {
+    const el = root.value
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      prep.value = false
+      return
+    }
+    targets.value = [...el.querySelectorAll<HTMLElement>(REVEAL)]
+    for (const target of targets.value) {
+      target.dataset.reveal = ''
+      target.style.setProperty('--i', String(Math.min([...(target.parentElement?.children ?? [])].indexOf(target), 8)))
+    }
+    prep.value = false
+  })
+
+  const { stop } = useIntersectionObserver(
+    targets,
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        entry.target.classList.add('is-in')
+      }
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -6% 0px' }
+  )
+  onBeforeUnmount(stop)
+
+  return { prep }
 }

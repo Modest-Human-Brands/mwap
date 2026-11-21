@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MicroverseHome, MicroverseVideo } from '~~/templates/portfolio/photographer/MicroverseV1/schema'
+import MediaPlayer from '~~/templates/_shared/MediaPlayer.vue'
 import { useSiteHref } from '~~/templates/_shared/useSiteHref'
 import { useCharReveal } from '../useMicroverse'
 
@@ -10,7 +11,7 @@ const props = defineProps<{ slotContent: MicroverseHome['videoGallery']; videos:
 
 const siteHref = useSiteHref()
 const root = ref<HTMLElement>()
-const player = ref<HTMLVideoElement>()
+const player = ref<InstanceType<typeof MediaPlayer>>()
 const title = ref<HTMLElement>()
 useCharReveal(title)
 
@@ -26,8 +27,6 @@ const count = computed(() => props.videos.length)
 const at = (offset: number) => props.videos[(((index.value + offset) % count.value) + count.value) % count.value]!
 const active = computed(() => at(0))
 const sides = computed(() => [-2, -1, 1, 2].filter((offset) => count.value >= 2 * Math.abs(offset) + 1).map((offset) => ({ offset, video: at(offset) })))
-const pad = (n: number) => String(n).padStart(2, '0')
-const stamp = (seconds: number) => `${pad(Math.floor(seconds / 60))}:${pad(Math.floor(seconds % 60))}`
 const progress = computed(() => (length.value ? Math.min(time.value / length.value, 1) : 0))
 const label = computed(() => `${active.value.category}  ·  ${active.value.title}`)
 
@@ -38,25 +37,10 @@ function go(step: number) {
   playing.value = true
 }
 
-function toggle() {
-  const el = player.value
-  if (!el) return
-  if (el.paused) el.play().catch(() => undefined)
-  else el.pause()
-}
-
-function seek(event: MouseEvent) {
-  const el = player.value
-  const bar = event.currentTarget as HTMLElement
-  if (!el || !length.value) return
-  const box = bar.getBoundingClientRect()
-  el.currentTime = ((event.clientX - box.left) / box.width) * length.value
-}
-
 // Plays only while the stage is on screen and the reel is not paused by the visitor
 watch([visible, playing, index, player], async () => {
   await nextTick()
-  const el = player.value
+  const el = player.value?.media
   if (!el || reduced.value) return
   if (visible.value && playing.value) el.play().catch(() => undefined)
   else el.pause()
@@ -107,44 +91,19 @@ onBeforeUnmount(() => observer?.disconnect())
         </li>
       </ol>
 
-      <video
+      <!-- The reel plays in Video.js: its skin has the play, seek, volume and fullscreen controls -->
+      <MediaPlayer
         :key="active.slug"
         ref="player"
         class="reel"
         :src="active.videoUrl"
         :poster="active.posterUrl"
         :muted="muted"
-        playsinline
-        preload="metadata"
-        @timeupdate="time = ($event.target as HTMLVideoElement).currentTime"
-        @loadedmetadata="length = ($event.target as HTMLVideoElement).duration"
+        @timeupdate="time = ($event.target as HTMLMediaElement).currentTime"
+        @loadedmetadata="length = ($event.target as HTMLMediaElement).duration"
         @play="playing = true"
         @pause="playing = false"
-        @ended="go(1)"
-        @click="toggle"></video>
-
-      <button type="button" class="mute mv-icon-button" :aria-pressed="muted" :aria-label="muted ? 'Unmute' : 'Mute'" @click="muted = !muted">
-        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-          <path d="M2.7 6h2.2L8.7 3v10L4.9 10H2.7z" fill="currentColor" />
-          <path v-if="muted" d="M11.5 6.2l3 3.6M14.5 6.2l-3 3.6" />
-          <path v-else d="M11.3 6a3 3 0 0 1 0 4" />
-        </svg>
-      </button>
-
-      <div class="bar">
-        <button type="button" class="pause" :aria-label="playing ? 'Pause' : 'Play'" @click="toggle">
-          <svg v-if="playing" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
-            <rect x="4" y="3" width="2.5" height="10" />
-            <rect x="9.5" y="3" width="2.5" height="10" />
-          </svg>
-          <svg v-else viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M5 3l8 5-8 5z" /></svg>
-        </button>
-        <span class="time">{{ stamp(time) }} / {{ stamp(length || active.durationSeconds) }}</span>
-        <div class="scrub" role="slider" aria-label="Seek" :aria-valuenow="Math.round(progress * 100)" aria-valuemin="0" aria-valuemax="100" @click="seek">
-          <i :style="{ width: `${progress * 100}%` }"></i>
-        </div>
-        <span class="pos">{{ pad(index + 1) }} / {{ pad(count) }}</span>
-      </div>
+        @ended="go(1)" />
     </div>
 
     <button type="button" class="arrow prev mv-icon-button" aria-label="Previous reel" @click="go(-1)">←</button>
@@ -211,8 +170,6 @@ onBeforeUnmount(() => observer?.disconnect())
   flex: 1;
   width: 100%;
   min-height: 0;
-  object-fit: cover;
-  cursor: pointer;
   box-shadow: 0 2.5rem 6.25rem color-mix(in srgb, var(--mv-red) 50%, transparent);
 }
 
@@ -242,77 +199,6 @@ onBeforeUnmount(() => observer?.disconnect())
   position: absolute;
   inset: 0 auto 0 0;
   background: var(--mv-red);
-}
-
-.mute {
-  position: absolute;
-  top: 2.75rem;
-  right: 1.5rem;
-  z-index: 3;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-color: transparent;
-  background: #fff;
-  color: #000;
-  backdrop-filter: none;
-}
-
-.bar {
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: 0.75rem;
-  height: 3.5rem;
-  padding: 0 1rem;
-  background: #000;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.pause {
-  display: grid;
-  place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: #fff;
-  cursor: pointer;
-}
-
-.time {
-  color: color-mix(in srgb, #fff 82%, transparent);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.scrub {
-  position: relative;
-  flex: 1;
-  height: 3px;
-  background: color-mix(in srgb, #fff 20%, transparent);
-  cursor: pointer;
-}
-
-/* A bigger hit area than the line */
-.scrub::before {
-  content: '';
-  position: absolute;
-  inset: -0.75rem 0;
-}
-
-.scrub i {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: var(--mv-hot);
-}
-
-.pos {
-  color: var(--mv-hot);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  white-space: nowrap;
 }
 
 .side,
@@ -370,13 +256,8 @@ onBeforeUnmount(() => observer?.disconnect())
   .active {
     left: 50%;
     width: var(--w);
-    height: calc(var(--h) + 3.5rem);
+    height: var(--h);
     transform: translateX(-50%);
-  }
-
-  .mute {
-    top: 2rem;
-    right: 1rem;
   }
 
   .side {
