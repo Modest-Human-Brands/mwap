@@ -179,3 +179,32 @@ html.lenis body {
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
+
+/* The pages beyond the home page: the nav floats over the top, content starts below it */
+:where(.mv) .mv-sub {
+  position: relative;
+  isolation: isolate;
+  min-height: 70svh;
+  padding: 7rem var(--mv-gutter) 5rem;
+}
+
+:where(.mv) .mv-pagehead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* A text link with an arrow, as in the design: BACK TO HOME, NOTIFY ME */
+:where(.mv) .mv-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+:where(.mv) .mv-link:hover {
+  color: var(--mv-hot);
+}

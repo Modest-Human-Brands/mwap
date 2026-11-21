@@ -17,7 +17,6 @@ defineProps<{ slotContent: MicroverseHome['manifesto'] }>()
         <li v-for="bullet in slotContent.bullets" :key="bullet">{{ bullet }}</li>
       </ul>
     </div>
-    <p class="figure">{{ slotContent.caption }}</p>
   </section>
 </template>
 
@@ -74,19 +73,6 @@ defineProps<{ slotContent: MicroverseHome['manifesto'] }>()
   flex: none;
 }
 
-.figure {
-  position: absolute;
-  right: 1.5rem;
-  bottom: 2.5rem;
-  margin: 0;
-  color: color-mix(in srgb, #fff 50%, transparent);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-align: right;
-  text-transform: uppercase;
-}
-
 @media (min-width: 880px) {
   .manifesto {
     gap: 1.375rem;
@@ -96,11 +82,6 @@ defineProps<{ slotContent: MicroverseHome['manifesto'] }>()
 
   .copy {
     gap: 2.5rem;
-  }
-
-  .figure {
-    right: 1.25rem;
-    bottom: 2.25rem;
   }
 }
 </style>

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { MicroverseHome } from '~~/templates/portfolio/photographer/MicroverseV1/schema'
+import { useSiteHref } from '~~/templates/_shared/useSiteHref'
+import SocialIcon from './SocialIcon.vue'
 
 defineProps<{
   slotContent: MicroverseHome['footer']
   contact: { email: string; phone?: string; links?: { label: string; url: string }[] }
 }>()
 
-// Social links are round marks; the platform shows as a short code
-const CODES: Record<string, string> = { instagram: 'IG', youtube: 'YT', facebook: 'FB', linkedin: 'IN', whatsapp: 'WA', x: 'X', twitter: 'X', tiktok: 'TT', maps: 'MAP', behance: 'BE', vimeo: 'VI' }
-const code = (label: string) => CODES[label.trim().toLowerCase()] ?? label.trim().slice(0, 2).toUpperCase()
+const siteHref = useSiteHref()
 </script>
 
 <template>
@@ -20,7 +20,7 @@ const code = (label: string) => CODES[label.trim().toLowerCase()] ?? label.trim(
       <a v-else class="phone" :href="`mailto:${contact.email}`">{{ contact.email }}</a>
       <ul v-if="contact.links?.length" class="social">
         <li v-for="link in contact.links" :key="link.url">
-          <a :href="link.url" rel="noopener" :aria-label="link.label">{{ code(link.label) }}</a>
+          <a :href="link.url" rel="noopener" :aria-label="link.label"><SocialIcon :label="link.label" /></a>
         </li>
       </ul>
     </div>
@@ -29,7 +29,7 @@ const code = (label: string) => CODES[label.trim().toLowerCase()] ?? label.trim(
       <p>{{ slotContent.legal }}</p>
       <ul>
         <li v-for="link in slotContent.links" :key="link.label + link.href">
-          <a :href="link.href">{{ link.label }}</a>
+          <a :href="siteHref(link.href)">{{ link.label }}</a>
         </li>
       </ul>
     </div>
@@ -96,9 +96,6 @@ const code = (label: string) => CODES[label.trim().toLowerCase()] ?? label.trim(
   height: 2.5rem;
   border: 1px solid color-mix(in srgb, #fff 24%, transparent);
   border-radius: 999px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
   transition:
     background-color 0.25s ease,
     border-color 0.25s ease;

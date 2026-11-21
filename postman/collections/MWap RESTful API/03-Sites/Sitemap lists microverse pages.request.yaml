@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Sitemap lists microverse pages'
 description: |-
-  The sitemap is cached, so this runs once the site exists and after the signal check. It lists the home page, one page per photo and one per video of the microverse site.
+  The sitemap is cached, so this runs once the site exists and after the signal check. It lists the home page, one page per photo and one per video, the about, projects, live, episode and blog pages, one page per episode and per post, and the legal pages of the microverse site.
 order: 4832
 method: GET
 url: '{{baseUrl}}/sitemap.xml'
@@ -13,9 +13,9 @@ scripts:
     language: text/javascript
     code: |-
       pm.test('status is 200', () => pm.response.to.have.status(200))
-      pm.test('lists the home page, the photo pages and the video pages', () => {
+      pm.test('lists the home page and every other page', () => {
         const xml = pm.response.text()
         const slug = pm.collectionVariables.get('microverseSlug')
         pm.expect(xml).to.include('/' + slug + '</loc>')
-        for (const page of ['photo/frame-one', 'photo/frame-two', 'photo/frame-three', 'video/reel-one', 'video/reel-two']) pm.expect(xml, page).to.include('/' + slug + '/' + page + '</loc>')
+        for (const page of ['photo/frame-one', 'photo/frame-two', 'photo/frame-three', 'video/reel-one', 'video/reel-two', 'about', 'projects', 'live', 'episode', 'episode/chocolate-product-shoot', 'blog', 'blog/storytelling-beyond-the-product-shot', 'terms', 'privacy', 'cancellation', 'license']) pm.expect(xml, page).to.include('/' + slug + '/' + page + '</loc>')
       })

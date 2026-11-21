@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Get blogs'
+description: |-
+  The blog posts of the site in order: slug, title, excerpt, author, thumbnailUrl, publishedAt and the body (paragraphs).
+order: 1530
+method: GET
+url: '{{baseUrl}}/api/site/:slug/blogs'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Blogs schema', () => pm.response.to.have.jsonSchema({ type: 'array', minItems: 1, items: { type: 'object', required: ['slug', 'title', 'excerpt', 'author', 'thumbnailUrl', 'publishedAt', 'body'] } }))
+      pm.test('keeps the order of the site', () => pm.expect(pm.response.json()[0].slug).to.eql('storytelling-beyond-the-product-shot'))
