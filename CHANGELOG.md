@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.0.15
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.14...v0.0.15)
+
+### 🚀 Enhancements
+
+- Enhance microverse template with scroll reveal animations, improved video handling, and ui ([ebe2261](https://github.com/Modest-Human-Brands/mwap/commit/ebe2261))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.14
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.12...v0.0.14)
