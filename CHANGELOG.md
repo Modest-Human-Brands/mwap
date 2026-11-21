@@ -1,5 +1,31 @@
 # Changelog
 
+## v0.0.14
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.12...v0.0.14)
+
+### 💅 Refactors
+
+- Herohome and manifestosection components; remove unused captions and hints ([93d9b37](https://github.com/Modest-Human-Brands/mwap/commit/93d9b37))
+
+### 📖 Documentation
+
+- Update README and TODO with template details and API routes ([cc7bb23](https://github.com/Modest-Human-Brands/mwap/commit/cc7bb23))
+
+### 🏡 Chore
+
+- Regenerate Microverse template thumbnail (tracked in LFS) ([3120178](https://github.com/Modest-Human-Brands/mwap/commit/3120178))
+
+### 🤖 CI
+
+- **release:** Update version ([4903b3d](https://github.com/Modest-Human-Brands/mwap/commit/4903b3d))
+- **release:** Update version ([a8a13a9](https://github.com/Modest-Human-Brands/mwap/commit/a8a13a9))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+- Shba007 ([@shba007](https://github.com/shba007))
+
 ## v0.0.13
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.12...v0.0.13)
