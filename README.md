@@ -4,9 +4,9 @@ A stateless, template-driven site builder. Pick a template, send a brand and a p
 
 ## How it works
 
-- A **template** (currently `studio-v1`) defines a payload schema, a sample payload and the Vue components that render it. Missing payload fields are filled from the template's `sample`, a complete payload that `GET /api/site/template/:id` also returns for prefilling an editor.
+- A **template** defines a payload schema, a sample payload and the Vue components that render it. Every template is a portfolio, one folder per profession under `templates/portfolio/`: `portfolio-model-contact-sheet`, `portfolio-psychiatrist-editorial`, `portfolio-developer-signal` and `portfolio-photographer-microverse` (the older ids `contact-sheet`, `psychiatrist-editorial` and `developer-signal` still resolve). Missing payload fields are filled from the template's `sample`, a complete payload that `GET /api/site/template/:id` also returns for prefilling an editor.
 - A **site** is `{ slug, orgId, templateId, brand, data, domains, updatedAt }`. The brand (name, logo, favicon, font, five colors) is shared by every template.
-- Sites are served at `/<slug>`, `/<slug>/projects`, `/<slug>/about`, or at the root of a custom domain.
+- Sites are served at `/<slug>` and the pages of their template (for example `/<slug>/projects`, `/<slug>/about`, `/<slug>/photo/<item>`), or at the root of a custom domain. A page the site does not have answers 404 with the template's own error page.
 - Every site belongs to one **organization** (`orgId`, a lowercase slug); one organization can own many sites. Slugs are unique across all organizations, reads are public, and a site without an organization belongs to `default`.
 - The zod schemas in `shared/utils` are the runtime source of truth.
 
@@ -17,6 +17,19 @@ In order of precedence:
 1. Sites saved through the API (`POST`/`PUT`), stored as JSON files in `NUXT_MWAP_PRIVATE_SITES_DIR`.
 2. Published rows of a Notion database (read-only, cached for 60 seconds).
 3. The built-in example site `northlight-studio`.
+
+### Templates
+
+Each template folder holds `schema.ts` (zod), `sample.ts`, `component.vue`, its `sections/` and, optionally, its own API routes under `api/site/[slug]/`, which Nitro picks up through `scanDirs` (see `nuxt.config.ts`). The server never imports `.vue` files; `templates/components.ts` maps template ids to components for the renderer.
+
+| Template                            | Pages                                                                                                                              |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `portfolio-model-contact-sheet`     | home                                                                                                                               |
+| `portfolio-psychiatrist-editorial`  | home                                                                                                                               |
+| `portfolio-developer-signal`        | home and a page per project                                                                                                        |
+| `portfolio-photographer-microverse` | home, about, projects, live, episodes, blogs, terms, privacy, cancellation, license, and a page per photo, video, episode and post |
+
+The Microverse template renders its hero lens and caustics with WebGL (TresJS) and falls back to CSS with reduced motion or without WebGL. Its media are URLs only. Thumbnails of the template picker are static PNGs in `public/templates/` (tracked in Git LFS); regenerate them against a production server with `bun run thumbnails [template id]`.
 
 ### Notion database
 
@@ -45,25 +58,32 @@ A site can list `domains` (lowercase apex hostnames). A request whose `Host` mat
 
 The contract lives in the Postman collection `postman/collections/MWap RESTful API` (requests, examples and assertions).
 
-| Method | Path                                           | Notes                                              |
-| ------ | ---------------------------------------------- | -------------------------------------------------- |
-| GET    | `/api/health`                                  | liveness                                           |
-| GET    | `/api/site/template`, `/api/site/template/:id` | template catalog, schema and placeholders          |
-| POST   | `/api/site/template/preview`                   | validate a payload and get rendered HTML           |
-| GET    | `/api/site`, `/api/site/:slug`                 | list (paginated, optional `?org=` filter) and read |
-| POST   | `/api/site`                                    | create, needs `x-api-key` and `x-org-id`           |
-| PUT    | `/api/site/:slug`                              | replace, needs `x-api-key` and `x-org-id`          |
+| Method | Path                                           | Notes                                                           |
+| ------ | ---------------------------------------------- | --------------------------------------------------------------- |
+| GET    | `/api/health`                                  | liveness                                                        |
+| GET    | `/api/site/template`, `/api/site/template/:id` | template catalog, schema and placeholders                       |
+| POST   | `/api/site/template/preview`                   | validate a payload and get rendered HTML                        |
+| GET    | `/api/site`, `/api/site/:slug`                 | list (paginated, optional `?org=` filter) and read              |
+| POST   | `/api/site`                                    | create, needs `x-api-key` and `x-org-id`                        |
+| PUT    | `/api/site/:slug`                              | replace, needs `x-api-key` and `x-org-id`                       |
+| DELETE | `/api/site/:slug`                              | delete (204), needs `x-api-key` and `x-org-id`                  |
+| GET    | `/api/site/:slug/manifest`                     | web app manifest generated from the brand                       |
+| GET    | `/api/site/template/preview/:token`            | HTML of a preview created by the `POST` above                   |
+| GET    | `/api/fonts`                                   | curated Google Fonts catalog                                    |
+| GET    | `/api/access`                                  | checks `x-api-key`, `x-org-id` and `x-user-id`; changes nothing |
+
+Templates add their own reads under `/api/site/:slug/...`, for example `photos`, `videos`, `packages`, `episodes`, `blogs`, `live` and `team` for Microverse and `projects`, `experience`, `certificates`, `hackathons` and `open-source` for Signal, and a `POST .../contact` (and `.../newsletter` for developer templates) that relays a form to the site's `bookingEndpoint`. These answer 404 for a site that uses another template.
 
 Validation failures answer 400 with `data.errors[{ field, message, code }]`; a missing or malformed `x-org-id` is reported with `field: "x-org-id"`. Replacing a site that belongs to another organization answers 404, like an unknown slug, so slugs of other organizations are not revealed.
 
 ## Configuration
 
-| Variable                                           | Purpose                                                                  |
-| -------------------------------------------------- | ------------------------------------------------------------------------ |
-| `NUXT_PUBLIC_SITE_URL`                             | public URL of the service (canonical URLs, sitemap)                      |
-| `NUXT_MWAP_PRIVATE_API_KEY`                        | key for write endpoints; unset means every write is 401                  |
-| `NUXT_MWAP_PRIVATE_SITES_DIR`                      | where saved sites are stored, default `./data/sites`                     |
-| `NOTION_API_KEY`, `NUXT_PRIVATE_SITE_NOTION_DB_ID` | enable the Notion source (integration token, and the id of the database) |
+| Variable                         | Purpose                                                                  |
+| -------------------------------- | ------------------------------------------------------------------------ |
+| `NUXT_MWAP_PUBLIC_SITE_URL`      | public URL of the service (canonical URLs, sitemap)                      |
+| `NUXT_MWAP_PRIVATE_API_KEY`      | key for write endpoints; unset means every write is 401                  |
+| `NUXT_MWAP_PRIVATE_SITES_DIR`    | where saved sites are stored, default `./data/sites`                     |
+| `NOTION_API_KEY`, `NOTION_DB_ID` | enable the Notion source (integration token, and the id of the database) |
 
 See `.env.example`.
 
@@ -85,7 +105,7 @@ Docker (the sites volume must be kept between runs):
 
 ```bash
 docker build -t mwap .
-docker run -p 3000:3000 -v mwap-data:/app/data -e NUXT_MWAP_PRIVATE_API_KEY=changeme -e NUXT_PUBLIC_SITE_URL=http://localhost:3000 mwap
+docker run -p 3000:3000 -v mwap-data:/app/data -e NUXT_MWAP_PRIVATE_API_KEY=changeme -e NUXT_MWAP_PUBLIC_SITE_URL=http://localhost:3000 mwap
 ```
 
 ## Test the API
@@ -97,7 +117,7 @@ postman collection lint "postman/collections/MWap RESTful API"
 postman collection run "postman/collections/MWap RESTful API" -e postman/environments/Local.environment.yaml --env-var apiKey=changeme
 ```
 
-Each run creates one test site (there is no delete endpoint), so use a throwaway `NUXT_MWAP_PRIVATE_SITES_DIR`.
+The run creates its own test sites and deletes them at the end, but use a throwaway `NUXT_MWAP_PRIVATE_SITES_DIR` anyway: the sitemap is cached for 10 minutes, so run it against a freshly started server.
 
 ## License
 
