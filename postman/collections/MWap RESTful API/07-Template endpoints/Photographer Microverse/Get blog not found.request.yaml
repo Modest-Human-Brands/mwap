@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Get blog not found'
+description: |-
+  An unknown post answers 404 with the error body of the API.
+order: 1550
+method: GET
+url: '{{baseUrl}}/api/site/:slug/blogs/:blog'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+  - key: blog
+    value: 'nope'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('has the error body', () => pm.expect(pm.response.json().error).to.eql(true))

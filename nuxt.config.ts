@@ -95,6 +95,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/': { ssr: true },
     '/_ipx/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+    '/templates/**': { cors: true, headers: { 'cache-control': 'public, max-age=3600' } },
     '/images/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
     '/fonts/**': { cors: true, headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
     // Previews are embedded in srcdoc iframes (opaque origin), which fetch crossorigin assets in CORS mode

@@ -33,7 +33,7 @@ const brands: Record<string, unknown> = {
   },
   'portfolio-photographer-microverse': {
     name: 'Sample Studio',
-    logoUrl: icon('aperture', '#FB3737'),
+    logoUrl: `${BASE_URL}/logo.svg`,
     faviconUrl: icon('aperture', '#FB3737'),
     fontFamily: 'Oxanium',
     colors: { primary: '#CD2D2D', secondary: '#1A0B0B', accent: '#FB3737', background: '#090303', text: '#FFFFFF' },

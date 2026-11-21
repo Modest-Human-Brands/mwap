@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Get blog'
+description: |-
+  One blog post by slug.
+order: 1540
+method: GET
+url: '{{baseUrl}}/api/site/:slug/blogs/:blog'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+  - key: blog
+    value: 'storytelling-beyond-the-product-shot'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is the post', () => { const b = pm.response.json(); pm.expect(b.slug).to.eql('storytelling-beyond-the-product-shot'); pm.expect(b.title).to.include('Storytelling beyond the product shot') })

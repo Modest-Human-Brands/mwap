@@ -21,4 +21,15 @@ export type MicroverseSite = TemplateSite<MicroverseData>
 export type { BookingSlot, CompCardSlot, ContactSheetData, CoverSlot, FooterSlot, IndexSlot, LightboxEntry, SheetSlot } from '../../templates/portfolio/model/ContactSheetV1/schema'
 export type { EditorialData } from '../../templates/portfolio/psychiatrist/EditorialV1/schema'
 export type { SignalData, SignalProject } from '../../templates/portfolio/developer/SignalV1/schema'
-export type { MicroverseData, MicroverseHome, MicroversePhoto, MicroverseVideo, MicroversePackage } from '../../templates/portfolio/photographer/MicroverseV1/schema'
+export type {
+  MicroverseData,
+  MicroverseHome,
+  MicroversePhoto,
+  MicroverseVideo,
+  MicroversePackage,
+  MicroverseEpisode,
+  MicroverseBlog,
+  MicroverseMember,
+  MicroverseLive,
+  MicroversePages,
+} from '../../templates/portfolio/photographer/MicroverseV1/schema'

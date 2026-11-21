@@ -88,7 +88,6 @@ onBeforeUnmount(() => observer?.disconnect())
       <p class="mv-eyebrow">{{ slotContent.eyebrow }}</p>
       <h2 ref="title" class="mv-title">{{ slotContent.title }}</h2>
     </header>
-    <p class="figure">{{ slotContent.caption }}</p>
 
     <button
       v-for="side in sides"
@@ -195,18 +194,6 @@ onBeforeUnmount(() => observer?.disconnect())
 .head .mv-title {
   font-size: clamp(2.5rem, 12vw, 4rem);
   text-shadow: 0 2px 24px rgb(0 0 0 / 0.8);
-}
-
-.figure {
-  display: none;
-  margin: 0;
-  color: color-mix(in srgb, #fff 50%, transparent);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  line-height: 1.6;
-  text-transform: uppercase;
-  white-space: pre-line;
 }
 
 .active {
@@ -378,15 +365,6 @@ onBeforeUnmount(() => observer?.disconnect())
 
   .head .mv-title {
     font-size: 4rem;
-  }
-
-  .figure {
-    position: absolute;
-    top: 4rem;
-    right: 2rem;
-    z-index: 3;
-    display: block;
-    max-width: 24.5rem;
   }
 
   .active {

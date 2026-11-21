@@ -45,7 +45,6 @@ onBeforeUnmount(() => media?.revert())
       <p class="mv-eyebrow">{{ slotContent.eyebrow }}</p>
       <h2 ref="title" class="mv-title">{{ slotContent.title }}</h2>
     </header>
-    <p class="figure">{{ slotContent.caption }}</p>
 
     <div class="frame">
       <ul v-for="(list, index) in columns" :key="index" class="col">
@@ -74,18 +73,6 @@ onBeforeUnmount(() => media?.revert())
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-.figure {
-  display: none;
-  margin: 0;
-  color: color-mix(in srgb, #fff 50%, transparent);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  line-height: 1.6;
-  text-transform: uppercase;
-  white-space: pre-line;
 }
 
 .frame {
@@ -175,14 +162,6 @@ onBeforeUnmount(() => media?.revert())
 
   .head {
     gap: 0.5rem;
-  }
-
-  .figure {
-    position: absolute;
-    top: 9.375rem;
-    right: 3.25rem;
-    display: block;
-    max-width: 21rem;
   }
 
   .frame {

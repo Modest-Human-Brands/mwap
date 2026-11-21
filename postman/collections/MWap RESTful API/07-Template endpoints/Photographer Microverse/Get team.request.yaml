@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Get team'
+description: |-
+  The team of the about page in order: name, role and photoUrl.
+order: 1570
+method: GET
+url: '{{baseUrl}}/api/site/:slug/team'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Team schema', () => pm.response.to.have.jsonSchema({ type: 'array', minItems: 1, maxItems: 8, items: { type: 'object', required: ['name', 'role', 'photoUrl'] } }))
+      pm.test('has the first member', () => pm.expect(pm.response.json()[0].name).to.eql('Alex Morgan'))

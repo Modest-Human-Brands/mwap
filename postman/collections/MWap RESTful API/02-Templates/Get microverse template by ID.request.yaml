@@ -27,7 +27,7 @@ scripts:
         const { sample } = pm.response.json()
         pm.expect(JSON.stringify(sample)).to.not.include('{{')
         pm.expect(sample.contact.email).to.match(/@example\.(com|org)$/)
-        pm.expect(Object.keys(sample.pages)).to.have.members(['home'])
+        pm.expect(Object.keys(sample.pages)).to.include('home')
         for (const slot of homeSlots) pm.expect(sample.pages.home[slot].enabled, 'home.' + slot).to.eql(true)
         for (const list of ['photos', 'videos', 'packages']) {
           pm.expect(new Set(sample[list].map((item) => item.slug)).size, list).to.eql(sample[list].length)

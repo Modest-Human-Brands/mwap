@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Get microverse unknown episode'
+description: |-
+  An episode that does not exist answers 404 with the 404 page of the template.
+order: 4815
+method: GET
+url: '{{baseUrl}}/:slug/episode/:episode'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+  - key: episode
+    value: 'nope'
+headers:
+  - key: Accept
+    value: 'text/html'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('is the 404 page', () => pm.expect(pm.response.text()).to.include('404'))

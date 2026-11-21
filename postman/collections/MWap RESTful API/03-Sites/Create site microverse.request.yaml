@@ -152,7 +152,7 @@ scripts:
       })
       pm.test('keeps the lists that were sent and fills the rest from the sample', () => {
         const { data } = pm.response.json()
-        pm.expect(Object.keys(data.pages)).to.have.members(['home'])
+        pm.expect(Object.keys(data.pages)).to.include('home')
         pm.expect(data.photos.map((p) => p.slug)).to.eql(['frame-one', 'frame-two', 'frame-three'])
         pm.expect(data.videos.map((v) => v.slug)).to.eql(['reel-one', 'reel-two'])
         pm.expect(data.packages.map((p) => p.slug)).to.eql(['standard', 'custom'])

@@ -27,6 +27,18 @@ const pad = (n: number) => String(n).padStart(2, '0')
 const AREAS = ['1 / 1 / 3 / 3', '1 / 3 / 2 / 4', '1 / 4 / 2 / 5', '3 / 1 / 4 / 2', '3 / 2 / 4 / 3', '2 / 3 / 4 / 4', '2 / 4 / 4 / 5']
 const areaOf = (index: number) => AREAS[index]
 
+// Where the tags rest before (or without) the physics: the pile of the design on the 680 x 200 stage, tilted like dropped tags
+const PILE = [
+  { x: 40, y: 120, r: -3 },
+  { x: 290, y: 128, r: 8 },
+  { x: 380, y: 46, r: -11 },
+]
+const COUNT_PILE = { x: 130, y: 40, r: 17 }
+function pile(index: number, count = false) {
+  const spot = count ? COUNT_PILE : (PILE[index] ?? { x: 40 + ((index * 110) % 480), y: 30 + ((index * 47) % 110), r: index % 2 ? 6 : -7 })
+  return `translate(${spot.x}px, ${spot.y}px) rotate(${spot.r}deg)`
+}
+
 let flipState: unknown
 let Flip: typeof import('gsap/Flip').Flip | undefined
 
@@ -127,7 +139,6 @@ onBeforeUnmount(() => stopPhysics?.())
       <p class="mv-eyebrow">{{ slotContent.eyebrow }}</p>
       <h2 ref="title" class="mv-title">{{ slotContent.title }}</h2>
     </header>
-    <p class="figure">{{ slotContent.caption }}</p>
 
     <!-- Desktop: the bento grid, filtered by the tags -->
     <ul ref="grid" class="grid">
@@ -147,12 +158,13 @@ onBeforeUnmount(() => stopPhysics?.())
             class="tag"
             :class="{ 'is-selected': selected === category }"
             :aria-pressed="selected === category"
+            :style="{ '--pile': pile(index) }"
             @click="!physics && choose(category)">
             {{ category }}
           </button>
         </li>
         <li class="count-item">
-          <p :ref="(el) => el && (tagEls[categories.length] = el as HTMLElement)" class="count">{{ pad(shown.length) }} {{ slotContent.framesLabel }}</p>
+          <p :ref="(el) => el && (tagEls[categories.length] = el as HTMLElement)" class="count" :style="{ '--pile': pile(0, true) }">{{ pad(shown.length) }} {{ slotContent.framesLabel }}</p>
         </li>
       </ul>
     </div>
@@ -187,18 +199,6 @@ onBeforeUnmount(() => stopPhysics?.())
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-.figure {
-  margin: 0;
-  color: color-mix(in srgb, #fff 56%, transparent);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  line-height: 1.6;
-  order: 5;
-  text-transform: uppercase;
-  white-space: pre-line;
 }
 
 .grid,
@@ -293,14 +293,6 @@ onBeforeUnmount(() => stopPhysics?.())
     gap: 0.5rem;
   }
 
-  .figure {
-    position: absolute;
-    top: 9.375rem;
-    right: 1rem;
-    max-width: 22.75rem;
-    letter-spacing: 0.2em;
-  }
-
   .swipe {
     display: none;
   }
@@ -354,17 +346,8 @@ onBeforeUnmount(() => stopPhysics?.())
   }
 
   .tags {
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-end;
-    gap: 0.75rem;
-    height: 100%;
-  }
-
-  .is-physics .tags {
     position: absolute;
     inset: 0;
-    display: block;
   }
 
   .tag {
@@ -403,18 +386,24 @@ onBeforeUnmount(() => stopPhysics?.())
     pointer-events: auto;
   }
 
-  .is-physics .tag,
-  .is-physics .count {
+  .tag,
+  .count {
     position: absolute;
     top: 0;
     left: 0;
+    transform: var(--pile);
+    transform-origin: center;
+  }
+
+  .is-physics .tag,
+  .is-physics .count {
     cursor: grab;
     touch-action: none;
     user-select: none;
     will-change: transform;
   }
 
-  .is-physics .count-item {
+  .count-item {
     position: static;
   }
 }

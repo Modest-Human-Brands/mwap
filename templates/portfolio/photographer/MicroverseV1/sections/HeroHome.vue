@@ -21,7 +21,6 @@ const timecode = computed(() => `${pad(seconds.value / 3600)}:${clock(seconds.va
 
     <div class="marks" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
     <p class="rec" aria-hidden="true"><i class="dot"></i>REC&nbsp; {{ timecode }} &nbsp;·&nbsp; 4K &nbsp;·&nbsp; 24 FPS</p>
-    <p class="hint" aria-hidden="true">← LENS WARP</p>
 
     <div class="body">
       <p class="eyebrow">{{ slotContent.eyebrow }}</p>
@@ -34,7 +33,6 @@ const timecode = computed(() => `${pad(seconds.value / 3600)}:${clock(seconds.va
     <div class="hud">
       <hr />
       <div class="row">
-        <p class="figure">{{ slotContent.caption }}</p>
         <a class="scroll" href="#manifesto" aria-label="Scroll down"><span aria-hidden="true">↓</span></a>
       </div>
     </div>
@@ -120,7 +118,6 @@ const timecode = computed(() => `${pad(seconds.value / 3600)}:${clock(seconds.va
 
 .marks,
 .rec,
-.hint,
 .hud {
   display: none;
 }
@@ -210,19 +207,6 @@ const timecode = computed(() => `${pad(seconds.value / 3600)}:${clock(seconds.va
     animation: blink 1.2s steps(2, jump-none) infinite;
   }
 
-  .hint {
-    position: absolute;
-    top: 48.7%;
-    left: 87.5%;
-    display: block;
-    margin: 0;
-    color: var(--mv-hot);
-    font-size: 0.625rem;
-    font-weight: 500;
-    letter-spacing: 0.22em;
-    text-shadow: 0 1px 12px rgb(0 0 0 / 0.8);
-  }
-
   .hud {
     position: absolute;
     right: 4rem;
@@ -244,20 +228,8 @@ const timecode = computed(() => `${pad(seconds.value / 3600)}:${clock(seconds.va
   .row {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 1rem;
-  }
-
-  .figure {
-    max-width: 11.75rem;
-    margin: 0;
-    color: color-mix(in srgb, #fff 60%, transparent);
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    line-height: 1.6;
-    text-transform: uppercase;
-    white-space: pre-line;
   }
 
   .scroll {

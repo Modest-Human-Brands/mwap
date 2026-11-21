@@ -2,7 +2,7 @@
 import type { MicroversePhoto, MicroverseVideo } from '~~/templates/portfolio/photographer/MicroverseV1/schema'
 import { useSiteHref } from '~~/templates/_shared/useSiteHref'
 import CausticsCanvas from './CausticsCanvas.vue'
-import { aspectLabel, clock, shortDate } from '../useMicroverse'
+import { aspectLabel, clock, shortDate, useDefaultLogo } from '../useMicroverse'
 
 // One photo or one video: the media at full height, a strip with its neighbours, a details panel and a caption.
 // Keys: ← → browse, I details, Esc close (back to the gallery on the home page). On a phone the details are a bottom sheet.
@@ -135,7 +135,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     <CausticsCanvas position="full" :strength="0.7" />
     <div class="tint" aria-hidden="true"></div>
 
-    <a class="logo" :href="siteHref('/')" :aria-label="brandName"><img :src="logoUrl" :alt="brandName" width="96" height="96" /></a>
+    <a class="logo" :href="siteHref('/')" :aria-label="brandName"><img :src="logoUrl" :alt="brandName" width="96" height="96" @error="useDefaultLogo" /></a>
 
     <nav class="strip" aria-label="Media strip">
       <a class="step mv-icon-button" :href="pageOf(previous.slug)" aria-label="Previous">

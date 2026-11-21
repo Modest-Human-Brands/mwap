@@ -1,0 +1,19 @@
+$kind: http-request
+name: 'Get live'
+description: |-
+  The live stream of the site: status ("live" or "offline"), the stream and poster URLs, the title, the next start (nextAt), the schedule (startsAt and title) and the replays (title, thumbnailUrl and url).
+order: 1560
+method: GET
+url: '{{baseUrl}}/api/site/:slug/live'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Live schema', () => pm.response.to.have.jsonSchema({ type: 'object', required: ['status', 'posterUrl', 'title', 'nextAt', 'schedule', 'replays'], properties: { status: { enum: ['live', 'offline'] }, schedule: { type: 'array', items: { type: 'object', required: ['startsAt', 'title'] } }, replays: { type: 'array', items: { type: 'object', required: ['title', 'thumbnailUrl', 'url'] } } } }))

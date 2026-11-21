@@ -67,13 +67,15 @@ export const siteSchema = z.object({
 type SiteData = z.infer<typeof siteSchema>['data']
 type PageMeta = { title: string; description: string }
 
-/** Templates with lists of things give each one a page: projects at `work/<slug>`, photos at `photo/<slug>`, videos at `video/<slug>` */
+/** Templates with lists of things give each one a page: projects at `work/<slug>`, photos at `photo/<slug>`, videos at `video/<slug>`, episodes at `episode/<slug>`, posts at `blog/<slug>` */
 function detailPages(data: SiteData, brandName?: string): { key: string; meta: PageMeta }[] {
   const named = (title: string, description: string): PageMeta => ({ title: brandName ? `${title} | ${brandName}` : title, description })
   return [
     ...('projects' in data ? data.projects.map((p) => ({ key: `work/${p.slug}`, meta: named(p.name, p.summary) })) : []),
     ...('photos' in data ? data.photos.map((p) => ({ key: `photo/${p.slug}`, meta: named(p.title, p.description ?? p.title) })) : []),
     ...('videos' in data ? data.videos.map((v) => ({ key: `video/${v.slug}`, meta: named(v.title, v.description ?? v.title) })) : []),
+    ...('episodes' in data ? data.episodes.map((e) => ({ key: `episode/${e.slug}`, meta: named(e.title, e.excerpt) })) : []),
+    ...('blogs' in data ? data.blogs.map((b) => ({ key: `blog/${b.slug}`, meta: named(b.title, b.excerpt) })) : []),
   ]
 }
 

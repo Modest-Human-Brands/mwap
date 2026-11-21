@@ -148,3 +148,9 @@ export function useCharReveal(el: Ref<HTMLElement | undefined>) {
     gsap.from(chars, { yPercent: 110, opacity: 0, duration: 0.9, ease: 'expo.out', stagger: 0.06 * 0.4, scrollTrigger: { trigger: target, start: 'top 88%', once: true } })
   })
 }
+
+/** The default logo (the MHB mark, served by the app itself): the `error` handler of a logo image */
+export function useDefaultLogo(event: Event) {
+  const img = event.target as HTMLImageElement
+  if (!img.src.endsWith('/logo.svg')) img.src = '/logo.svg'
+}
