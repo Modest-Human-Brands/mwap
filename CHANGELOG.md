@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.0.12
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.11...v0.0.12)
+
+### 🚀 Enhancements
+
+- **api:** Enhance site management with user ID validation and access control ([3ac0df0](https://github.com/Modest-Human-Brands/mwap/commit/3ac0df0))
+- Enhance site management with user ownership and template endpoints ([6547bb3](https://github.com/Modest-Human-Brands/mwap/commit/6547bb3))
+- Implement form relay and template site management with new API endpoints ([6f26ce3](https://github.com/Modest-Human-Brands/mwap/commit/6f26ce3))
+- Add Microverse V1 template components for photo and video galleries, navigation, client logos ([8b5d9e3](https://github.com/Modest-Human-Brands/mwap/commit/8b5d9e3))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.11
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.10...v0.0.11)
