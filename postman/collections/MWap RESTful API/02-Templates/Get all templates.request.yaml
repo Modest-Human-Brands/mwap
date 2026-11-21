@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'Get all templates'
 description: |-
-  Template catalog for the picker. Every template is a portfolio: the category is Portfolios and the label names the profession (Model, Psychiatrist, Developer). Each template carries the URL of its static thumbnail (`thumbnail`, a pre-rendered PNG of the sample content, served from /templates/<id>.png), which the picker shows instead of a live preview. Ids are what `templateId` accepts when previewing or creating a site; the earlier ids (contact-sheet, psychiatrist-editorial, developer-signal) are still accepted and answer as the new id.
+  Template catalog for the picker. Every template is a portfolio: the category is Portfolios and the label names the profession (Model, Psychiatrist, Developer, Photographer). Each template carries the URL of its static thumbnail (`thumbnail`, a pre-rendered PNG of the sample content, served from /templates/<id>.png), which the picker shows instead of a live preview. Ids are what `templateId` accepts when previewing or creating a site; the earlier ids (contact-sheet, psychiatrist-editorial, developer-signal) are still accepted and answer as the new id.
 order: 1000
 method: GET
 url: '{{baseUrl}}/api/site/template'
@@ -22,12 +22,13 @@ scripts:
           properties: { id: { type: 'string' }, label: { type: 'string' }, shortLabel: { type: 'string' }, category: { type: ['string', 'null'] }, description: { type: 'string' }, thumbnail: { type: 'string' } }
         }
       }))
-      pm.test('lists all templates', () => pm.expect(pm.response.json().map((t) => t.id)).to.have.members(['portfolio-model-contact-sheet', 'portfolio-psychiatrist-editorial', 'portfolio-developer-signal']))
+      pm.test('lists all templates', () => pm.expect(pm.response.json().map((t) => t.id)).to.have.members(['portfolio-model-contact-sheet', 'portfolio-psychiatrist-editorial', 'portfolio-developer-signal', 'portfolio-photographer-microverse']))
       pm.test('labels name the profession', () => {
         const byId = Object.fromEntries(pm.response.json().map((t) => [t.id, t.label]))
         pm.expect(byId['portfolio-model-contact-sheet']).to.eql('Model · Contact Sheet')
         pm.expect(byId['portfolio-psychiatrist-editorial']).to.eql('Psychiatrist · Editorial')
         pm.expect(byId['portfolio-developer-signal']).to.eql('Developer · Signal')
+        pm.expect(byId['portfolio-photographer-microverse']).to.eql('Photographer · Microverse')
       })
       pm.test('each has a static thumbnail image at /templates/<id>.png', () => pm.response.json().forEach((t) => pm.expect(t.thumbnail).to.match(new RegExp('^https?://.+/templates/' + t.id + '\\.png$'))))
       pm.test('groups them by category', () => {
@@ -35,5 +36,6 @@ scripts:
         pm.expect(byId['portfolio-model-contact-sheet']).to.eql('Portfolios')
         pm.expect(byId['portfolio-psychiatrist-editorial']).to.eql('Portfolios')
         pm.expect(byId['portfolio-developer-signal']).to.eql('Portfolios')
+        pm.expect(byId['portfolio-photographer-microverse']).to.eql('Portfolios')
       })
 examples: './.resources/Get all templates.resources/examples/'

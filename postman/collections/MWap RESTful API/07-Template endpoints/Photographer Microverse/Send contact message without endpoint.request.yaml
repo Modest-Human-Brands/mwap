@@ -1,0 +1,29 @@
+$kind: http-request
+name: 'Send contact message without endpoint'
+description: |-
+  A site without a bookingEndpoint cannot receive messages: 422, nothing is relayed.
+order: 2120
+method: POST
+url: '{{baseUrl}}/api/site/:slug/contact'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {
+      "name": "Sam Example",
+      "email": "sam@example.com",
+      "phone": "+1 555 0123",
+      "message": "I would like a quote for a product shoot."
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 422', () => pm.response.to.have.status(422))

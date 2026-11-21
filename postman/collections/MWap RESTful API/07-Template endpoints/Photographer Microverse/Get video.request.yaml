@@ -1,0 +1,29 @@
+$kind: http-request
+name: 'Get video'
+description: |-
+  One video with `index`, `total`, `previous` and `next` like a photo.
+order: 1300
+method: GET
+url: '{{baseUrl}}/api/site/:slug/videos/:video'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+  - key: video
+    value: 'reel-two'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is the video that was asked for with its place', () => {
+        const video = pm.response.json()
+        pm.expect(video.slug).to.eql('reel-two')
+        pm.expect(video.videoUrl).to.eql('https://example.com/videos/reel-two.mp4')
+        pm.expect(video.index).to.eql(2)
+        pm.expect(video.total).to.eql(2)
+        pm.expect(video.previous).to.eql('reel-one')
+        pm.expect(video.next).to.eql('reel-one')
+      })

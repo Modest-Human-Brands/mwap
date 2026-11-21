@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Get photo not found'
+description: |-
+  A photo the site does not have answers 404 with the Nitro error shape.
+order: 1110
+method: GET
+url: '{{baseUrl}}/api/site/:slug/photos/:photo'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+  - key: photo
+    value: 'no-such-photo'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('has the error shape', () => { pm.expect(pm.response.json()).to.have.property('statusCode') })

@@ -3,6 +3,7 @@ import { z } from 'zod'
 // The payload of a template lives next to it
 import { contactSheetDataSchema } from '../../templates/portfolio/model/ContactSheetV1/schema'
 import { signalDataSchema } from '../../templates/portfolio/developer/SignalV1/schema'
+import { microverseDataSchema } from '../../templates/portfolio/photographer/MicroverseV1/schema'
 import { editorialDataSchema } from '../../templates/portfolio/psychiatrist/EditorialV1/schema'
 
 const hexColor = z.string().regex(/^#[0-9a-fA-F]{3,8}$/, 'Expected a hex color')
@@ -54,7 +55,7 @@ export const siteSchema = z.object({
   orgId: orgIdSchema.default(DEFAULT_ORG_ID),
   templateId: z.string(),
   brand: brandSchema,
-  data: z.union([contactSheetDataSchema, editorialDataSchema, signalDataSchema]),
+  data: z.union([contactSheetDataSchema, editorialDataSchema, signalDataSchema, microverseDataSchema]),
   domains: domainsSchema,
   googleAnalyticsId: googleAnalyticsIdSchema.optional(),
   /** The user (x-user-id) who created the site and who changed it last; sites saved before owners were recorded have neither */
@@ -66,18 +67,24 @@ export const siteSchema = z.object({
 type SiteData = z.infer<typeof siteSchema>['data']
 type PageMeta = { title: string; description: string }
 
-/** Templates with a list of projects give each one a page at `work/<slug>` */
-const projectsOf = (data: SiteData) => ('projects' in data ? data.projects : [])
+/** Templates with lists of things give each one a page: projects at `work/<slug>`, photos at `photo/<slug>`, videos at `video/<slug>` */
+function detailPages(data: SiteData, brandName?: string): { key: string; meta: PageMeta }[] {
+  const named = (title: string, description: string): PageMeta => ({ title: brandName ? `${title} | ${brandName}` : title, description })
+  return [
+    ...('projects' in data ? data.projects.map((p) => ({ key: `work/${p.slug}`, meta: named(p.name, p.summary) })) : []),
+    ...('photos' in data ? data.photos.map((p) => ({ key: `photo/${p.slug}`, meta: named(p.title, p.description ?? p.title) })) : []),
+    ...('videos' in data ? data.videos.map((v) => ({ key: `video/${v.slug}`, meta: named(v.title, v.description ?? v.title) })) : []),
+  ]
+}
 
-/** Every page key of a site payload: the named pages and one per project, e.g. `home`, `about`, `work/rune-infer` */
+/** Every page key of a site payload: the named pages and one per project, photo or video, e.g. `home`, `about`, `work/rune-infer`, `photo/frame-one` */
 export function sitePageKeys(data: SiteData): string[] {
-  return [...Object.keys(data.pages), ...projectsOf(data).map((project) => `work/${project.slug}`)]
+  return [...Object.keys(data.pages), ...detailPages(data).map(({ key }) => key)]
 }
 
 /** The page `key` of a site payload, or undefined when the template has no such page */
 export function sitePage(data: SiteData, key: string, brandName?: string): PageMeta | undefined {
   const pages = data.pages as Record<string, PageMeta>
   if (Object.hasOwn(pages, key)) return pages[key]
-  const project = key.startsWith('work/') ? projectsOf(data).find((p) => `work/${p.slug}` === key) : undefined
-  return project ? { title: brandName ? `${project.name} | ${brandName}` : project.name, description: project.summary } : undefined
+  return detailPages(data, brandName).find((page) => page.key === key)?.meta
 }

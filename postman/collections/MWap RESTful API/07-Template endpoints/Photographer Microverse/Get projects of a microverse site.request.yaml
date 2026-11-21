@@ -1,0 +1,18 @@
+$kind: http-request
+name: 'Get projects of a microverse site'
+description: |-
+  The routes of another template do not exist on this one: the project routes of the Signal template answer 404 for a Microverse site.
+order: 1510
+method: GET
+url: '{{baseUrl}}/api/site/:slug/projects'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))

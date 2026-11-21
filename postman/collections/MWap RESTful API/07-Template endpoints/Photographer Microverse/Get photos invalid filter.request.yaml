@@ -1,0 +1,19 @@
+$kind: http-request
+name: 'Get photos invalid filter'
+description: |-
+  A filter that is not true or false answers 400 with data.errors, naming the query field.
+order: 1040
+method: GET
+url: '{{baseUrl}}/api/site/:slug/photos?gallery=maybe'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('names the field', () => pm.expect(pm.response.json().data.errors.map((e) => e.field)).to.include('gallery'))

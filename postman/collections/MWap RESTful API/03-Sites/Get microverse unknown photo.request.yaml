@@ -1,0 +1,27 @@
+$kind: http-request
+name: 'Get microverse unknown photo'
+description: |-
+  A photo the site does not have answers 404 with the template's own page ("This frame is out of focus.", the brand name and a link back to the home page), not indexed.
+order: 4805
+method: GET
+url: '{{baseUrl}}/:slug/photo/:photo'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+  - key: photo
+    value: 'no-such-photo'
+headers:
+  - key: Accept
+    value: 'text/html'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('is the page of the template, not the plain error', () => {
+        const html = pm.response.text()
+        pm.expect(html).to.include('404')
+        pm.expect(html).to.include('out of focus')
+        pm.expect(html).to.include('Nova Frame')
+      })
+      pm.test('is not indexed', () => pm.expect(pm.response.text()).to.include('noindex'))

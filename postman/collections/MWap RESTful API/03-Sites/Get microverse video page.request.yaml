@@ -1,0 +1,34 @@
+$kind: http-request
+name: 'Get microverse video page'
+description: |-
+  The page of one video at /<slug>/video/<video.slug>: the poster, the player (the video is played on demand, not on load), the caption, the duration and upload date in the details and the previous and next links.
+order: 4804
+method: GET
+url: '{{baseUrl}}/:slug/video/:video'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+  - key: video
+    value: 'reel-one'
+headers:
+  - key: Accept
+    value: 'text/html'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is HTML with the video as title and h1', () => {
+        const html = pm.response.text()
+        pm.expect(html).to.include('<title>Product reel, a watch in motion | Nova Frame')
+        pm.expect(html).to.include('<h1')
+      })
+      pm.test('has the poster and the source of the video', () => {
+        const html = pm.response.text()
+        pm.expect(html).to.include('picsum.photos/seed/nv1/506/900')
+        pm.expect(html).to.include('https://example.com/videos/reel-one.mp4')
+      })
+      pm.test('has the duration, the upload date and the aspect ratio', () => {
+        const html = pm.response.text()
+        for (const text of ['0:36', '19 Jan 2026', '9 : 16']) pm.expect(html, text).to.include(text)
+      })

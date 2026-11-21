@@ -1,0 +1,181 @@
+/* Microverse: red and black photography studio. Colors come from the brand (--brand-*); the brand font drives all text.
+   Rules of the design: only icon buttons and logos are round, there is one sticky Book a Session. */
+:where(.mv) {
+  --mv-bg: var(--brand-bg);
+  --mv-red: var(--brand-primary);
+  --mv-hot: var(--brand-accent);
+  --mv-text: var(--brand-text);
+  --mv-muted: color-mix(in srgb, var(--brand-text) 62%, var(--brand-bg));
+  --mv-dim: color-mix(in srgb, var(--brand-text) 38%, var(--brand-bg));
+  --mv-line: color-mix(in srgb, var(--brand-text) 14%, var(--brand-bg));
+  --mv-raised: color-mix(in srgb, var(--brand-primary) 8%, var(--brand-bg));
+  --mv-on-red: rgb(var(--brand-on-primary-rgb));
+  --mv-font: var(--brand-font, sans-serif);
+  --mv-pad: clamp(1.25rem, 5vw, 5rem);
+  /* Section content starts at 120px on the 1440 design and 24px on the phone one */
+  --mv-gutter: clamp(1.5rem, 8.3333vw, 7.5rem);
+  --mv-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  position: relative;
+  background: var(--mv-bg);
+  color: var(--mv-text);
+  font-family: var(--mv-font);
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+:where(.mv) :is(h1, h2, h3, h4, p, ul, ol, dl, dd, figure) {
+  margin: 0;
+}
+
+:where(.mv) :is(ul, ol) {
+  padding: 0;
+  list-style: none;
+}
+
+:where(.mv) *,
+:where(.mv) *::before,
+:where(.mv) *::after {
+  box-sizing: border-box;
+}
+
+:where(.mv) a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:where(.mv) img,
+:where(.mv) video {
+  display: block;
+  max-width: 100%;
+}
+
+:where(.mv) button {
+  font: inherit;
+  color: inherit;
+}
+
+/* Small caps label: the section numbers, figure captions and metadata */
+:where(.mv) .mv-eyebrow {
+  color: var(--mv-hot);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+:where(.mv) .mv-caption {
+  color: var(--mv-dim);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+:where(.mv) .mv-title {
+  font-size: clamp(3rem, 12vw, 5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* Sharp, never round */
+:where(.mv) .mv-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  border: 1px solid var(--mv-hot);
+  background: var(--mv-red);
+  color: var(--mv-on-red);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s var(--mv-ease);
+}
+
+:where(.mv) .mv-button:hover {
+  background: var(--mv-hot);
+}
+
+:where(.mv) .mv-button:active {
+  transform: translateY(1px);
+}
+
+/* The one round control: icon buttons */
+:where(.mv) .mv-icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--mv-line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mv-bg) 70%, transparent);
+  color: var(--mv-text);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+:where(.mv) .mv-icon-button:hover {
+  border-color: var(--mv-hot);
+  background: var(--mv-red);
+}
+
+:where(.mv) :focus-visible {
+  outline: 2px solid var(--mv-hot);
+  outline-offset: 3px;
+}
+
+/* A section header: number, big title, caption */
+:where(.mv) .mv-head {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+:where(.mv) .mv-section {
+  position: relative;
+  padding: clamp(4rem, 6.7vw, 6rem) var(--mv-gutter);
+  isolation: isolate;
+}
+
+/* Film grain and a soft vignette over everything, as the post-process pass of the design */
+:where(.mv)::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 55%, color-mix(in srgb, #000 45%, transparent) 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.5'/></svg>");
+  mix-blend-mode: overlay;
+  opacity: 0.35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.mv) * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}

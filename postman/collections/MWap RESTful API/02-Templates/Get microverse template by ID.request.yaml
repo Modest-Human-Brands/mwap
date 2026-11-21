@@ -1,0 +1,66 @@
+$kind: http-request
+name: 'Get microverse template by ID'
+description: |-
+  The portfolio-photographer-microverse template (category Portfolios): a red and black photography studio site on molten, light-driven WebGL backgrounds (the hero is always a looping video reel). `data.pages.home` is the one fixed page, built from the slots hero, manifesto, photoGallery, videoGallery, featured, packages and footer. The content lives in three lists of the payload: `data.photos` (1 to 60; every photo has a page at /<slug>/photo/<photo.slug>; `gallery` puts it in the pinned gallery, `featured` is its position in the bento, null when not featured), `data.videos` (1 to 30; a page at /<slug>/video/<video.slug>) and `data.packages` (1 to 4 price cards). `data.trusted` lists up to 8 client logos, `data.contact` carries the email, an optional phone, up to six links and the optional bookingEndpoint that the Book a Session form is relayed to. Media is URLs only. The sample is a complete payload with generic content that prefills an editor.
+order: 2700
+method: GET
+url: '{{baseUrl}}/api/site/template/:id'
+pathVariables:
+  - key: id
+    value: 'portfolio-photographer-microverse'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      const homeSlots = ['hero', 'manifesto', 'photoGallery', 'videoGallery', 'featured', 'packages', 'footer']
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('matches Template Detail schema', () => pm.response.to.have.jsonSchema({
+        type: 'object',
+        required: ['id', 'label', 'shortLabel', 'category', 'description', 'schema', 'sample'],
+        properties: { id: { const: 'portfolio-photographer-microverse' }, category: { const: 'Portfolios' }, schema: { type: 'object', required: ['type', 'properties'] }, sample: { type: 'object', required: ['seo', 'navigation', 'contact', 'trusted', 'photos', 'videos', 'packages', 'pages'] } }
+      }))
+      pm.test('brand is not part of the payload schema', () => pm.expect(pm.response.json().schema.properties).to.not.have.property('brand'))
+      pm.test('sample is a complete payload with generic content', () => {
+        const { sample } = pm.response.json()
+        pm.expect(JSON.stringify(sample)).to.not.include('{{')
+        pm.expect(sample.contact.email).to.match(/@example\.(com|org)$/)
+        pm.expect(Object.keys(sample.pages)).to.have.members(['home'])
+        for (const slot of homeSlots) pm.expect(sample.pages.home[slot].enabled, 'home.' + slot).to.eql(true)
+        for (const list of ['photos', 'videos', 'packages']) {
+          pm.expect(new Set(sample[list].map((item) => item.slug)).size, list).to.eql(sample[list].length)
+          sample[list].forEach((item) => pm.expect(item.slug).to.match(/^[a-z0-9]+(-[a-z0-9]+)*$/))
+        }
+        pm.expect(sample.photos.some((p) => p.gallery), 'a gallery photo').to.eql(true)
+        pm.expect(sample.photos.some((p) => p.featured !== null), 'a featured photo').to.eql(true)
+      })
+      pm.test('schema fixes the layout and limits the lists', () => {
+        const { properties } = pm.response.json().schema
+        const limits = (list) => [list.minItems, list.maxItems]
+        const home = properties.pages.properties.home.properties
+        pm.expect(properties.pages.additionalProperties).to.eql(false)
+        pm.expect(Object.keys(home)).to.have.members(['title', 'description', ...homeSlots])
+        pm.expect(limits(properties.navigation)).to.eql([1, 6])
+        pm.expect(limits(properties.photos)).to.eql([1, 60])
+        pm.expect(limits(properties.videos)).to.eql([1, 30])
+        pm.expect(limits(properties.packages)).to.eql([1, 4])
+        pm.expect(properties.trusted.maxItems).to.eql(8)
+        pm.expect(limits(properties.packages.items.properties.features)).to.eql([1, 10])
+        pm.expect(limits(home.hero.properties.titleLines)).to.eql([1, 3])
+      })
+      pm.test('a photo and a video have the fields the pages and the detail sidebar show', () => {
+        const { properties } = pm.response.json().schema
+        const photo = properties.photos.items
+        const video = properties.videos.items
+        pm.expect(Object.keys(photo.properties)).to.have.members(['slug', 'title', 'description', 'imageUrl', 'aspectRatio', 'category', 'gallery', 'featured', 'mediaId', 'width', 'height', 'project'])
+        pm.expect(photo.required).to.have.members(['slug', 'title', 'imageUrl', 'aspectRatio', 'category', 'gallery', 'featured'])
+        pm.expect(Object.keys(video.properties)).to.have.members(['slug', 'title', 'description', 'posterUrl', 'videoUrl', 'aspectRatio', 'category', 'durationSeconds', 'uploadedAt', 'mediaId'])
+        pm.expect(video.required).to.have.members(['slug', 'title', 'posterUrl', 'videoUrl', 'aspectRatio', 'category', 'durationSeconds'])
+      })
+      pm.test('the contact email is required, phone, links and endpoints are optional', () => {
+        const contact = pm.response.json().schema.properties.contact
+        pm.expect(contact.required).to.include('email').and.not.include('phone').and.not.include('links').and.not.include('bookingEndpoint')
+        pm.expect(Object.keys(contact.properties)).to.include.members(['phone', 'links', 'bookingEndpoint'])
+      })

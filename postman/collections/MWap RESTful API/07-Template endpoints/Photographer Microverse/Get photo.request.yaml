@@ -1,0 +1,29 @@
+$kind: http-request
+name: 'Get photo'
+description: |-
+  One photo with its place in the site: `index` (1-based), `total`, and the slugs of the `previous` and the `next` photo, which wrap around (the first photo's previous is the last one). The photo page uses them for the media strip.
+order: 1100
+method: GET
+url: '{{baseUrl}}/api/site/:slug/photos/:photo'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+  - key: photo
+    value: 'frame-one'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is the photo that was asked for with its place', () => {
+        const photo = pm.response.json()
+        pm.expect(photo.slug).to.eql('frame-one')
+        pm.expect(photo.imageUrl).to.include('picsum.photos')
+        pm.expect(photo.index).to.eql(1)
+        pm.expect(photo.total).to.eql(3)
+        pm.expect(photo.previous).to.eql('frame-three')
+        pm.expect(photo.next).to.eql('frame-two')
+      })

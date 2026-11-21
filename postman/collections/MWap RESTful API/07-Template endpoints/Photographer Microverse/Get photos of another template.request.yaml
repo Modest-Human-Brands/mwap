@@ -1,0 +1,19 @@
+$kind: http-request
+name: 'Get photos of another template'
+description: |-
+  The route belongs to the Microverse template. A site with another template (here the built-in example) answers 404, not an empty list.
+order: 1500
+method: GET
+url: '{{baseUrl}}/api/site/:slug/photos'
+pathVariables:
+  - key: slug
+    value: '{{siteSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))
+      pm.test('has the error shape', () => { pm.expect(pm.response.json()).to.have.property('statusCode') })

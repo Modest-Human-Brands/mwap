@@ -1,0 +1,47 @@
+$kind: http-request
+name: 'Preview site microverse'
+description: |-
+  Renders the portfolio-photographer-microverse home page with its sample content (no `data`) as standalone HTML without scripts: the WebGL scenes are replaced by their rendered stills and the hero reel by its poster frame. Section ids are the anchors of the navigation: hero, manifesto, photos, videos, featured and packages.
+order: 4400
+method: POST
+url: '{{baseUrl}}/api/site/template/preview'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {
+      "templateId": "portfolio-photographer-microverse",
+      "brand": {
+        "name": "Nova Frame",
+        "logoUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FB3737&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FB3737",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "#CD2D2D",
+          "secondary": "#1A0B0B",
+          "accent": "#FB3737",
+          "background": "#090303",
+          "text": "#FFFFFF"
+        }
+      }
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('renders the headline and every home section', () => {
+        const { html } = pm.response.json()
+        pm.expect(html).to.include('<h1')
+        for (const id of ['hero', 'manifesto', 'photos', 'videos', 'featured', 'packages']) pm.expect(html, id).to.include('id="' + id + '"')
+      })
+      pm.test('previews are free of scripts and placeholder tokens', () => {
+        const { html } = pm.response.json()
+        pm.expect(html).to.not.include('<script')
+        pm.expect(html).to.not.include('{{')
+      })
+      pm.test('the brand name is used', () => pm.expect(pm.response.json().html).to.include('Nova Frame'))

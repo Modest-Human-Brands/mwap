@@ -31,6 +31,13 @@ const brands: Record<string, unknown> = {
     fontFamily: 'Outfit',
     colors: { primary: '#E7B66B', secondary: '#10303A', accent: '#2E7C7B', background: '#F4F7F6', text: '#14262B' },
   },
+  'portfolio-photographer-microverse': {
+    name: 'Sample Studio',
+    logoUrl: icon('aperture', '#FB3737'),
+    faviconUrl: icon('aperture', '#FB3737'),
+    fontFamily: 'Oxanium',
+    colors: { primary: '#CD2D2D', secondary: '#1A0B0B', accent: '#FB3737', background: '#090303', text: '#FFFFFF' },
+  },
   'portfolio-developer-signal': {
     name: 'Sample Dev',
     logoUrl: icon('terminal', '#5BBBFF'),

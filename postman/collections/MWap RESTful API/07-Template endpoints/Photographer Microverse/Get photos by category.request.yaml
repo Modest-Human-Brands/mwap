@@ -1,0 +1,19 @@
+$kind: http-request
+name: 'Get photos by category'
+description: |-
+  `category` keeps the photos of one category (compared without case). Categories that no photo has give an empty list, not an error.
+order: 1010
+method: GET
+url: '{{baseUrl}}/api/site/:slug/photos?category=food'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('only the photos of the category', () => pm.expect(pm.response.json().map((p) => p.slug)).to.eql(['frame-two']))

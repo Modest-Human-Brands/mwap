@@ -1,0 +1,25 @@
+$kind: http-request
+name: 'Send contact message invalid body'
+description: |-
+  A missing name, an invalid email, an empty message or a too long phone answers 400 with data.errors; nothing is relayed.
+order: 2110
+method: POST
+url: '{{baseUrl}}/api/site/:slug/contact'
+pathVariables:
+  - key: slug
+    value: '{{microverseFormsSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {"name": "", "email": "nope", "message": "", "phone": "11111111111111111111111111111111111111111"}
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 400', () => pm.response.to.have.status(400))
+      pm.test('lists every problem', () => pm.expect(pm.response.json().data.errors.map((e) => e.field)).to.have.members(['name', 'email', 'message', 'phone']))

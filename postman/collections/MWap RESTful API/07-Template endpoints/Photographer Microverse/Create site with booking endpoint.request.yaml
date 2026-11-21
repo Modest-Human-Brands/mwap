@@ -1,0 +1,147 @@
+$kind: http-request
+name: 'Create site with booking endpoint'
+description: |-
+  Creates a Microverse site whose data.contact.bookingEndpoint is an https URL of a public host; the Book a Session form is relayed to it. The slug is kept in microverseFormsSlug. The next requests use postman-echo.com as the receiver, so they need network access.
+order: 2000
+method: POST
+url: '{{baseUrl}}/api/site'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+  - key: x-api-key
+    value: '{{apiKey}}'
+  - key: x-org-id
+    value: '{{orgId}}'
+  - key: x-user-id
+    value: '{{userId}}'
+body:
+  type: json
+  content: |-
+    {
+      "slug": "{{microverseFormsSlug}}",
+      "templateId": "portfolio-photographer-microverse",
+      "brand": {
+        "name": "Nova Frame",
+        "logoUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FB3737&width=64&height=64",
+        "faviconUrl": "https://api.iconify.design/lucide/aperture.svg?color=%23FB3737",
+        "fontFamily": "Oxanium",
+        "colors": {
+          "primary": "#CD2D2D",
+          "secondary": "#1A0B0B",
+          "accent": "#FB3737",
+          "background": "#090303",
+          "text": "#FFFFFF"
+        }
+      },
+      "googleAnalyticsId": "G-NOVAFRAME1",
+      "data": {
+        "contact": {
+          "email": "hello@novaframe.example.com",
+          "phone": "+1 555 0100",
+          "bookingEndpoint": "https://postman-echo.com/post"
+        },
+        "photos": [
+          {
+            "slug": "frame-one",
+            "title": "Lifestyle photograph of a black leather wallet",
+            "imageUrl": "https://picsum.photos/seed/nf1/720/1080",
+            "aspectRatio": 0.6667,
+            "category": "product",
+            "gallery": true,
+            "featured": 1,
+            "mediaId": "photo-frame-one",
+            "width": 720,
+            "height": 1080,
+            "project": "Sample shoot"
+          },
+          {
+            "slug": "frame-two",
+            "title": "A chilled glass of cola on a dark table",
+            "imageUrl": "https://picsum.photos/seed/nf2/1080/720",
+            "aspectRatio": 1.5,
+            "category": "food",
+            "gallery": true,
+            "featured": null,
+            "mediaId": "photo-frame-two",
+            "width": 1080,
+            "height": 720,
+            "project": "Sample shoot"
+          },
+          {
+            "slug": "frame-three",
+            "title": "Studio shot of a pair of white sneakers",
+            "imageUrl": "https://picsum.photos/seed/nf3/900/900",
+            "aspectRatio": 1.0,
+            "category": "ecommerce",
+            "gallery": false,
+            "featured": 2,
+            "mediaId": "photo-frame-three",
+            "width": 900,
+            "height": 900,
+            "project": "Sample shoot"
+          }
+        ],
+        "videos": [
+          {
+            "slug": "reel-one",
+            "title": "Product reel, a watch in motion",
+            "posterUrl": "https://picsum.photos/seed/nv1/506/900",
+            "videoUrl": "https://example.com/videos/reel-one.mp4",
+            "aspectRatio": 0.5625,
+            "category": "product",
+            "durationSeconds": 36.4,
+            "uploadedAt": "2026-01-19",
+            "mediaId": "video-reel-one"
+          },
+          {
+            "slug": "reel-two",
+            "title": "Food reel, pouring and steam",
+            "posterUrl": "https://picsum.photos/seed/nv2/900/506",
+            "videoUrl": "https://example.com/videos/reel-two.mp4",
+            "aspectRatio": 1.7778,
+            "category": "food",
+            "durationSeconds": 21,
+            "uploadedAt": "2026-02-02",
+            "mediaId": "video-reel-two"
+          }
+        ],
+        "packages": [
+          {
+            "slug": "standard",
+            "title": "Standard Photography Package",
+            "subtitle": "Everything you need for great product visuals",
+            "price": "15000",
+            "unit": "day",
+            "features": [
+              "Photo and video shoots included",
+              "Marketplace-ready edits",
+              "White background and infographic shots"
+            ]
+          },
+          {
+            "slug": "custom",
+            "title": "Custom Photography Package",
+            "subtitle": "Tailored end-to-end for premium brands",
+            "price": "custom",
+            "unit": "day",
+            "features": [
+              "Custom mood board creation",
+              "Bespoke creative concept and direction",
+              "Dedicated production manager"
+            ]
+          }
+        ]
+      }
+    }
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      pm.collectionVariables.set('microverseFormsSlug', 'pm-microverse-forms-' + Date.now())
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 201', () => pm.response.to.have.status(201))
+      pm.test('stores the endpoint and the phone', () => { const { data } = pm.response.json(); pm.expect(data.contact.bookingEndpoint).to.eql('https://postman-echo.com/post'); pm.expect(data.contact.phone).to.eql('+1 555 0100') })

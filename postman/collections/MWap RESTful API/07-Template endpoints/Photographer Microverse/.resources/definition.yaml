@@ -1,0 +1,5 @@
+$kind: collection
+name: 'Photographer Microverse'
+description: |-
+  Endpoints of the portfolio-photographer-microverse template, served under /api/site/:slug/. Reads are public like the site page and are typed views of the lists of the site (photos, videos, packages). A list keeps the order of the site; a filtered list keeps it too, except `featured`, which is ordered by the featured position. The contact relay is the one the other portfolio templates with a bookingEndpoint share: it stores nothing and forwards to data.contact.bookingEndpoint.
+order: 2000

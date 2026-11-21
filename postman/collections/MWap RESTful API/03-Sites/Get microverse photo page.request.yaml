@@ -1,0 +1,40 @@
+$kind: http-request
+name: 'Get microverse photo page'
+description: |-
+  The page of one photo, server-rendered at /<slug>/photo/<photo.slug>: the photo, its caption (category and media id, title), the media strip with the position ("01 / 03") and links to the previous and next photo (they wrap around), and the details (type, category, aspect ratio, delivered size, project, featured, description). The title of the page is the photo title and the brand.
+order: 4803
+method: GET
+url: '{{baseUrl}}/:slug/photo/:photo'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+  - key: photo
+    value: 'frame-one'
+headers:
+  - key: Accept
+    value: 'text/html'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is HTML with the photo as title and h1', () => {
+        const html = pm.response.text()
+        pm.expect(html).to.include('<title>Lifestyle photograph of a black leather wallet | Nova Frame')
+        pm.expect(html).to.include('<h1')
+      })
+      pm.test('shows the photo and its position', () => {
+        const html = pm.response.text()
+        pm.expect(html).to.include('picsum.photos/seed/nf1/720/1080')
+        pm.expect(html).to.include('01 / 03')
+      })
+      pm.test('links to the previous and the next photo', () => {
+        const html = pm.response.text()
+        const slug = pm.collectionVariables.get('microverseSlug')
+        pm.expect(html).to.include('/' + slug + '/photo/frame-three')
+        pm.expect(html).to.include('/' + slug + '/photo/frame-two')
+      })
+      pm.test('has the media details', () => {
+        const html = pm.response.text()
+        for (const text of ['MEDIA DETAILS', 'photo-frame-one', '2 : 3', '720 × 1080 px', 'Sample shoot']) pm.expect(html, text).to.include(text)
+      })

@@ -1,0 +1,19 @@
+$kind: http-request
+name: 'Get gallery photos'
+description: |-
+  `gallery=true` keeps the photos of the pinned gallery, `gallery=false` the others.
+order: 1020
+method: GET
+url: '{{baseUrl}}/api/site/:slug/photos?gallery=true'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('only the gallery photos', () => pm.expect(pm.response.json().map((p) => p.slug)).to.eql(['frame-one', 'frame-two']))

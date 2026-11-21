@@ -1,0 +1,19 @@
+$kind: http-request
+name: 'Get videos by category'
+description: |-
+  Only the videos of the category.
+order: 1210
+method: GET
+url: '{{baseUrl}}/api/site/:slug/videos?category=product'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('only the videos of the category', () => pm.expect(pm.response.json().map((v) => v.slug)).to.eql(['reel-one']))

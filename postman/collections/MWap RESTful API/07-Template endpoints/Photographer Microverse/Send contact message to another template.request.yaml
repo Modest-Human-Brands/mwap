@@ -1,0 +1,29 @@
+$kind: http-request
+name: 'Send contact message to another template'
+description: |-
+  The relay belongs to the portfolio templates that list it (Signal and Microverse). The built-in example uses the model template, which does not, so the answer is 404.
+order: 2130
+method: POST
+url: '{{baseUrl}}/api/site/:slug/contact'
+pathVariables:
+  - key: slug
+    value: '{{siteSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {
+      "name": "Sam Example",
+      "email": "sam@example.com",
+      "phone": "+1 555 0123",
+      "message": "I would like a quote for a product shoot."
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))

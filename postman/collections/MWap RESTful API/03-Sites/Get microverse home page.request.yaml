@@ -1,0 +1,39 @@
+$kind: http-request
+name: 'Get microverse home page'
+description: |-
+  The home page of the site created by "Create site microverse", server-rendered: the hero headline in the h1, then the sections manifesto, photos (the photos with gallery: true), videos, featured (the featured photos, by position) and packages, and the footer with the brand wordmark. The WebGL canvas is client-only, so the HTML already carries the content and the poster frame of the reel.
+order: 4802
+method: GET
+url: '{{baseUrl}}/:slug'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+headers:
+  - key: Accept
+    value: 'text/html'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is HTML with the brand in the title and an h1', () => {
+        pm.expect(pm.response.headers.get('Content-Type')).to.include('text/html')
+        const html = pm.response.text()
+        pm.expect(html).to.include('<title>Nova Frame')
+        pm.expect(html).to.include('<h1')
+      })
+      pm.test('has every home section', () => { for (const id of ['hero', 'manifesto', 'photos', 'videos', 'featured', 'packages']) pm.expect(pm.response.text(), id).to.include('id="' + id + '"') })
+      pm.test('the gallery has the gallery photos only and links to their pages', () => {
+        const html = pm.response.text()
+        const slug = pm.collectionVariables.get('microverseSlug')
+        pm.expect(html).to.include('/' + slug + '/photo/frame-one')
+        pm.expect(html).to.include('/' + slug + '/photo/frame-two')
+        pm.expect(html).to.include('/' + slug + '/video/reel-one')
+      })
+      pm.test('shows the packages with their prices', () => { const html = pm.response.text(); pm.expect(html).to.include('Standard Photography Package'); pm.expect(html).to.include('15000') })
+      pm.test('has the share preview of the site and its icon', () => {
+        const html = pm.response.text()
+        pm.expect(html).to.include('og:title')
+        pm.expect(html).to.include('aperture.svg')
+        pm.expect(html).to.include('G-NOVAFRAME1')
+      })

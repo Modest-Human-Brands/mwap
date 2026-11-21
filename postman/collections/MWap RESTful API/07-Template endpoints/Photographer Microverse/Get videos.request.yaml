@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'Get videos'
+description: |-
+  Every video of the site in the order of the site; `category` filters like the photos do.
+order: 1200
+method: GET
+url: '{{baseUrl}}/api/site/:slug/videos'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 200', () => pm.response.to.have.status(200))
+      pm.test('is cacheable like the site', () => pm.expect(pm.response.headers.get('Cache-Control')).to.match(/s-maxage/))
+      pm.test('does not expose who owns the site', () => pm.expect(pm.response.text()).to.not.include('createdBy'))
+
+      pm.test('matches Videos schema', () => pm.response.to.have.jsonSchema({ type: 'array', minItems: 1, items: { type: 'object', required: ['slug', 'title', 'posterUrl', 'videoUrl', 'aspectRatio', 'category', 'durationSeconds'], properties: { durationSeconds: { type: 'number', exclusiveMinimum: 0 } } } }))
+      pm.test('keeps the order of the site', () => pm.expect(pm.response.json().map((v) => v.slug)).to.eql(['reel-one', 'reel-two']))

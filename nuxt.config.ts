@@ -66,6 +66,7 @@ export default defineNuxtConfig({
     '@nuxtjs/mcp-toolkit',
     '@nuxtjs/seo',
     '@nuxtjs/tailwindcss',
+    '@tresjs/nuxt',
     '@vite-pwa/nuxt',
     '@vueuse/nuxt',
     'v-gsap-nuxt',

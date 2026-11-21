@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Get video not found'
+description: |-
+  A video the site does not have answers 404.
+order: 1310
+method: GET
+url: '{{baseUrl}}/api/site/:slug/videos/:video'
+pathVariables:
+  - key: slug
+    value: '{{microverseSlug}}'
+  - key: video
+    value: 'no-such-video'
+headers:
+  - key: Accept
+    value: 'application/json'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 404', () => pm.response.to.have.status(404))

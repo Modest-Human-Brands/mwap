@@ -1,0 +1,31 @@
+$kind: http-request
+name: 'Send contact message'
+description: |-
+  Book a Session. Public. Checks the body and relays it to the bookingEndpoint of the site: 202 means the receiver accepted it; MWap stores nothing. Body: name (1 to 120 characters), email, message (1 to 4000), optional phone (at most 40) and company (at most 120). Same relay as the other portfolio templates with a booking endpoint.
+order: 2100
+method: POST
+url: '{{baseUrl}}/api/site/:slug/contact'
+pathVariables:
+  - key: slug
+    value: '{{microverseFormsSlug}}'
+headers:
+  - key: Accept
+    value: 'application/json'
+  - key: Content-Type
+    value: 'application/json'
+body:
+  type: json
+  content: |-
+    {
+      "name": "Sam Example",
+      "email": "sam@example.com",
+      "phone": "+1 555 0123",
+      "message": "I would like a quote for a product shoot."
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status is 202', () => pm.response.to.have.status(202))
+      pm.test('says it was delivered', () => pm.expect(pm.response.json()).to.eql({ delivered: true }))
+      pm.test('is never cached', () => pm.expect(pm.response.headers.get('Cache-Control')).to.match(/no-store/))

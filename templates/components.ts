@@ -6,6 +6,7 @@ export const templateComponents: Record<string, () => Promise<Component>> = {
   'portfolio-model-contact-sheet': () => import('./portfolio/model/ContactSheetV1/component.vue'),
   'portfolio-psychiatrist-editorial': () => import('./portfolio/psychiatrist/EditorialV1/component.vue'),
   'portfolio-developer-signal': () => import('./portfolio/developer/SignalV1/component.vue'),
+  'portfolio-photographer-microverse': () => import('./portfolio/photographer/MicroverseV1/component.vue'),
 }
 
 /** Page shown in the look of the template when a page of its site does not exist */
@@ -13,4 +14,5 @@ export const templateNotFound: Record<string, () => Promise<Component>> = {
   'portfolio-model-contact-sheet': () => import('./portfolio/model/ContactSheetV1/sections/NotFound.vue'),
   'portfolio-psychiatrist-editorial': () => import('./portfolio/psychiatrist/EditorialV1/sections/NotFound.vue'),
   'portfolio-developer-signal': () => import('./portfolio/developer/SignalV1/sections/NotFound.vue'),
+  'portfolio-photographer-microverse': () => import('./portfolio/photographer/MicroverseV1/sections/NotFound.vue'),
 }
