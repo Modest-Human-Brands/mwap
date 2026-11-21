@@ -1,7 +1,7 @@
 # Nuxt modules (nuxt-og-image) need real Node APIs at build time; Bun is only used to install and to run the output
 FROM node:24-alpine AS builder
 
-COPY --from=oven/bun:1-alpine /usr/local/bin/bun /usr/local/bin/bun
+COPY --from=oven/bun:1-alpine@sha256:da816670775f4c2b4e990b6b1847cf5540dcdc721a42033dd331ce7a88ba6a3b /usr/local/bin/bun /usr/local/bin/bun
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ ENV NITRO_PRESET=bun
 
 RUN bun run build
 
-FROM oven/bun:1-alpine AS runner
+FROM oven/bun:1-alpine@sha256:da816670775f4c2b4e990b6b1847cf5540dcdc721a42033dd331ce7a88ba6a3b AS runner
 
 ARG VERSION
 ARG BUILD_TIME
