@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.0.13
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.12...v0.0.13)
+
+### 💅 Refactors
+
+- Herohome and manifestosection components; remove unused captions and hints ([93d9b37](https://github.com/Modest-Human-Brands/mwap/commit/93d9b37))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.12
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.11...v0.0.12)
