@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.0.16
+
+[compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.15...v0.0.16)
+
+### 🚀 Enhancements
+
+- Add new social media icons and update existing components ([6230039](https://github.com/Modest-Human-Brands/mwap/commit/6230039))
+
+### ❤️ Contributors
+
+- Shirsendu Bairagi ([@shba007](https://github.com/shba007))
+
 ## v0.0.15
 
 [compare changes](https://github.com/Modest-Human-Brands/mwap/compare/v0.0.14...v0.0.15)
